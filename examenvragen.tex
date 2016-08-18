@@ -1,0 +1,120 @@
+\section{Examenvragen}
+
+\subsection{GNFA}
+
+\subsubsection{Vraag 1 (Bijvraag)}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{>{\centering\arraybackslash}m{5cm}>{\centering\arraybackslash}m{1cm} >{\centering\arraybackslash}m{5cm}}
+\begin{nfa}
+  \node[state] (A)                     {$A$};
+  \node[state] (X)  [below right of=A] {$X$};
+  \node[state] (B)  [above right of=X] {$B$};
+  
+  \path (A) edge [bend left]  node {$E_4$} (B)
+            edge [bend right] node {$E_1$} (X)
+        (X) edge [loop below] node {$E_2$} (E)
+            edge [bend right] node {$E_3$} (B);
+  \addvmargin{1mm}
+\end{nfa} & $\longrightarrow$ & \begin{nfa}
+  \node[state] (A)                   {$A$};
+  \node[state] (B)  [right=3cm of A] {$B$};
+  
+  \path (A) edge []  node {$E_4|E_1(E_2)^*E_3$} (B);
+  \addvmargin{1mm}
+\end{nfa}
+\end{tabular}
+\end{center}
+
+\textit{Stel dat het linkse deel toestand B niet bevat, de boog met $E_3$ van $X$ naar $A$ gaat en de boog met $E_4$ van $A$ naar zichzelf gaat. Kan dit omgevormd worden op methode gelijkaardig aan die beschreven is in de cursus?}
+
+\begin{center}
+\begin{nfa}
+  \node[state] (A)              {$A$};
+  \node[state] (X) [right of=A] {$X$};
+  
+  \path (A) edge [bend left]  node {$E_1$} (X)
+            edge [loop left]  node {$E_4$} (A)
+        (X) edge [bend left]  node {$E_3$} (A)
+            edge [loop right] node {$E_2$} (X);
+  \addvmargin{1mm}
+\end{nfa}
+\end{center}
+
+Ja, we elimineren eerst het pad van $X$ naar $A$. We voeren een nieuwe toestand $Y$ in en gebruiken de standaard eleminatie om het pad van $Y$ naar $X$ door $A$ te behandelen:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{>{\centering\arraybackslash}m{5cm}>{\centering\arraybackslash}m{1cm} >{\centering\arraybackslash}m{5cm}}
+\begin{nfa}
+  \node[state] (A)                   {$A$};
+  \node[state] (X) [above right=.25cm and 2cm of A] {$X$};
+  \node[state] (Y) [below right=.25cm and 2cm of A] {$Y$};
+  
+  \path (A) edge [bend left]  node {$E_1$}      (X)
+            edge [loop left]  node {$E_4$}      (A)
+        (X) edge [bend left]  node {$\epsilon$} (Y)
+            edge [loop right] node {$E_2$}      (X)
+        (Y) edge [bend left]  node {$E_3$}      (A)
+            edge [bend left]  node {$\epsilon$} (X);
+  \addvmargin{1mm}
+\end{nfa} & $\longrightarrow$ & \begin{nfa}
+  \node[state] (X) []                {$X$};
+  \node[state] (Y) [below=.75cm of X] {$Y$};
+  
+  \path (X) edge [bend left]  node {$\epsilon$}               (Y)
+            edge [loop right] node {$E_2$}                    (X)
+        (Y) edge [bend left]  node {$\epsilon|E_3(E_4)^*E_1$} (X);
+  \addvmargin{1mm}
+\end{nfa}
+\end{tabular}
+\end{center}
+
+Nu we de boog van $X$ naar $A$ ge\"elemineerd hebben, kunnen we de resterende bewerkingen uitvoeren om de lussen van de knopen op de boog tussen $A$ en $X$ te plaatsen:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{>{\centering\arraybackslash}m{5cm}>{\centering\arraybackslash}m{1cm} >{\centering\arraybackslash}m{5cm}}
+\begin{nfa}
+  \node[state] (A)              {$A$};
+  \node[state] (X) [right of=A] {$X$};
+  
+  \path (A) edge []           node {$E_1$} (X)
+            edge [loop left]  node {$E_4$} (A)
+        (X) edge [loop above] node {$E_2|E_3(E_4)^*E_1$} (X);
+  \addvmargin{1mm}
+\end{nfa} & $\longrightarrow$ & \begin{nfa}
+  \node[state] (A)              {$A$};
+  \node[state] (X) [right=4cm of A] {$X$};
+  
+  \path (A) edge [] node {$(E_4)^*E_1(E_2|E_3(E_4)^*E_1)^*$} (X);
+  \addvmargin{1mm}
+\end{nfa}
+\end{tabular}
+\end{center}
+
+\subsection{$MN(L)$-relaties}
+
+\subsubsection{Vraag 1}
+
+\textit{Geef de definitie van een Myhil-Nerode relatie over een taal $L$, of zoals we noteren een $MN(L)$-relatie.}
+
+Een Myhill-Nerode relatie voor een taal $L$ ($MN(L)$-relatie) is een equivalentierelatie $\sim_X$ die voldoet aan de volgende eigenschappen:
+  \begin{itemize}
+  \item $\sim_X$ is rechts congruent\\$\forall x, y \in \Sigma^*, a \in \Sigma: x \sim_X y \Rightarrow xa \sim_X ya$
+  \item $\sim_X$ verfijnt $\sim_L$\\$x \sim_X y \Rightarrow x \sim_L y$
+  \item $\sim_X$ heeft een eindige index\\Het aantal equivalentieklassen van $\sim_X$ is eindig.
+  \end{itemize}
+
+\textit{Bewijs vervolgens dat een $MN(L)$-relatie bestaat als en slechts als $L$ regulier is.}
+
+\input{bewijzen/mnlregulier}
+
+\textit{Bestaat er voor een taal $L$ soms meer dan één $MN(L)$-relatie?}
+
+Een taal $L$ waarvoor een $MN(L)$-relatie bestaat moet regulier zijn. Een mogelijke $MN(L)$-relatie voor een reguliere taal is $\sim_{DFA}$. Die equivalentierelatie wordt bepaald door alle strings die vanuit de begintoestand van de $DFA$ een willekeurige toestand bereiken te groeperen per toestand.
+\begin{equation*}
+\forall x, y \in \Sigma^*: x \sim_{DFA} y \Leftrightarrow \delta^*(q, x) = \delta^*(q, y)
+\end{equation*}
+We kunnen voor de taal $L$ een equivalente DFA opstellen die dezelfde taal bepaalt, maar niet isomorf is. De equivalentierelatie $\sim_{DFA}$ voor die DFA zal $\Sigma^*$ anders partitioneren. Bijgevolg bestaat er meer dan \'e\'en $MN(L)$-relatie voor een taal $L$.

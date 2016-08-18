@@ -4,9 +4,31 @@
 \usepackage[pdftex]{graphicx}
 \usepackage{amsfonts}
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{xcolor}
 \usepackage{mdframed}
+\usepackage{parskip}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{bm}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata,calc,fit,positioning}
+\usepackage{chngcntr}
+\counterwithin{figure}{section}
+
+\begingroup
+    \makeatletter
+    \@for\theoremstyle:=definition,remark,plain\do{%
+        \expandafter\g@addto@macro\csname th@\theoremstyle\endcsname{%
+            \addtolength\thm@preskip\parskip
+            }%
+        }
+\endgroup
+
+\newcommand\addvmargin[1]{
+  \node[fit=(current bounding box),inner ysep=#1,inner xsep=0]{};
+}
 
 \definecolor{silver}{rgb}{0.95,0.95,0.95}
 
@@ -18,11 +40,46 @@
     leftline=false,
     bottomline=false]\begin{tdefinitie}#1\\\normalfont}%
   {\end{tdefinitie}\end{mdframed}}
+
+\newtheorem{talgo}{Algoritme}[section]
+\newenvironment{algoritme}[1]%
+  {\begin{mdframed}[backgroundcolor=silver,
+    topline=false,
+    rightline=false,
+    leftline=false,
+    bottomline=false]\begin{talgo}#1\\\normalfont}%
+  {\end{talgo}\end{mdframed}}
   
-\newcommand{\perm}{\ensuremath{\mathcal{P}}}
+\renewcommand{\qedsymbol}{$\blacksquare$}
+\newenvironment{bewijs}%
+  {\begin{mdframed}[topline=true,
+    rightline=true,
+    leftline=true,
+    bottomline=true]\begin{proof}[Bewijs]\normalfont}%
+  {\end{proof}\end{mdframed}}
+ 
+\newenvironment{nfa}%
+  {\begin{tikzpicture}[->,
+    >=stealth',
+    shorten >=1pt,
+    auto,
+    node distance=2cm,
+    semithick]
+  \tikzstyle{every state}=[fill=none,draw=black,text=black]
+  \tikzstyle{accepting}=[accepting by double]
+  \tikzstyle{every initial by arrow}=[initial text=]}%
+  {\end{tikzpicture}}
+  
+\newenvironment{enumalgo}%
+  {\begin{enumerate}[leftmargin=1.5cm,label=Stap \arabic*:]}%
+  {\end{enumerate}}
+  
+\newcommand{\powerset}{\ensuremath{\mathcal{P}}}
+\newcommand{\partition}{\ensuremath{\mathfrak{P}}}
 \newcommand{\nat}{\ensuremath{\mathbb{N}}}
-\newcommand{\of}{\ensuremath{\text{ of }}}
+\newcommand{\dfastate}{\ensuremath{\mathcal{Q}}}
 \newcommand{\en}{\ensuremath{\text{ en }}}
+\newcommand{\of}{\ensuremath{\text{ of }}}
 
 \begin{document}
 
@@ -104,14 +161,50 @@ Een algebra is een verzameling met daarop een aantal inwendige operaties.
   \\ $\overline{S} = \{x|x \notin S\}$
 \end{definitie}
 
-\begin{definitie}{Een machtsverzameling $\perm(S)$ van een verzameling S}
-  Een machtsverzameling $\perm(S)$ is een verzameling van alle deelverzamelingen die gevormd kunnen worden met de elementen in S, inclusief de lege verzameling en de verzameling A.\\ \\ $\perm(S) = \{A|A \subseteq S\}$
+\begin{definitie}{Een machtsverzameling $\powerset(S)$ van een verzameling $S$}
+  Een machtsverzameling $\powerset(S)$ is een verzameling van alle deelverzamelingen die gevormd kunnen worden met de elementen in S, inclusief de lege verzameling en de verzameling A.\\ \\ $\powerset(S) = \{A|A \subseteq S\}$
 \end{definitie}
 
-\section{Talen}
+\begin{definitie}{Een equivalentierelatie $\sim$ op een verzameling $S$}
+  Een equivalentierelatie ($\sim$) is een relatie die de elementen van een verzameling groepeert die allemaal voldoen aan een zekere set criteria. Elke equivalentierelatie is
+  \begin{itemize}
+  \item reflexief: $\forall x \in S: x \sim x$
+  \item symmetrisch: $\forall x, y \in S: x \sim y \Leftrightarrow y \sim x$
+  \item transitief: $\forall x, y, z \in S: x \sim y \en y \sim z \Rightarrow x \sim z$
+  \end{itemize}
+\end{definitie}
+
+\begin{definitie}{Een equivalentieklasse onder $\sim$ op een verzameling $S$}
+  Een equivalentieklasse ($x_\sim \subseteq S$) is de verzameling van alle elementen in de verzameling $S$ die onder de gegeven equivalentierelatie gelijkwaardig zijn aan $x$. \\
+  \\ $x_\sim = \{y \in S|x \sim y\}$
+\end{definitie}
+
+\begin{definitie}{Een partitie $\partition$ van een verzameling $S$}
+  Een partitie van een verzameling is een opdeling van de elementen van die verzameling in niet-lege onderling disjuncte delen. Als $\partition$ een partitie is van een verzameling $S$, dan geldt:
+  \begin{itemize}
+  \item $\emptyset \notin \partition$
+  \item $\forall X, Y \in \partition: X \neq Y \Rightarrow X \cap Y = \emptyset$
+  \item $\bigcup_{X \in \partition} = S$
+  \end{itemize}
+\end{definitie}
+
+\begin{definitie}{Een tralie ($L$, $\leq$, $\vee$, $\wedge$)}
+  Een tralie is een partieel-geordende verzameling, geordend volgens $\leq$, met een supremum ($\vee$) en een infimum ($\wedge$) voor elk paar elementen. Voor een tralie geldt:
+  \begin{itemize}
+  \item $\forall x, y \in L: x \leq y \Rightarrow x = x \wedge y$
+  \item $\forall x, y \in L: x \leq y \Rightarrow y = x \vee y$
+  \end{itemize}
+\end{definitie}
+
+\begin{definitie}{Een volledige tralie ($L$, $\leq$, $\vee$, $\wedge$)}
+  Een tralie is een volledige tralie indien elke deelverzameling van $L$ een bovengrens en ondergrens heeft die een elementen zijn van $L$. \\
+  \\ $\forall X \subseteq L: \bigwedge_X \in L \en \bigvee_X \in L$
+\end{definitie}
+
+\newpage\section{Talen}
 
 \begin{definitie}{Een alfabet $\Sigma$}
-  Een verzameling van tekens.
+  Een verzameling van symbolen.
 \end{definitie}
 
 \begin{definitie}{Een string $s$ over een alfabet $\Sigma$}
@@ -124,10 +217,14 @@ Een algebra is een verzameling met daarop een aantal inwendige operaties.
   De lege string is een string die bestaat uit nul elementen.
 \end{definitie}
 
+\begin{definitie}{Het alfabet $\Sigma_\epsilon$}
+  $\Sigma_\epsilon = \Sigma \cup \{\epsilon\}$
+\end{definitie}
+
 \begin{definitie}{Een taal $L$ over een alfabet $\Sigma$}
   Een verzameling van strings over $\Sigma$.\\
-  \\ $L \subset \Sigma^*$
-  \\ $L \in \perm(\Sigma^*)$
+  \\ $L \subseteq \Sigma^*$
+  \\ $L \in L_\Sigma$
 \end{definitie}
 
 \begin{definitie}{Concatenatie van twee talen}
@@ -147,17 +244,364 @@ Een algebra is een verzameling met daarop een aantal inwendige operaties.
   \\ $\Sigma^* = \{a_1a_2a_3...a_n|a_i \in \Sigma, n \in \nat\}$
 \end{definitie}
 
-\begin{definitie}{De verzameling $\perm(\Sigma^*)$ van alle talen over $\Sigma$}
-  $\perm(\Sigma^*)$ is een verzameling met alle talen die gevormd kunnen worden uit het alfabet $\Sigma$. Elke taal over $\Sigma$ is een element van $\perm(\Sigma^*)$.
+\begin{definitie}{De verzameling $L_\Sigma$ van alle talen over $\Sigma$}
+  $L_\Sigma = \powerset(\Sigma^*)$ is een verzameling met alle talen die gevormd kunnen worden uit het alfabet $\Sigma$. Elke taal over $\Sigma$ is een element van $\powerset(\Sigma^*)$.
 \end{definitie}
 
-De verzameling $\perm(\Sigma^*)$ wordt een algebra door de definitie van verschillende inwendige operaties, waaronder:
+De verzameling $L_\Sigma$ vormt een algebra met verschillende inwendige operaties, waaronder:
 \begin{itemize}
-\item Unie: $L_1 \cup L_2 \in \perm(\Sigma^*)$ met $L_1 \in \perm(\Sigma^*), L_2 \in \perm(\Sigma^*)$
-\item Doorsnede: $L_1 \cap L_2 \in \perm(\Sigma^*)$ met $L_1 \in \perm(\Sigma^*), L_2 \in \perm(\Sigma^*)$
-\item Complement: $\overline{L} \in \perm(\Sigma^*)$ met $L \in \perm(\Sigma^*)$
+\item Unie: $L_1 \cup L_2 \in L_\Sigma$ met $L_1 \in L_\Sigma, L_2 \in L_\Sigma$
+\item Doorsnede: $L_1 \cap L_2 \in L_\Sigma$ met $L_1 \in L_\Sigma, L_2 \in L_\Sigma$
+\item Complement: $\overline{L} \in L_\Sigma$ met $L \in L_\Sigma$
+\item Concatenatie: $L_1L_2 \in L_\Sigma$ met $L_1 \in L_\Sigma, L_2 \in L_\Sigma$
+\item Willekeurig lange concatenatie: $L_1^* \in L_\Sigma$ met $L_1 \in L_\Sigma$
 \end{itemize}
 
-\section{Reguliere talen}
+\newpage\section{Reguliere talen}
+
+\begin{definitie}{Een reguliere expressie $E$ over een alfabet $\Sigma$}
+  $E$ is een reguliere expressie over $\Sigma$ indien $E$ van de vorm is:
+  \begin{itemize}
+  \item $\epsilon$ (lege string)
+  \item $\phi$
+  \item $a$ met $a \in \Sigma$
+  \item $(E_1E_2)$ met $E_1$ en $E_2$ reguliere expressies over $\Sigma$
+  \item $(E_1)^*$ met $E_1$ een reguliere expressie over $\Sigma$
+  \item $(E_1|E_2)$ met $E_1$ en $E_2$ reguliere expressies over $\Sigma$
+  \end{itemize}
+\end{definitie}
+
+\begin{definitie}{Een reguliere expressie $E$ over een alfabet $\Sigma$ bepaalt een taal $L_E$ over $\Sigma$}
+  Een taal bepaalt door een reguliere expressie is een reguliere taal.
+  \begin{itemize}
+  \item Als $E = \epsilon$, dan $L_E = \{\epsilon\}$
+  \item Als $E = \phi$, dan $L_E = \emptyset$
+  \item Als $E = a$ met $a \in \Sigma$, dan $L_E = \{a\}$
+  \item Als $E = (E_1E_2)$, dan $L_E = L_{E_1}L_{E_2}$
+  \item Als $E = (E_1)^*$, dan $L_E = L_{E_1}^*$
+  \item Als $E = (E_1|E_2)$, dan $L_E = L_{E_1} \cup L_{E_2}$
+  \end{itemize}
+\end{definitie}
+
+\begin{definitie}{De verzameling $RegLan$ van de reguliere talen}
+  $RegLan$ is een verzameling die alle reguliere talen bevat. \\
+  \\ $RegLan \subseteq L_\Sigma$
+  \\ $x \in RegLan \Rightarrow x \in L_\Sigma$
+  \\ $x \in RegLan \en y \in x \Rightarrow y \in \Sigma^*$
+\end{definitie}
+
+% TODO (Optional): Bewijs dat RegLan een subalgebra is van L_Sigma
+
+\subsection{Automaten}
+
+\subsubsection{NFA}
+
+\begin{definitie}{Een niet-deterministische eindige toestandsautomaat}
+  Een niet-deterministische eindige toestandsautomaat (NFA) is een 5-tal ($Q$, $\Sigma$, $\delta$, $q_s$, $F$):
+  \begin{itemize}
+  \item $Q$ is een eindige verzameling toestanden
+  \item $\Sigma$ is een eindig alfabet
+  \item \bm{$\delta : Q \times \Sigma_\epsilon \rightarrow \powerset(Q)$}\\$\delta$ is de overgansfunctie
+  \item $q_s \in Q$ is de starttoestand
+  \item $F \subseteq Q$ is de verzameling van eindtoestanden
+  \end{itemize}
+\end{definitie}
+
+Eigenschappen van een NFA:
+\begin{itemize}
+\item Een NFA is een gerichte graaf.
+\item Elke knoop van een NFA heeft een label.
+\item Knopen met een dubbele cirkel zijn eindtoestanden.
+\item Lussen (bogen van een knoop naar zichzelf) zijn toegestaan in een NFA.
+\item Boven van een NFA dragen een label met \'e\'en of meerdere symbolen uit het alfabet, gescheiden door een komma en/of $\epsilon$.
+\item Er komt slechts \'e\'en boog aan in de starttoestand, die niet vertrekt vanuit een knoop.
+\end{itemize}
+
+% TODO: Uitvoering NFA
+% TODO: Algebra van NFA's beschrijven
+
+\begin{definitie}{Een string $s$ wordt aanvaard door een NFA}
+  Een string $s$ ($a_1a_2a_3...a_n$ met $a_i \in \Sigma_\epsilon$) wordt aanvaard door een NFA ($Q$, $\Sigma$, $\delta$, $q_s$, $F$) als een rij toestanden $t_1t_2t_3...t_{n+1}$ bestaat zodanig dat:
+  \begin{itemize}
+  \item $t_1 = q_s$
+  \item $t_{i+1} \in \delta(t_i, a_i)$
+  \item $t_{n+1} \in F$
+  \end{itemize}
+\end{definitie}
+
+\begin{definitie}{Een taal bepaald door een NFA $M$}
+  Een taal $L$ wordt bepaald door een NFA $M$ als $M$ elke string van $L$ aanvaardt. Deze taal noteren we als $L_M$.
+\end{definitie}
+
+\begin{definitie}{Equivalente NFA's}
+  Twee NFA's zijn equivalent als ze dezelfde taal bepalen.
+\end{definitie}
+
+% TODO: Transitietabel
+
+Elke NFA beschijft een reguliere taal en elke reguliere taal kan beschreven worden door een NFA ($L_E = L_{NFA_E}$). Figuur \ref{fig:regexnfa} toont de overgangen van de elemetaire reguliere expressies naar de bijhorende NFA's.
+
+\begin{figure}[ht]
+\label{fig:regexnfa}
+\centering
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{10cm}}
+$E$ & $NFA_E$ \\ \hline
+$\epsilon$ & \begin{nfa}
+  \node[initial,state,accepting] (A) {};
+  \addvmargin{1mm}
+\end{nfa} \\
+$\phi$ & \begin{nfa}
+  \node[initial,state] (A) {};
+  \addvmargin{1mm}
+\end{nfa} \\
+$a \in \Sigma$ & \begin{nfa}
+  \node[initial,state]   (A)              {};
+  \node[state,accepting] (B) [right of=A] {};
+  \path (A) edge [] node {$a$} (B);
+  \addvmargin{1mm}
+\end{nfa} \\
+$(E_1|E_2)$ & \begin{nfa}
+  \node[initial,state]   (A)                    []                                     {};
+  \node[]                (B)                    [above right=.25cm and .5cm of A,draw] {$NFA_1$};
+  \node                  (C)                    [below right=.25cm and .5cm of A,draw] {$NFA_2$};
+  \node[state]           (D)                    [right of=B]                           {};
+  \node[state]           (E)                    [right of=C]                           {};
+  \node[state,accepting] (F) at ($(C)!0.5!(D)$) [right=3.7cm of A]                     {};
   
+  \path (A) edge [bend left]  node               {$\epsilon$} (B)
+            edge [bend right] node [below left]  {$\epsilon$} (C)
+        (B) edge []           node               {}           (D)
+        (C) edge []           node               {}           (E)
+        (D) edge [bend left]  node               {$\epsilon$} (F)
+        (E) edge [bend right] node [below right] {$\epsilon$} (F);
+  \addvmargin{1mm}
+\end{nfa} \\
+$(E_1E_2)$ & \begin{nfa}
+  \node[initial]         (A) [draw]            {$NFA_1$};
+  \node[state]           (B) [right of=A]      {};
+  \node                  (C) [right of=B,draw] {$NFA_2$};
+  \node[state,accepting] (D) [right of=C]      {};
+  
+  \path (A) edge [] node {}           (B)
+        (B) edge [] node {$\epsilon$} (C)
+        (C) edge [] node {}           (D);
+  \addvmargin{1mm}
+\end{nfa} \\
+$(E_1)^*$ & \begin{nfa}
+  \node[initial,state]   (A)                   {};
+  \node                  (B) [right of=A,draw] {$NFA_1$};
+  \node[state]           (C) [right of=B]      {};
+  \node[state,accepting] (D) [right of=C]      {};
+  
+  \path (A) edge []           node         {$\epsilon$} (B)
+            edge [bend right] node [above] {$\epsilon$} (C)
+        (B) edge []           node         {$\epsilon$} (C)
+        (C) edge []           node         {}           (D)
+            edge [bend right] node [above] {$\epsilon$} (A);
+  \addvmargin{1mm}
+\end{nfa} \\
+\end{tabular}
+\caption{De overgang van een reguliere expressie naar een NFA.}
+\end{figure}
+
+\subsubsection{GNFA}
+
+Een NFA kan omgezet worden naar reguliere expressie door de NFA eerst om te zetten naar een GNFA, vervolgens een GNFA met twee toestanden, waaruit de reguliere expressie rechstreeks af te lezen is.
+
+\begin{definitie}{Een gegeneraliseerde NFA}
+  \label{def:gnfa}
+  Een gegeneraliseerde NFA (GNFA) is een NFA met gewijzigde en extra eigenschappen:
+  \begin{itemize}
+  \item Er is slechts \'e\'en eindtoestand die verschilt van de begintoestand.
+  \item Er komen geen bogen aan in de starttoestand (vanuit andere toestanden) en vanuit de starttoestand vertrekt exact \'e\'en boog naar elke andere toestand.
+  \item Er is exact \'e\'en boog van elke toestand naar de eindtoestand.
+  \item Tussen elk paar toestanden is er exact \'e\'en boog in beide richtingen.
+  \item Er is exact \'e\'en boog van elke toestand naar zichzelf.
+  \item Het label van elke boog is een reguliere epxressie.
+  \end{itemize}
+\end{definitie}
+
+\begin{algoritme}{Uitvoering van een GNFA}
+  \vspace{-5mm}\begin{enumalgo}
+  \item Je start een GNFA met een string $s$.
+  \item Je kiest een overgang naar een volgende toestand en verwijder de eerste $n$ symbolen die voldoen aan de reguliere expressie op de gevolgde boog. Bij een boog met enkel $\epsilon$ moet er geen symbool verwijderd worden en het is niet toegestaan om een boog te volgen met als label $\phi$.
+  \item Als je aankomt in de eindtoestand en de string is leeg, dan heeft de GNFA de string $s$ aanvaard.
+  \end{enumalgo}
+\end{algoritme}
+
+\begin{algoritme}{Transformatie NFA naar GNFA}
+  \vspace{-5mm}\begin{enumalgo}
+  \item Generaliseer de NFA:
+    \begin{itemize}
+    \item Voer een nieuwe starttoestand $q_s$ in.
+    \item Voer een nieuwe (unieke) eindtoestand $q_a$ in.
+    \item Teken $\epsilon$-boog van $q_s$ naar de oude begintoestand.
+    \item Teken $\epsilon$-boog van elke oude eindtoestand naar $q_e$.
+    \item Vul de automaat aan met $\phi$-bogen waar er bogen ontbreken. (Zie definitie \ref{def:gnfa})
+    \item Neem parallelle gerichte bogen samen met de unie van hun labels.
+    \end{itemize}
+  \item Reduceer de GNFA:
+    \begin{itemize}
+    \item Als $Q \setminus \{q_s, q_e\} = \emptyset$, ga naar stap 3.
+    \item Voer een reductiestap uit door een willekeurige knoop $q \in Q \setminus \{q_s, q_e\}$ te verwijderen. (Zie voorbeeld \ref{ex:gnfa})
+    \item Herhaal stap 2.
+    \end{itemize}
+  \item Bepaal de reguliere expressie die af te lezen is als label op de boog tussen $q_s$ en $q_e$.
+\end{enumalgo}
+\end{algoritme}
+
+% TODO: Bewijs dat elke string die aanvaard wordt voor de reductiestap nadien nog steeds aanvaard wordt
+% TODO: Bewijs dat elke string die verworpen wordt voor de reductiestap nadien nog steeds verworpen wordt
+
+\subsubsection{DFA}
+
+\begin{definitie}{Een deterministische eindige toestandsautomaat}
+  \label{def:dfa}
+  Een deterministische eindige toestandsautomaat (DFA) is een type automaat dat gelijkt op een NFA, waarvoor de volgende extra eigenschappen gelden:
+  \begin{itemize}
+  \item Er zijn geen bogen met $\epsilon$.
+  \item Elk symbool $a \in \Sigma$ mag hoogstens op \'e\'en uitgaande boog staan per knoop.
+  \end{itemize}
+\end{definitie}
+
+\begin{definitie}{Een complete DFA}
+  \label{def:cdfa}
+  Een DFA is compleet wanneer de overgangsfunctie $\delta$ totaal is. D.w.z. dat voor elke $a \in \Sigma$ een overgang mogelijk is vanuit elke toestand. Definitie \ref{def:dfa} beschrijft een parti\"ele DFA. Een parti\"ele (niet-complete) DFA kan omgevormd worden tot een complete DFA door een extra toestand $q_t$ toe te voegen waar alle niet-acceptabele strings in vast komen te zitten. We bepalen een nieuwe overgansfunctie $\delta'$ voor $Q' = Q \cup \{q_t\}$:
+  \begin{equation*}
+  \forall q \in Q', a \in \Sigma: \delta'(q, a) = \begin{cases}
+    \delta(q, a), & \text{als}\ \delta(q, a) \neq \phi\\
+    q_t & \text{anders}
+  \end{cases}
+  \end{equation*}
+\end{definitie}
+
+Definitie \ref{def:cdfa} impliceert ook dat voor elke $a \in \Sigma$ een overgang bestaat van $q_t$ naar $q_t$, waarin $t$ staat voor ``trash".
+
+De complete DFA wordt voornamelijk gebruikt in praktijk. Verder in dit document wordt vaak gebruik gemaakt van een DFA met de assumptie dat $\delta$ een totale functie is. Daarbij wordt impliciet gesteld dat voor een niet-complete DFA eerst de constructie van de equivalente complete DFA wordt uitgevoerd.
+
+\begin{algoritme}{Transformatie NFA naar DFA}
+  We construeren een DFA ($Q_d$, $\Sigma$, $\delta_d$, $q_{sd}$, $F_d$) uit een NFA ($Q_n$, $\Sigma$, $\delta_n$, $q_{sn}$, $F_n$) zodanig dat $L_{NFA} = L_{DFA}$ als volgt:
+  \begin{itemize}
+  \item $Q_d = \powerset(Q_n)$: Elke toestand van de DFA is een verzameling van toestanden van de NFA. Onbereikbare toestanden zullen we later verwijderen, waardoor zal gelden: $Q_d \subseteq \powerset(Q_n)$.
+  \item \bm{$\delta_d: (\powerset(Q_n) \times \Sigma) \rightarrow \powerset(Q_n)$}\\$\delta_d(\dfastate, a) = eb(\delta_n(\dfastate, a))$ voor $\dfastate \in Q_d$: Voor een symbool $a$ is er vanuit de toestand van de DFA $\dfastate$ een overgang naar de toestand van de DFA die alle toestanden van de NFA bevat die epsilon-bereikbaar zijn vanuit alle $q \in \dfastate$.
+  \item $q_{sd} = eb(q_{sn})$: De starttoestand is de verzameling van toestanden van de NFA die epsilon-bereikbaar zijn vanuit de starttoestand van de NFA.
+  \item $F_d = \{S|S \in Q_d, S \cap F_n \neq \emptyset\}$: Een eindtoestand van een DFA bevat altijd een eindtoestand van de NFA.
+  \end{itemize}
+  Om de constructie uit te voeren hebben we de volgende definities ingevoerd:
+  \begin{itemize}
+  \item \bm{$eb: Q_n \rightarrow \powerset(Q_n)$}\\ $eb(q) = \{x|x \in \{q\} \cup \delta_n(q, \epsilon)\}$ met $q \in Q_n$: De afbeelding die een toestand $q \in Q_n$ afbeeldt op alle epsilon-bereikbare toestanden.
+  \item \bm{$eb: Q_d \rightarrow \powerset(Q_n)$}\\ $eb(\dfastate) = \{x|x \in \bigcup_{q \in \dfastate}eb(q)\}$ met $\dfastate \in Q_d$: De afbeelding die een toestand $\dfastate \in Q_d$ afbeeldt op alle toestanden die epsilon-bereikbaar zijn vanuit alle toestanden in $\dfastate$.
+  \item \bm{$\delta_n: Q_d \times \Sigma \rightarrow \powerset(Q_n)$}\\ $\delta_n(\dfastate, a) = \{x|x \in \bigcup_{q \in \dfastate}\delta_n(q, a)\}$ met $\dfastate \in Q_d$ en $a \in \Sigma$: De afbeelding die een toestand $\dfastate \in Q_d$ afbeeldt op de verzameling van alle toestanden die voor een gegeven symbool bereikbaar zijn vanuit elke toestand in $\dfastate$.
+  \end{itemize}
+\end{algoritme}
+
+Elke reguliere taal wordt bepaald door een DFA, omdat elke reguliere taal wordt bepaald door een NFA en elke NFA kan worden omgezet tot een DFA.
+
+\begin{definitie}{De overgangsfunctie $\delta^*$ van een DFA voor strings}
+  \label{def:deltaster}
+  \bm{$\delta^*: (\powerset(Q) \times \Sigma^*) \rightarrow \powerset(Q)$}\\
+  $\delta^*$ is een afbeelding die een string afbeeldt op een verzameling toestanden die vanuit een toestand bereikt kunnen worden met die string. We defini\"eren $\delta^*$ inductief:
+  \begin{equation*}
+    \delta^*(q, s) = \begin{cases}
+      q, & \text{als}\ s=\epsilon \\
+      \delta^*(\delta(q, a), w) & \text{als}\ s=aw\ \text{voor}\ a \in \Sigma, w \in \Sigma^*
+    \end{cases}
+  \end{equation*}
+\end{definitie}
+
+\begin{bewijs}
+  We bewijzen dat $\delta^*(q, wa) = \delta(\delta^*(q, w), a)$ voor $a \in \Sigma, w \in \Sigma^*_\epsilon$.\\[.2cm]
+  Bewijs met inductie op basis van definitie \ref{def:deltaster}:
+  \begin{itemize}
+  \item Stel $w = \epsilon$, dan geldt:\\$\delta^*(q, \epsilon a) = \delta^*(q, a \epsilon) = \delta^*(\delta(q, a), \epsilon) = \delta(q, a) = \delta(\delta^*(q, \epsilon), a)$
+  \item Stel $w \neq \epsilon$ en $w = bw'$ met $b \in \Sigma, w' \in \Sigma^*_\epsilon$, dan geldt:\\$\delta^*(q, wa) = \delta^*(q, bw'a) = \delta^*(\delta(q, b), w'a) = \delta(\delta^*(\delta(q, b), w'), a) = \delta(\delta^*(q, w), a)$
+  \end{itemize}
+\end{bewijs}
+
+\subsubsection{Minimale DFA}
+
+\begin{definitie}{f-gelijke toestanden}
+  Twee toestanden zijn finaal-gelijk indien
+  \vspace{-3mm}\begin{equation*}
+  \forall w \in \Sigma^* : \delta^*(p, w) \in F \Leftrightarrow \delta^*(q, w) \in F
+  \end{equation*}
+\end{definitie}
+
+\begin{definitie}{f-verschillende toestanden}
+  Twee toestanden zijn finaal-verschillend indien ze niet f-gelijk zijn.
+\end{definitie}
+
+Een minimale DFA wordt opgesteld door f-gelijke toestanden samen te nemen. Om het minimaliseren te vergemakkelijken stellen we een totale functie  $\delta'$ op van $\delta$ waarbij in elke toestand voor elk ontbrekend symbool uit het alfabet een overgang wordt toegevoegd zodanig dat $\delta'(q_i, a)=q_i$.
+
+% TODO: Algoritme minimale DFA
+% TODO: Bewijs minimale DFA heeft minimaal aantal toestanden
+% TODO: Isomorfe DFA's
+
+\subsubsection{Myhill-Nerode relaties op $\Sigma^*$}
+
+\begin{definitie}{$\partition_1$ is fijner dan $\partition_2$}
+  Als een partie $\partition_1$ fijner is dan een $\partition_2$, dan zit elk element van $\partition_1$ vervat in een element van $\partition_2$. $\{\partition_1$, $\partition_2\}$ vormt een tralie waar geldt dat $\partition_1 \leq \partition_2$.
+\end{definitie}
+
+\begin{definitie}{$\partition_1$ is groffer dan $\partition_2$}
+  Als een partie $\partition_1$ groffer is dan een $\partition_2$, dan zit elk element van $\partition_2$ vervat in een element van $\partition_1$. $\{\partition_2$, $\partition_1\}$ vormt een tralie waar geldt dat $\partition_2 \leq \partition_1$.
+\end{definitie}
+
+\begin{definitie}{Equivalentierelatie $\sim_L$ over $\Sigma^*$}
+  Gegeven een taal $L$ over $\Sigma$, is het mogelijk om $\Sigma^*$ op te delen in de partitie $\{L,\overline{L}\}$. De equivalentierelatie $\sim_L$ over $\Sigma^*$ beschouwt twee elementen van $\Sigma^*$ gelijkwaardig indien ze beiden tot dezelfde deelverzameling van die partitie behoren.
+  \begin{equation*}
+  \forall x, y \in \Sigma^*: x \sim_L y \Leftrightarrow x,y \in L \of x,y \notin L
+  \end{equation*}
+\end{definitie}
+
+\begin{definitie}{De deelverzameling $reach(q)$ van $\Sigma^*$ voor een DFA}
+  De deelverzameling $reach(q)$ van $\Sigma^*$ voor een DFA ($Q$, $\Sigma$, $\delta$, $q_s$, $F$) bevat alle strings die je vanaf de begintoestand $q_s$ in de toestand $q \in Q$ brengen.
+  \begin{equation*}
+  reach(q) = \{s \in \Sigma^*|\delta^*(q_s,s)=q\}
+  \end{equation*}
+\end{definitie}
+
+\begin{definitie}{Equivalentierelatie $\sim_{DFA}$ over $\Sigma^*$}
+  Gegeven een $DFA$ met $L_{DFA}$ een taal over $\Sigma$, is het mogelijk om $\Sigma^*$ op te delen in de een partitie $\{reach(q)|q \in Q\}$ zodanig dat
+  \begin{itemize}
+  \item de partitie eindig is.
+  \item $s \in \Sigma^*$ wordt aanvaard door de $DFA$ alss $s \in reach(q)$ voor $q \in F$.
+  \item als $s \in reach(q)$ dan $\forall a \in \Sigma : sa \in reach(\delta(q, a))$.
+  \end{itemize}
+  Of in symbolen:
+  \begin{equation*}
+  \forall x, y \in \Sigma^*: x \sim_{DFA} y \Leftrightarrow \delta^*(q_s, x) = \delta^*(q_s, y)
+  \end{equation*}
+\end{definitie}
+
+De equivalentierelatie $\sim_{DFA}$ is een $MN(L_{DFA})$-relatie op $\Sigma^*$.
+
+\begin{definitie}{Een Myhill-Nerode relatie voor een taal $L$ over $\Sigma^*$}
+  \label{def:mnl}
+  Een Myhill-Nerode relatie voor een taal $L$ ($MN(L)$-relatie) is een equivalentierelatie $\sim_X$ die voldoet aan de volgende eigenschappen:
+  \begin{itemize}
+  \item $\sim_X$ is rechts congruent\\$\forall x, y \in \Sigma^*, a \in \Sigma: x \sim_X y \Rightarrow xa \sim_X ya$
+  \item $\sim_X$ verfijnt $\sim_L$\\$x \sim_X y \Rightarrow x \sim_L y$
+  \item $\sim_X$ heeft een eindige index\\Het aantal equivalentieklassen van $\sim_X$ is eindig.
+  \end{itemize}
+\end{definitie}
+
+\begin{bewijs}
+  We bewijzen dat een $MN(L)$-relatie enkel bestaat alss de taal $L$ regulier is.\\[.2cm]
+  \input{bewijzen/mnlregulier}
+\end{bewijs}
+
+% TODO: MN(L) en isomorfe DFA's
+% TODO: Supremum van MN(L)-relaties
+
+Het is mogelijk om met een $MN(L)$-relatie te bewijzen dat een taal niet-regulier is. Je gaat te werk door aan te nemen dat als er een minimale DFA bestaat voor de taal, waarvoor men een relatie $\sim_{DFA}$ definieert. Je neemt aan dat die voldoet aan de eerste twee eigenschappen van de definitie (\ref{def:mnl}) en bewijst vervolgens dat het aantal equivalentieklassen van die relatie oneindig is.
+
+% TODO: Stelling van Myhill en Nerode
+
+\subsubsection{Pompend lemma voor reguliere talen}
+
+\include{voorbeelden}
+\include{examenvragen}
+
 \end{document}

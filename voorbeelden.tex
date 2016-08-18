@@ -1,0 +1,125 @@
+\section{Voorbeelden}
+
+\subsection{NFA $\longrightarrow$ RE}
+\label{ex:gnfa}
+
+\begin{nfa}
+  \node[state]           (S)                    {$S$};
+  \node[state]           (A) [below right of=S] {$A$};
+  \node[state,accepting] (E) [above right of=A] {$E$};
+  
+  \path (S) edge []           node         {$a$}          (E)
+            edge []           node         {$a,\epsilon$} (A)
+        (A) edge [loop below] node         {$b$}          (A)
+            edge [bend right] node         {$a$}          (E)
+        (E) edge [loop right] node         {$a,b$}        (E)
+            edge [bend right] node [above] {$\epsilon$}   (A);
+  \addvmargin{1mm}
+\end{nfa}
+
+\paragraph{Stap 1} Generaliseren
+
+\begin{nfa}
+  \node[initial,state]   (SN)                    {$q_s$};
+  \node[state]           (S)  [right of=SN]      {$S$};
+  \node[state]           (A)  [below right of=S] {$A$};
+  \node[state]           (E)  [above right of=A] {$E$};
+  \node[state,accepting] (EN) [right of=E]       {$q_e$};
+  
+  \path (SN) edge []           node         {$\epsilon$}   (S)
+        (S)  edge []           node         {$a$}          (E)
+             edge []           node         {$a|\epsilon$} (A)
+        (A)  edge [loop below] node         {$b$}          (A)
+             edge [bend right] node         {$a$}          (E)
+        (E)  edge [loop above] node         {$a|b$}        (E)
+             edge [bend right] node [above] {$\epsilon$}   (A)
+             edge []           node         {$\epsilon$}   (EN);
+  \addvmargin{1mm}
+\end{nfa}
+
+\paragraph{Stap 2} Reductie (met vereenvoudiging)
+
+Reductie 1:\\
+\begin{nfa}
+  \node[initial,state]   (SN)                    {$q_s$};
+  \node[state]           (S)  [right of=SN]      {$S$};
+  \node[state]           (A)  [below right of=S] {$A$};
+  \node[state]           (E)  [above right of=A] {$E$};
+  \node[state,accepting] (EN) [right of=E]       {$q_e$};
+  
+  \path (SN) edge []           node {$\epsilon$}   (S)
+        (S)  edge []           node {$a$}          (E)
+             edge []           node {$a|\epsilon$} (A)
+        (A)  edge [loop below] node {$b$}          (A)
+             edge []           node {$a$}          (E)
+        (E)  edge [loop above] node {$a|b|b^*a$}   (E)
+             edge []           node {$\epsilon$}   (EN);
+  \addvmargin{1mm}
+\end{nfa}
+
+\begin{nfa}
+  \node[initial,state]   (SN)                  {$q_s$};
+  \node[state]           (S)  [right of=SN]    {$S$};
+  \node[state]           (E)  [right=2cm of S] {$E$};
+  \node[state,accepting] (EN) [right of=E]     {$q_e$};
+  
+  \path (SN) edge []           node {$\epsilon$}         (S)
+        (S)  edge [bend right] node {$(a|\epsilon)b^*a$} (E)
+             edge [bend left]  node {$a$}                (E)
+        (E)  edge [loop above] node {$b|b^*a$}           (E)
+             edge []           node {$\epsilon$}         (EN);
+  \addvmargin{1mm}
+\end{nfa}
+
+\begin{nfa}
+  \node[initial,state]   (SN)                  {$q_s$};
+  \node[state]           (S)  [right of=SN]    {$S$};
+  \node[state]           (E)  [right=3cm of S] {$E$};
+  \node[state,accepting] (EN) [right of=E]     {$q_e$};
+  
+  \path (SN) edge []           node {$\epsilon$}         (S)
+        (S)  edge []           node {$(a|\epsilon)b^*a$} (E)
+        (E)  edge [loop above] node {$b|b^*a$}              (E)
+             edge []           node {$\epsilon$}         (EN);
+  \addvmargin{1mm}
+\end{nfa}
+
+Reductie 2:\\
+\begin{nfa}
+  \node[initial,state]   (SN)                  {$q_s$};
+  \node[state]           (S)  [right of=SN]    {$S$};
+  \node[state,accepting] (EN) [right=4cm of S] {$q_e$};
+  
+  \path (SN) edge [] node {$\epsilon$}                   (S)
+        (S)  edge [] node {$(a|\epsilon)b^*a(b|b^*a)^*$} (EN);
+  \addvmargin{1mm}
+\end{nfa}
+
+\begin{nfa}
+  \node[initial,state]   (SN)                  {$q_s$};
+  \node[state]           (S)  [right of=SN]    {$S$};
+  \node[state,accepting] (EN) [right=4cm of S] {$q_e$};
+  
+  \path (SN) edge [] node {$\epsilon$}                   (S)
+        (S)  edge [] node {$(a|\epsilon)b^*a(a|b)^*$} (EN);
+  \addvmargin{1mm}
+\end{nfa}
+
+Reductie 3:\\
+\begin{nfa}
+  \node[initial,state]   (SN)                   {$q_s$};
+  \node[state,accepting] (EN) [right=4cm of SN] {$q_e$};
+  
+  \path (SN) edge [] node {$(a|\epsilon)b^*a(a|b)^*$} (EN);
+  \addvmargin{1mm}
+\end{nfa}
+
+\begin{nfa}
+  \node[initial,state]   (SN)                   {$q_s$};
+  \node[state,accepting] (EN) [right=4cm of SN] {$q_e$};
+  
+  \path (SN) edge [] node {$b^*a(a|b)^*$} (EN);
+  \addvmargin{1mm}
+\end{nfa}
+
+\paragraph{Stap 3} De RE voor de NFA is ``$b^*a(a|b)^*$".

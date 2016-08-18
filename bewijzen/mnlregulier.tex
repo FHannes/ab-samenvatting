@@ -1,0 +1,40 @@
+  Het bewijs wordt geleverd door aan te tonen dat het mogelijk is om een $MN(L)$-relatie te construeren uit een DFA en een DFA uit een $MN(L)$-relatie.
+  \begin{itemize}
+  \item Voor een gegeven DFA $D$ kan men een equivalentierelatie $\sim_D$ construeren waarvoor geldt
+  \begin{equation*}
+  \forall x, y \in \Sigma^*: x \sim_D y \Leftrightarrow \delta^*(q_s, x) = \delta^*(q_s, y)
+  \end{equation*}
+  \begin{itemize}
+  \item $\sim_D$ is rechts congruent omdat geldt
+  \begin{equation*}
+  \forall x, y \in \Sigma^*, a \in \Sigma: xa \sim_D ya \Leftrightarrow \delta(\delta^*(q_s, x), a) = \delta(\delta^*(q_s, y), a)
+  \end{equation*}
+  \item $\sim_D$ verfijnt $\sim_{L_D}$, omdat $\sim_D$ een equivalentieklasse genereert voor alle strings die aanvaard worden door per eindtoestand. Bovendien is $\delta$ een totale functie en zullen alle strings die niet aanvaard worden samen in een equivalentieklasse komen. De verzameling van die equivalentieklassen is een partitie van $\Sigma^*$ die $\sim_{L_D}$ verfijnt.
+  \item $\sim_D$ heeft een eindige index omdat het aantal toestanden in $D$ eindig is.
+  \end{itemize}
+  \item Voor een $MN(L)$-relatie kan men een DFA ($Q$, $\Sigma$, $\delta$, $q_s$, $F$) construeren die $L$ bepaalt, waarvoor geldt
+  \begin{itemize}
+  \item $Q = \{x_\sim|x \in \Sigma^*\}$\\
+  De toestanden van de DFA zijn gelijk aan de equivalentieklassen van de $MN(L)$-relatie, dat aantal equivalentieklassen is eindig.
+  \item $\delta(x_\sim, a) = (xa)_\sim$\\
+  Volgt uit de rechtse congruentie eigenschap van de equivalentierelatie.
+  \item $q_s = \epsilon_\sim$
+  Een starttoestand wordt bereikt met $\epsilon$.
+  \item $F = \{x_\sim|x \in L\}$\\
+  Een eindtoestand wordt bereikt door elke string in $L$. Het aantal eindtoestanden is eindig omdat $F \subseteq Q$.
+  \end{itemize}
+  Tenslotte bewijzen we met inductie voor een willekeurige string $x \in \Sigma^*$ dat geldt
+  \begin{equation*}
+  \forall x \in \Sigma^*: x \in L_{DFA} \triangleq \delta^*(\epsilon_\sim,x) \in F \Leftrightarrow x \in L \triangleq x_\sim \in F
+  \end{equation*}
+  \begin{itemize}
+  \item Voor een string $x$ met een lengte $l = 0$:
+  \begin{equation*}
+  \delta^*(\epsilon_\sim,\epsilon) = \delta(\epsilon_\sim,\epsilon) = \epsilon_\sim \Leftrightarrow x_\sim \in F
+  \end{equation*}
+  \item Stel dat de bewering geldt voor een string met willekeurige lengte $l$, dan geldt ze ook voor $xa$ met $a \in \Sigma$:
+  \begin{equation*}
+  \delta^*(\epsilon_\sim,xa) = \delta(x_\sim,a) = (xa)_\sim \Leftrightarrow x_\sim \in F
+  \end{equation*}
+  \end{itemize}
+  \end{itemize}
