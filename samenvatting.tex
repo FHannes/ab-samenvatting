@@ -69,10 +69,26 @@
   \tikzstyle{accepting}=[accepting by double]
   \tikzstyle{every initial by arrow}=[initial text=]}%
   {\end{tikzpicture}}
+ 
+\newenvironment{pda}%
+  {\begin{tikzpicture}[->,
+    >=stealth',
+    shorten >=1pt,
+    auto,
+    node distance=2cm,
+    semithick]
+  \tikzstyle{every state}=[fill=none,draw=black,text=black]
+  \tikzstyle{accepting}=[accepting by double]
+  \tikzstyle{every initial by arrow}=[initial text=]}%
+  {\end{tikzpicture}}
   
 \newenvironment{enumalgo}%
   {\begin{enumerate}[leftmargin=1.5cm,label=Stap \arabic*:]}%
   {\end{enumerate}}
+  
+\newenvironment{nobreakparagraph}%
+  {\par\nobreak\vfil\penalty0\vfilneg\vtop\bgroup}%
+  {\par\xdef\tpd{\the\prevdepth}\egroup\prevdepth=\tpd}%
   
 \newcommand{\powerset}{\ensuremath{\mathcal{P}}}
 \newcommand{\partition}{\ensuremath{\mathfrak{P}}}
@@ -292,16 +308,14 @@ De verzameling $L_\Sigma$ vormt een algebra met verschillende inwendige operatie
 
 % TODO (Optional): Bewijs dat RegLan een subalgebra is van L_Sigma
 
-\subsection{Automaten}
-
-\subsubsection{NFA}
+\subsection{NFA}
 
 \begin{definitie}{Een niet-deterministische eindige toestandsautomaat}
   Een niet-deterministische eindige toestandsautomaat (NFA) is een 5-tal ($Q$, $\Sigma$, $\delta$, $q_s$, $F$):
   \begin{itemize}
   \item $Q$ is een eindige verzameling toestanden
   \item $\Sigma$ is een eindig alfabet
-  \item \bm{$\delta : Q \times \Sigma_\epsilon \rightarrow \powerset(Q)$}\\$\delta$ is de overgansfunctie
+  \item \bm{$\delta : Q \times \Sigma_\epsilon \rightarrow \powerset(Q)$}\\$\delta$ is de overgangsfunctie
   \item $q_s \in Q$ is de starttoestand
   \item $F \subseteq Q$ is de verzameling van eindtoestanden
   \end{itemize}
@@ -339,7 +353,7 @@ Eigenschappen van een NFA:
 
 % TODO: Transitietabel
 
-Elke NFA beschijft een reguliere taal en elke reguliere taal kan beschreven worden door een NFA ($L_E = L_{NFA_E}$). Figuur \ref{fig:regexnfa} toont de overgangen van de elemetaire reguliere expressies naar de bijhorende NFA's.
+Elke NFA beschrijft een reguliere taal en elke reguliere taal kan beschreven worden door een NFA ($L_E = L_{NFA_E}$). Figuur \ref{fig:regexnfa} toont de overgangen van de elementaire reguliere expressies naar de bijhorende NFA's.
 
 \begin{figure}[ht]
 \label{fig:regexnfa}
@@ -405,7 +419,7 @@ $(E_1)^*$ & \begin{nfa}
 \caption{De overgang van een reguliere expressie naar een NFA.}
 \end{figure}
 
-\subsubsection{GNFA}
+\subsection{GNFA}
 
 Een NFA kan omgezet worden naar reguliere expressie door de NFA eerst om te zetten naar een GNFA, vervolgens een GNFA met twee toestanden, waaruit de reguliere expressie rechstreeks af te lezen is.
 
@@ -418,7 +432,7 @@ Een NFA kan omgezet worden naar reguliere expressie door de NFA eerst om te zett
   \item Er is exact \'e\'en boog van elke toestand naar de eindtoestand.
   \item Tussen elk paar toestanden is er exact \'e\'en boog in beide richtingen.
   \item Er is exact \'e\'en boog van elke toestand naar zichzelf.
-  \item Het label van elke boog is een reguliere epxressie.
+  \item Het label van elke boog is een reguliere expressie.
   \end{itemize}
 \end{definitie}
 
@@ -454,7 +468,7 @@ Een NFA kan omgezet worden naar reguliere expressie door de NFA eerst om te zett
 % TODO: Bewijs dat elke string die aanvaard wordt voor de reductiestap nadien nog steeds aanvaard wordt
 % TODO: Bewijs dat elke string die verworpen wordt voor de reductiestap nadien nog steeds verworpen wordt
 
-\subsubsection{DFA}
+\subsection{DFA}
 
 \begin{definitie}{Een deterministische eindige toestandsautomaat}
   \label{def:dfa}
@@ -467,7 +481,7 @@ Een NFA kan omgezet worden naar reguliere expressie door de NFA eerst om te zett
 
 \begin{definitie}{Een complete DFA}
   \label{def:cdfa}
-  Een DFA is compleet wanneer de overgangsfunctie $\delta$ totaal is. D.w.z. dat voor elke $a \in \Sigma$ een overgang mogelijk is vanuit elke toestand. Definitie \ref{def:dfa} beschrijft een parti\"ele DFA. Een parti\"ele (niet-complete) DFA kan omgevormd worden tot een complete DFA door een extra toestand $q_t$ toe te voegen waar alle niet-acceptabele strings in vast komen te zitten. We bepalen een nieuwe overgansfunctie $\delta'$ voor $Q' = Q \cup \{q_t\}$:
+  Een DFA is compleet wanneer de overgangsfunctie $\delta$ totaal is. D.w.z. dat voor elke $a \in \Sigma$ een overgang mogelijk is vanuit elke toestand. Definitie \ref{def:dfa} beschrijft een parti\"ele DFA. Een parti\"ele (niet-complete) DFA kan omgevormd worden tot een complete DFA door een extra toestand $q_t$ toe te voegen waar alle niet-acceptabele strings in vast komen te zitten. We bepalen een nieuwe overgangsfunctie $\delta'$ voor $Q' = Q \cup \{q_t\}$:
   \begin{equation*}
   \forall q \in Q', a \in \Sigma: \delta'(q, a) = \begin{cases}
     \delta(q, a), & \text{als}\ \delta(q, a) \neq \phi\\
@@ -519,7 +533,7 @@ Elke reguliere taal wordt bepaald door een DFA, omdat elke reguliere taal wordt 
   \end{itemize}
 \end{bewijs}
 
-\subsubsection{Minimale DFA}
+\subsection{Minimale DFA}
 
 \begin{definitie}{f-gelijke toestanden}
   Twee toestanden zijn finaal-gelijk indien
@@ -538,14 +552,14 @@ Een minimale DFA wordt opgesteld door f-gelijke toestanden samen te nemen. Om he
 % TODO: Bewijs minimale DFA heeft minimaal aantal toestanden
 % TODO: Isomorfe DFA's
 
-\subsubsection{Myhill-Nerode relaties op $\Sigma^*$}
+\subsection{Myhill-Nerode relaties op $\Sigma^*$}
 
 \begin{definitie}{$\partition_1$ is fijner dan $\partition_2$}
   Als een partie $\partition_1$ fijner is dan een $\partition_2$, dan zit elk element van $\partition_1$ vervat in een element van $\partition_2$. $\{\partition_1$, $\partition_2\}$ vormt een tralie waar geldt dat $\partition_1 \leq \partition_2$.
 \end{definitie}
 
 \begin{definitie}{$\partition_1$ is groffer dan $\partition_2$}
-  Als een partie $\partition_1$ groffer is dan een $\partition_2$, dan zit elk element van $\partition_2$ vervat in een element van $\partition_1$. $\{\partition_2$, $\partition_1\}$ vormt een tralie waar geldt dat $\partition_2 \leq \partition_1$.
+  Als een partitie $\partition_1$ groffer is dan een $\partition_2$, dan zit elk element van $\partition_2$ vervat in een element van $\partition_1$. $\{\partition_2$, $\partition_1\}$ vormt een tralie waar geldt dat $\partition_2 \leq \partition_1$.
 \end{definitie}
 
 \begin{definitie}{Equivalentierelatie $\sim_L$ over $\Sigma^*$}
@@ -599,7 +613,207 @@ Het is mogelijk om met een $MN(L)$-relatie te bewijzen dat een taal niet-regulie
 
 % TODO: Stelling van Myhill en Nerode
 
-\subsubsection{Pompend lemma voor reguliere talen}
+\subsection{Pompend lemma voor reguliere talen}
+
+Het pompend lemma kan niet gebruikt worden om te bewijzen dat een taal regulier is. Elke reguliere taal moet voldoen aan de eigenschappen van het pompend lemma, maar er zijn ook niet-reguliere talen die daaraan voldoen. Daardoor kan je met zekerheid zeggen dat een taal niet-regulier is als je ze niet kan pompen, maar je kan niet met zekerheid zeggen dat een taal regulier is. In FO-logica $Regulier(L) \rightarrow KanPompen(L)$ met waarheidstabel:
+\begin{center}
+\begin{tabular}{r|c|c}
+                     & $KanPompen(L)$ & $\neg KanPompen(L)$ \\ \hline
+  $Regulier(L)$      & True           & False               \\ \hline
+  $\neg Regulier(L)$ & True           & True
+\end{tabular}
+\end{center}
+
+\begin{definitie}{Het pompend lemma voor reguliere talen}
+  Voor een reguliere taal $L$ bestaat een pomplengte $d$ zodanig dat als $s \in L$ en $|s| \geq d$, dan bestaat er minstens \'e\'en verdeling van $s$ in stukken $x$, $y$ en $z$ zodanig dat $s = xyz$ en
+  \begin{enumerate}
+  \item $\forall i \geq 0: xy^iz \in L$
+  \item $|y| > 0$
+  \item $|xy| \leq d$
+  \end{enumerate}
+\end{definitie}
+
+\begin{bewijs}
+  We bewijzen de eigenschappen van het pompend lemma. \\[.2cm]
+  Voor een DFA die een taal $L$ bepaalt nemen we een pomplengte $d = \#Q + 1$ en een willekeurige string $s = a_1a_2a_3...a_n$ met $n \geq d$. De accepterende sequentie van toestanden ($q_s = q_1$, $q_2$, ..., $q_f$) voor s heeft een lengte strikt groter dan het aantal toestanden in $Q$, dus er zijn bij de eerste $d$ toestanden zeker twee toestanden gelijk omdat er maar $d-1$ toestanden zijn. Stel dat $q_i$ en $q_j$ gelijk zijn met $i < j \leq d$, dan nemen we
+  \begin{equation*}
+  \begin{cases}
+  x = a_1a_2...a_i\\
+  y = a_{i+1}a_{i+2}...a_j\\
+  z = a_{j+1}a_{j+2}...a_n
+  \end{cases}
+  \end{equation*}
+  \begin{itemize}
+  \item Eigenschap 1 geldt omdat $y$ een lus volgt en die $k$ keer herhaald kan worden voor $xy^kz \in L$.
+  \item Eigenschap 2 geldt omdat $i$ strikt kleiner is dan $j$, dus bevat $y$ minstens \'e\'en element.
+  \item Eigenschap 3 geldt omdat $i < j \leq d$, dus we hebben $xy$ kleiner dan (of gelijk aan) $d$ gekozen.
+  \end{itemize}
+\end{bewijs}
+
+% TODO: Voorbeeld gebruiken van pompend lemme of aan te tonen dat een taal niet-regulier is
+% TODO: Algebra van DFAs
+
+\subsection{Andere automaten}
+
+\begin{definitie}{B\"uchi automaat}
+  Een B\"uchi automaat (BA) is een automaat die lijkt op een NFA, maar deze doorlopen oneindige strings. Een BA accepteert een string indien de rij toestanden die gepasseerd wordt oneindig dikwijls een accepterende toestand bevat.
+\end{definitie}
+
+\newpage\section{Contextvrije talen}
+
+\begin{definitie}{Contextvrije grammatica}
+  Een contextvrije grammatica (CFG) is een 4-tal ($V$, $\Sigma$, $R$, $S$) waarbij
+  \begin{itemize}
+  \item $V$ een eindige verzameling niet-eindsymbolen is (variabelen of non-terminals)
+  \item $\Sigma$ een eindig alfabet van eindsymbolen (terminals), disjunct met $V$
+  \item $R$ een eindige verzameling regels (producties) is die bestaan uit een koppel van een variabele en een string $s \in \Sigma^*_\epsilon$, gescheiden door $\rightarrow$
+  \item $S \in V$ is de starttoestand
+  \end{itemize}
+\end{definitie}
+
+\begin{definitie}{Afleiding/constructie m.b.v. een CFG}
+  Gegeven een CFG ($V$, $\Sigma$, $R$, $S$) en een string $f$ over $V \cup \Sigma_\epsilon$, dan kan men een string $b$ over $V \cup \Sigma_\epsilon$ afleiden/construeren uit $f$ ($b \Rightarrow^* f$) met de gegeven CFG, indien er er een rij strings $s_0,s_1,s_2,...,s_n$ bestaat zodanig dat
+  \begin{itemize}
+  \item $s_0 = b$
+  \item $s_n = f$
+  \item $s_{i+1}$ is gelijk aan $s_i$ (met $i < n$) waarin een variabele $X$ wordt vervangen door de rechterzijde van een productie waarin $X$ aan de linkerzijde voorkomt.
+  \end{itemize}
+\end{definitie}
+
+\begin{definitie}{Taal $L_{CFG}$ bepaald door een CFG}
+  Een taal $L_{CFG}$ bepaald door een CFG ($V$, $\Sigma$, $R$, $S$) is een verzameling van strings over $\Sigma$ die kan afgeleid worden uit het startsymbool $S$.
+  \begin{equation*}
+  L_{CFG} = \{s \in \Sigma^*|S \Rightarrow^* s\}
+  \end{equation*}
+\end{definitie}
+
+\begin{definitie}{Contextvrije taal}
+  Een taal $L$ is een contextvrije taal (CFL) indien er een CFG bestaat zodanig dat $L = L_{CFG}$.
+\end{definitie}
+
+\begin{definitie}{Ambigue strings}
+  Een string is ambigu indien er voor die meerdere meest-linkse (of meest-rechtse) afleidingen bestaan.
+\end{definitie}
+
+\begin{definitie}{Ambigue CFG's}
+  Een CFG is ambigu indien er strings $s \in L_{CFG}$ die ambigue zijn t.o.v. de CFG.
+\end{definitie}
+Sommige CFL's hebben niet-ambigue CFG, maar dat geldt niet voor elke CFL. Een CFL die geen niet-ambigue CFG heeft is inherent ambigu.
+
+\begin{definitie}{Equivalente CFG's}
+  Twee CFG's zijn equivalent indien ze dezelfde taal bepalen.
+  \begin{equation*}
+  L_{CFG_1} = L_{CFG_2}
+  \end{equation*}
+\end{definitie}
+
+\begin{definitie}{Chromsky Normaal Vorm}
+  Elke CFG heeft een Chromsky Normaal Vorm (CNF) die dezelfde taal genereert en waarbij de producties een beperkt aantal vormen kan aannemen:
+  \begin{itemize}
+  \item $A \rightarrow BC$ met $\begin{cases}A \in V \\ B,C \in V \setminus \{S\}\end{cases}$
+  \item $A \rightarrow \alpha$ met $\begin{cases}A \in V \\ \alpha \in \Sigma\end{cases}$
+  \item $S \rightarrow \epsilon$
+  \end{itemize}
+\end{definitie}
+
+Met de CNF
+\begin{itemize}
+\item kan je onmiddellijk zien of $L_{CFG}$ de lege string bevat.
+\item is elke parse tree (bijna) een volledige binaire boom.
+\item heeft de afleiding van een string van lengte $n > 0$ altijd een lengte $2n-1$.
+\end{itemize}
+
+% TODO: Bewijs CNF
+
+\begin{definitie}{Greibach Normaal Vorm}
+  Elke CFG heeft een Greibach Normaal Vorm (GNF) die dezelfde taal genereert en waarbij de producties een beperkt aantal vormen kan aannemen:
+  \begin{itemize}
+  \item $A \rightarrow \alpha X$ met $\begin{cases}A \in V \\ \alpha \in \Sigma \\ X = X_1X_2X_3...X_n \text{ met } X_i \in V, n \in \nat\end{cases}$
+  \item $S \rightarrow \epsilon$
+  \end{itemize}
+\end{definitie}
+
+\subsection{PDA}
+
+\begin{definitie}{Push-down automaat}
+  Een push-down automaat (PDA) is een 6-tal ($Q$, $\Sigma$, $\Gamma$, $\delta$, $q_s$, $F$) waarbij
+  \begin{itemize}
+  \item $Q$ is een eindige verzameling toestanden
+  \item $\Sigma$ is een eindige inputalfabet
+  \item $\Gamma$ is een eindige stapelalfabet
+  \item \bm{$\delta: Q \times \Sigma_\epsilon \times \Gamma_\epsilon \rightarrow \powerset(Q \times \Gamma_\epsilon)$}\\$\delta$ is een overgangsfunctie
+  \item $q_s$ is de starttoestand
+  \item $F \subseteq Q$ is een verzameling eindtoestanden
+  \end{itemize}
+\end{definitie}
+
+\begin{figure}[!ht]
+  \label{fig:pdasstep}
+  \centering
+  \begin{pda}
+  \node[state] (A) []               {};
+  \node[state] (B) [right=3cm of A] {};
+  
+  \path (A) edge [] node {$\alpha,\beta\rightarrow\gamma$} (B);
+  \addvmargin{1mm}
+  \end{pda}
+  \caption{Een overgang van een PDA.}
+\end{figure}
+
+\begin{nobreakparagraph}
+Een PDA maakt overgangen zoals in figuur \ref{fig:pdasstep},
+\begin{itemize}
+\item indien $\alpha$ het eerste symbool is van de string
+\item en $\beta$ bovenaan de stapel staat,
+\item je kan die boog volgen en
+\begin{itemize}
+\item $\alpha$ van de string verwijderen
+\item $\beta$ van de stapel verwijderen
+\item $\gamma$ op de stapel plaatsen
+\end{itemize}
+\end{itemize}
+\end{nobreakparagraph}
+Indien de PDA niet-deterministisch is, kunnen er meerdere bogen met dezelfde $\alpha,\beta$ combinaties vertrekken uit een toestand.
+
+% TODO: Aanvaarding van een string door een PDA
+
+Alternatieve definities van een PDA:
+\begin{itemize}
+\item Er mag meer dan \'e\'en symbool op de stapel geplaatst worden tijdens een overgang.
+\item Een string wordt geaccepteerd indien de string op is en de stapel leeg is ($F$ heeft geen belang).
+\item Een string wordt geaccepteerd indien de string op is, de stapel leeg is en we in een eindtoestand zitten.
+\item In een overgang wordt een symbool op de stapel geplaatst maar er wordt geen symbool van de stapel verwijderd of omgekeerd.
+\item Er is slechts \'e\'en eindtoestand.
+\end{itemize}
+Voor een CFL is het mogelijk om met eender welke van deze definities equivalente automaten te maken.
+
+% TODO: Bewijs equivalentie CFG en PDA
+
+\begin{algoritme}{Constructie van een PDA uit een CFG}
+  \label{alg:cfgpda}
+  We stellen een PDA ($Q$, $\Sigma_{PDA}$, $\Gamma$, $\delta$, $q_s$, $F$) voor een CFG ($V$, $\Sigma_{CFG}$, $R$, $S$) met
+  \begin{itemize}
+  \item $Q = {q_s, q_h, q_a}$ met $q_h$ een hulptoestand
+  \item $\Sigma_{PDA} = \Sigma_{CFG}$
+  \item $\Gamma = \{\$\} \cup V \cup \Sigma_{CFG}$
+  \item $\delta$ waarvoor geldt:
+  \begin{itemize}
+  \item Er is 1 boog van $q_s$ naar $q_h$ met label ``$\epsilon,\epsilon\rightarrow\$$".
+  \item Er is 1 boog van $q_h$ naar $q_a$ met label ``$\epsilon,\$\rightarrow\epsilon$".
+  \item Voor elk symbool $a \in \Sigma_{CFG}$ is er een lus bij $q_h$ met label ``$a,a\rightarrow\epsilon$".
+  \item Voor elke productie $(X \rightarrow \gamma) \in R$ is er een lus bij $q_h$ met label ``$\epsilon,X\rightarrow\gamma$". (Vervang de linkerkant van een productie bovenaan de stapel met de rechterkant van de productie.)
+  \end{itemize}
+  \item $q_s$ de starttoestand
+  \item $F = \{q_a\}$ met $q_a$ de eindtoestand
+  \end{itemize}
+\end{algoritme}
+
+Om een meest-linkse afleiding te bekomen moeten we in algoritme \ref{alg:cfgpda} de symbolen van een string $\gamma \in \Sigma^*_\epsilon$ in omgekeerde volgorde op de stapel plaatsen.
+
+% TODO: Een PDA accepteert een L_CFG
+% TODO: Constructie CFG uit PDA
+
+\subsection{Pompend lemma voor contextvrije talen}
 
 \include{voorbeelden}
 \include{examenvragen}
