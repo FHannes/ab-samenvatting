@@ -96,6 +96,7 @@
 \newcommand{\dfastate}{\ensuremath{\mathcal{Q}}}
 \newcommand{\en}{\ensuremath{\text{ en }}}
 \newcommand{\of}{\ensuremath{\text{ of }}}
+\newcommand{\sstar}{\ensuremath{\Sigma^*}}
 
 \begin{document}
 
@@ -137,6 +138,20 @@
 \newpage
 
 \section{Voorkennis}
+
+\subsection{Belangrijke afkortingen}
+
+\begin{tabular}{l|l}
+	alss & Als en alleen als ($\Leftrightarrow$) \\
+\end{tabular}
+
+\subsection{Wiskundige symbolen}
+
+\begin{tabular}{l|l}
+	$\vee$ & Supremum \\
+	$\wedge$ & Infimum \\
+	$\triangleq$ & Is per definitie gelijk aan \\
+\end{tabular}
 
 \subsection{Griekse letters}
 
@@ -239,7 +254,7 @@ Een algebra is een verzameling met daarop een aantal inwendige operaties.
 
 \begin{definitie}{Een taal $L$ over een alfabet $\Sigma$}
   Een verzameling van strings over $\Sigma$.\\
-  \\ $L \subseteq \Sigma^*$
+  \\ $L \subseteq \sstar$
   \\ $L \in L_\Sigma$
 \end{definitie}
 
@@ -255,13 +270,13 @@ Een algebra is een verzameling met daarop een aantal inwendige operaties.
   \\ $L^+ = LL^*$
 \end{definitie}
 
-\begin{definitie}{De verzameling $\Sigma^*$ van alle strings over $\Sigma$}
-  $\Sigma^*$ is een verzameling met alle strings die gevormd kunnen worden uit het alfabet $\Sigma$. Elke taal over $\Sigma$ is een deelverzameling van $\Sigma^*$. \\
-  \\ $\Sigma^* = \{a_1a_2a_3...a_n|a_i \in \Sigma, n \in \nat\}$
+\begin{definitie}{De verzameling $\sstar$ van alle strings over $\Sigma$}
+  $\sstar$ is een verzameling met alle strings die gevormd kunnen worden uit het alfabet $\Sigma$. Elke taal over $\Sigma$ is een deelverzameling van $\sstar$. \\
+  \\ $\sstar = \{a_1a_2a_3...a_n|a_i \in \Sigma, n \in \nat\}$
 \end{definitie}
 
 \begin{definitie}{De verzameling $L_\Sigma$ van alle talen over $\Sigma$}
-  $L_\Sigma = \powerset(\Sigma^*)$ is een verzameling met alle talen die gevormd kunnen worden uit het alfabet $\Sigma$. Elke taal over $\Sigma$ is een element van $\powerset(\Sigma^*)$.
+  $L_\Sigma = \powerset(\sstar)$ is een verzameling met alle talen die gevormd kunnen worden uit het alfabet $\Sigma$. Elke taal over $\Sigma$ is een element van $\powerset(\sstar)$.
 \end{definitie}
 
 De verzameling $L_\Sigma$ vormt een algebra met verschillende inwendige operaties, waaronder:
@@ -303,7 +318,7 @@ De verzameling $L_\Sigma$ vormt een algebra met verschillende inwendige operatie
   $RegLan$ is een verzameling die alle reguliere talen bevat. \\
   \\ $RegLan \subseteq L_\Sigma$
   \\ $x \in RegLan \Rightarrow x \in L_\Sigma$
-  \\ $x \in RegLan \en y \in x \Rightarrow y \in \Sigma^*$
+  \\ $x \in RegLan \en y \in x \Rightarrow y \in \sstar$
 \end{definitie}
 
 % TODO (Optional): Bewijs dat RegLan een subalgebra is van L_Sigma
@@ -504,7 +519,7 @@ De complete DFA wordt voornamelijk gebruikt in praktijk. Verder in dit document 
   \end{itemize}
   Om de constructie uit te voeren hebben we de volgende definities ingevoerd:
   \begin{itemize}
-  \item \bm{$eb: Q_n \rightarrow \powerset(Q_n)$}\\ $eb(q) = \{x|x \in \{q\} \cup \delta_n(q, \epsilon)\}$ met $q \in Q_n$: De afbeelding die een toestand $q \in Q_n$ afbeeldt op alle epsilon-bereikbare toestanden.
+  \item \bm{$eb: Q_n \rightarrow \powerset(Q_n)$}\\ $eb(q) = \{x|x \in \{q\} \cup \delta_n(q, \epsilon)\}$ met $q \in Q_n$: De afbeelding die een toestand $q \in Q_n$ afbeeldt op alle epsilon-bereikbare toestanden. Een toestand $q_{next}$ is epsilon-bereikbaar uit $q$ indien $q_{next} = q$ of er een overgang bestaat zodanig dat $\delta_n(q, \epsilon) = q_{next}$.
   \item \bm{$eb: Q_d \rightarrow \powerset(Q_n)$}\\ $eb(\dfastate) = \{x|x \in \bigcup_{q \in \dfastate}eb(q)\}$ met $\dfastate \in Q_d$: De afbeelding die een toestand $\dfastate \in Q_d$ afbeeldt op alle toestanden die epsilon-bereikbaar zijn vanuit alle toestanden in $\dfastate$.
   \item \bm{$\delta_n: Q_d \times \Sigma \rightarrow \powerset(Q_n)$}\\ $\delta_n(\dfastate, a) = \{x|x \in \bigcup_{q \in \dfastate}\delta_n(q, a)\}$ met $\dfastate \in Q_d$ en $a \in \Sigma$: De afbeelding die een toestand $\dfastate \in Q_d$ afbeeldt op de verzameling van alle toestanden die voor een gegeven symbool bereikbaar zijn vanuit elke toestand in $\dfastate$.
   \end{itemize}
@@ -514,22 +529,22 @@ Elke reguliere taal wordt bepaald door een DFA, omdat elke reguliere taal wordt 
 
 \begin{definitie}{De overgangsfunctie $\delta^*$ van een DFA voor strings}
   \label{def:deltaster}
-  \bm{$\delta^*: (\powerset(Q) \times \Sigma^*) \rightarrow \powerset(Q)$}\\
+  \bm{$\delta^*: (\powerset(Q) \times \sstar) \rightarrow \powerset(Q)$}\\
   $\delta^*$ is een afbeelding die een string afbeeldt op een verzameling toestanden die vanuit een toestand bereikt kunnen worden met die string. We defini\"eren $\delta^*$ inductief:
   \begin{equation*}
     \delta^*(q, s) = \begin{cases}
       q, & \text{als}\ s=\epsilon \\
-      \delta^*(\delta(q, a), w) & \text{als}\ s=aw\ \text{voor}\ a \in \Sigma, w \in \Sigma^*
+      \delta^*(\delta(q, a), w) & \text{als}\ s=aw\ \text{voor}\ a \in \Sigma, w \in \sstar
     \end{cases}
   \end{equation*}
 \end{definitie}
 
 \begin{bewijs}
-  We bewijzen dat $\delta^*(q, wa) = \delta(\delta^*(q, w), a)$ voor $a \in \Sigma, w \in \Sigma^*_\epsilon$.\\[.2cm]
+  We bewijzen dat $\delta^*(q, wa) = \delta(\delta^*(q, w), a)$ voor $a \in \Sigma, w \in \sstar_\epsilon$.\\[.2cm]
   Bewijs met inductie op basis van definitie \ref{def:deltaster}:
   \begin{itemize}
   \item Stel $w = \epsilon$, dan geldt:\\$\delta^*(q, \epsilon a) = \delta^*(q, a \epsilon) = \delta^*(\delta(q, a), \epsilon) = \delta(q, a) = \delta(\delta^*(q, \epsilon), a)$
-  \item Stel $w \neq \epsilon$ en $w = bw'$ met $b \in \Sigma, w' \in \Sigma^*_\epsilon$, dan geldt:\\$\delta^*(q, wa) = \delta^*(q, bw'a) = \delta^*(\delta(q, b), w'a) = \delta(\delta^*(\delta(q, b), w'), a) = \delta(\delta^*(q, w), a)$
+  \item Stel $w \neq \epsilon$ en $w = bw'$ met $b \in \Sigma, w' \in \sstar_\epsilon$, dan geldt:\\$\delta^*(q, wa) = \delta^*(q, bw'a) = \delta^*(\delta(q, b), w'a) = \delta(\delta^*(\delta(q, b), w'), a) = \delta(\delta^*(q, w), a)$
   \end{itemize}
 \end{bewijs}
 
@@ -538,7 +553,7 @@ Elke reguliere taal wordt bepaald door een DFA, omdat elke reguliere taal wordt 
 \begin{definitie}{f-gelijke toestanden}
   Twee toestanden zijn finaal-gelijk indien
   \vspace{-3mm}\begin{equation*}
-  \forall w \in \Sigma^* : \delta^*(p, w) \in F \Leftrightarrow \delta^*(q, w) \in F
+  \forall w \in \sstar : \delta^*(p, w) \in F \Leftrightarrow \delta^*(q, w) \in F
   \end{equation*}
 \end{definitie}
 
@@ -552,7 +567,7 @@ Een minimale DFA wordt opgesteld door f-gelijke toestanden samen te nemen. Om he
 % TODO: Bewijs minimale DFA heeft minimaal aantal toestanden
 % TODO: Isomorfe DFA's
 
-\subsection{Myhill-Nerode relaties op $\Sigma^*$}
+\subsection{Myhill-Nerode relaties op $\sstar$}
 
 \begin{definitie}{$\partition_1$ is fijner dan $\partition_2$}
   Als een partie $\partition_1$ fijner is dan een $\partition_2$, dan zit elk element van $\partition_1$ vervat in een element van $\partition_2$. $\{\partition_1$, $\partition_2\}$ vormt een tralie waar geldt dat $\partition_1 \leq \partition_2$.
@@ -562,40 +577,40 @@ Een minimale DFA wordt opgesteld door f-gelijke toestanden samen te nemen. Om he
   Als een partitie $\partition_1$ groffer is dan een $\partition_2$, dan zit elk element van $\partition_2$ vervat in een element van $\partition_1$. $\{\partition_2$, $\partition_1\}$ vormt een tralie waar geldt dat $\partition_2 \leq \partition_1$.
 \end{definitie}
 
-\begin{definitie}{Equivalentierelatie $\sim_L$ over $\Sigma^*$}
-  Gegeven een taal $L$ over $\Sigma$, is het mogelijk om $\Sigma^*$ op te delen in de partitie $\{L,\overline{L}\}$. De equivalentierelatie $\sim_L$ over $\Sigma^*$ beschouwt twee elementen van $\Sigma^*$ gelijkwaardig indien ze beiden tot dezelfde deelverzameling van die partitie behoren.
+\begin{definitie}{Equivalentierelatie $\sim_L$ over $\sstar$}
+  Gegeven een taal $L$ over $\Sigma$, is het mogelijk om $\sstar$ op te delen in de partitie $\{L,\overline{L}\}$. De equivalentierelatie $\sim_L$ over $\sstar$ beschouwt twee elementen van $\sstar$ gelijkwaardig indien ze beiden tot dezelfde deelverzameling van die partitie behoren.
   \begin{equation*}
-  \forall x, y \in \Sigma^*: x \sim_L y \Leftrightarrow x,y \in L \of x,y \notin L
+  \forall x, y \in \sstar: x \sim_L y \Leftrightarrow x,y \in L \of x,y \notin L
   \end{equation*}
 \end{definitie}
 
-\begin{definitie}{De deelverzameling $reach(q)$ van $\Sigma^*$ voor een DFA}
-  De deelverzameling $reach(q)$ van $\Sigma^*$ voor een DFA ($Q$, $\Sigma$, $\delta$, $q_s$, $F$) bevat alle strings die je vanaf de begintoestand $q_s$ in de toestand $q \in Q$ brengen.
+\begin{definitie}{De deelverzameling $reach(q)$ van $\sstar$ voor een DFA}
+  De deelverzameling $reach(q)$ van $\sstar$ voor een DFA ($Q$, $\Sigma$, $\delta$, $q_s$, $F$) bevat alle strings die je vanaf de begintoestand $q_s$ in de toestand $q \in Q$ brengen.
   \begin{equation*}
-  reach(q) = \{s \in \Sigma^*|\delta^*(q_s,s)=q\}
+  reach(q) = \{s \in \sstar|\delta^*(q_s,s)=q\}
   \end{equation*}
 \end{definitie}
 
-\begin{definitie}{Equivalentierelatie $\sim_{DFA}$ over $\Sigma^*$}
-  Gegeven een $DFA$ met $L_{DFA}$ een taal over $\Sigma$, is het mogelijk om $\Sigma^*$ op te delen in de een partitie $\{reach(q)|q \in Q\}$ zodanig dat
+\begin{definitie}{Equivalentierelatie $\sim_{DFA}$ over $\sstar$}
+  Gegeven een $DFA$ met $L_{DFA}$ een taal over $\Sigma$, is het mogelijk om $\sstar$ op te delen in de een partitie $\{reach(q)|q \in Q\}$ zodanig dat
   \begin{itemize}
   \item de partitie eindig is.
-  \item $s \in \Sigma^*$ wordt aanvaard door de $DFA$ alss $s \in reach(q)$ voor $q \in F$.
+  \item $s \in \sstar$ wordt aanvaard door de $DFA$ alss $s \in reach(q)$ voor $q \in F$.
   \item als $s \in reach(q)$ dan $\forall a \in \Sigma : sa \in reach(\delta(q, a))$.
   \end{itemize}
   Of in symbolen:
   \begin{equation*}
-  \forall x, y \in \Sigma^*: x \sim_{DFA} y \Leftrightarrow \delta^*(q_s, x) = \delta^*(q_s, y)
+  \forall x, y \in \sstar: x \sim_{DFA} y \Leftrightarrow \delta^*(q_s, x) = \delta^*(q_s, y)
   \end{equation*}
 \end{definitie}
 
-De equivalentierelatie $\sim_{DFA}$ is een $MN(L_{DFA})$-relatie op $\Sigma^*$.
+De equivalentierelatie $\sim_{DFA}$ is een $MN(L_{DFA})$-relatie op $\sstar$.
 
-\begin{definitie}{Een Myhill-Nerode relatie voor een taal $L$ over $\Sigma^*$}
+\begin{definitie}{Een Myhill-Nerode relatie voor een taal $L$ over $\sstar$}
   \label{def:mnl}
   Een Myhill-Nerode relatie voor een taal $L$ ($MN(L)$-relatie) is een equivalentierelatie $\sim_X$ die voldoet aan de volgende eigenschappen:
   \begin{itemize}
-  \item $\sim_X$ is rechts congruent\\$\forall x, y \in \Sigma^*, a \in \Sigma: x \sim_X y \Rightarrow xa \sim_X ya$
+  \item $\sim_X$ is rechts congruent\\$\forall x, y \in \sstar, a \in \Sigma: x \sim_X y \Rightarrow xa \sim_X ya$
   \item $\sim_X$ verfijnt $\sim_L$\\$x \sim_X y \Rightarrow x \sim_L y$
   \item $\sim_X$ heeft een eindige index\\Het aantal equivalentieklassen van $\sim_X$ is eindig.
   \end{itemize}
@@ -625,7 +640,7 @@ Het pompend lemma kan niet gebruikt worden om te bewijzen dat een taal regulier 
 \end{center}
 
 \begin{definitie}{Het pompend lemma voor reguliere talen}
-  Voor een reguliere taal $L$ bestaat een pomplengte $d$ zodanig dat als $s \in L$ en $|s| \geq d$, dan bestaat er minstens \'e\'en verdeling van $s$ in stukken $x$, $y$ en $z$ zodanig dat $s = xyz$ en
+  Voor een reguliere taal $L$ bestaat een pomplengte $d$ zodanig dat als $s \in L$ en $|s| \geq d$, er minstens \'e\'en verdeling bestaat van $s$ in stukken $x$, $y$ en $z$ met $s = xyz$ en
   \begin{enumerate}
   \item $\forall i \geq 0: xy^iz \in L$
   \item $|y| > 0$
@@ -666,7 +681,7 @@ Het pompend lemma kan niet gebruikt worden om te bewijzen dat een taal regulier 
   \begin{itemize}
   \item $V$ een eindige verzameling niet-eindsymbolen is (variabelen of non-terminals)
   \item $\Sigma$ een eindig alfabet van eindsymbolen (terminals), disjunct met $V$
-  \item $R$ een eindige verzameling regels (producties) is die bestaan uit een koppel van een variabele en een string $s \in \Sigma^*_\epsilon$, gescheiden door $\rightarrow$
+  \item $R$ een eindige verzameling regels (producties) is die bestaan uit een koppel van een variabele en een string $s \in \sstar_\epsilon$, gescheiden door $\rightarrow$
   \item $S \in V$ is de starttoestand
   \end{itemize}
 \end{definitie}
@@ -683,7 +698,7 @@ Het pompend lemma kan niet gebruikt worden om te bewijzen dat een taal regulier 
 \begin{definitie}{Taal $L_{CFG}$ bepaald door een CFG}
   Een taal $L_{CFG}$ bepaald door een CFG ($V$, $\Sigma$, $R$, $S$) is een verzameling van strings over $\Sigma$ die kan afgeleid worden uit het startsymbool $S$.
   \begin{equation*}
-  L_{CFG} = \{s \in \Sigma^*|S \Rightarrow^* s\}
+  L_{CFG} = \{s \in \sstar|S \Rightarrow^* s\}
   \end{equation*}
 \end{definitie}
 
@@ -707,8 +722,9 @@ Sommige CFL's hebben niet-ambigue CFG, maar dat geldt niet voor elke CFL. Een CF
   \end{equation*}
 \end{definitie}
 
-\begin{definitie}{Chromsky Normaal Vorm}
-  Elke CFG heeft een Chromsky Normaal Vorm (CNF) die dezelfde taal genereert en waarbij de producties een beperkt aantal vormen kan aannemen:
+\begin{definitie}{Chomsky Normaal Vorm}
+  \label{def:cnf}
+  Elke CFG heeft een Chomsky Normaal Vorm (CNF) die dezelfde taal genereert en waarbij de producties een beperkt aantal vormen kan aannemen:
   \begin{itemize}
   \item $A \rightarrow BC$ met $\begin{cases}A \in V \\ B,C \in V \setminus \{S\}\end{cases}$
   \item $A \rightarrow \alpha$ met $\begin{cases}A \in V \\ \alpha \in \Sigma\end{cases}$
@@ -808,12 +824,178 @@ Voor een CFL is het mogelijk om met eender welke van deze definities equivalente
   \end{itemize}
 \end{algoritme}
 
-Om een meest-linkse afleiding te bekomen moeten we in algoritme \ref{alg:cfgpda} de symbolen van een string $\gamma \in \Sigma^*_\epsilon$ in omgekeerde volgorde op de stapel plaatsen.
+Om een meest-linkse afleiding te bekomen moeten we in algoritme \ref{alg:cfgpda} de symbolen van een string $\gamma \in \sstar_\epsilon$ in omgekeerde volgorde op de stapel plaatsen.
 
 % TODO: Een PDA accepteert een L_CFG
 % TODO: Constructie CFG uit PDA
 
 \subsection{Pompend lemma voor contextvrije talen}
+
+\begin{definitie}{Het pompend lemma voor contextvrije talen}
+  Voor een contextvrije taal $L$ bestaat een pomplengte $d$ zodanig dat als $s \in L$ en $|s| \geq d$, er minstens \'e\'en verdeling van $s$ bestaat in stukken $u$, $v$, $x$, $y$, $z$ met $s = uvxyz$ en
+  \begin{enumerate}
+  \item $\forall i \geq 0: uv^ixy^iz \in L$
+  \item $|vy| > 0$
+  \item $|vxy| \leq d$
+  \end{enumerate}
+\end{definitie}
+
+Net zoals bij het pompend lemma voor reguliere talen, is het niet mogelijk om met deze variant te bewijzen dat een taal regulier is, omdat het een eigenschap is van een CFL, maar er zijn ook niet-contextvrije talen die die eigenschap zouden kunnen hebben. Het is enkel mogelijk om aan te tonen dat als deze eigenschap niet geldig is, dat een taal niet contextvrij is.
+
+\begin{bewijs}
+  We bewijzen het pompend lemma voor contextvrije talen.\\[.2cm]
+  Voor een taal $L$ nemen we een CFG in CNF, waardoor er voor elke $s \in L$ een parse tree bestaat. Omdat de CFG in CNF staat, weten we dat elk blad onderaan de boom een terminal is, die (voor een niet-lege string $s$) volgt uit een productie met vorm ``$A \rightarrow \alpha$". Elke andere knoop in de boom moet dan volgen uit een productie met vorm ``$A \rightarrow BC$". Daarom kunnen we weggen dat indien we alle bladeren van de boom wegsnoeien, we een perfecte binaire boom bekomen, die een hoogte heeft van minstens $log_2|s|$.
+  
+  Het langste enkelvoudig pad vanaf de wortel van de parse tree moet minstens een lengte hebben van $log_2|s| + 1$. We nemen een string $s \in L$ waarvoor geldt dat $log_2|s| + 1 > n$ met $n = \#V + 1$ Dus er moet minstens \'e\'en variabele $X$ herhaald worden. Vanwege de definitie van de CNF (definitie \ref{def:cnf}) geldt dat $X \neq S$. We nemen op dat pad een $X_1$ en de dichtste herhaling $X_2$ (zie figuur \ref{fig:pumptree}). We kunnen nu de afleiding construeren als
+  \begin{equation*}
+  S \Rightarrow^* uX_2z \Rightarrow^* uvX_1yz \Rightarrow^* uvxyz \text{ met }u,v,x,y,z \in \sstar
+  \end{equation*}
+  
+  \begin{itemize}
+  \item Eigenschap 1 geldt omdat indien de bovenstaande afleiding geldt, de volgende afleidingen ook moeten gelden:
+  \begin{equation*}
+  S \Rightarrow^* uX_2z \Rightarrow^* uxz
+  \end{equation*}
+  \begin{equation*}
+  S \Rightarrow^* uXz \Rightarrow^* uvXyz \Rightarrow^* uvvxyyz
+  \end{equation*}
+  \item Eigenschap 2 geldt omdat $v$ en $y$ niet tegelijkertijd leeg kunnen zijn, want dan zou men $X$ uit zichzelf kunnen afleiden en dat kan niet vanwege de vorm van de CFG.
+  \end{itemize}
+  
+  Deze eigenschappen zijn geldig voor strings langer dan de pomplengte, dus $d = 2^{n-1}$.
+  
+  \begin{itemize}
+  \item Eigenschap 3 geldt omdat $vxy$ afgeleid wordt uit een $X$ met een parse tree die lager is dan $n$, dus hoogstens $d$ bladeren heeft, wat juist correspondeert met $vxy$.
+  \end{itemize}
+\end{bewijs}
+
+\begin{figure}[ht]
+  \label{fig:pumptree}
+  \centering
+  \begin{tikzpicture}[-,
+    >=stealth',
+    shorten >=1pt,
+    auto,
+    node distance=1cm]
+  \tikzstyle{every state}=[fill=none,draw=none,text=black]
+  
+  \node (S)                {$S$};
+  \node (X2) [below of=S]  {$X_2$};
+  \node (X1) [below of=X2] {$X_1$};
+  \node (x)  [below of=X1] {$x$};
+  \node (l3) [left of=x]   {};
+  \node (v)  [left of=l3]  {$v$};
+  \node (l2) [left of=v]   {};
+  \node (u)  [left of=l2]  {$u$};
+  \node (l1) [left of=u]   {};
+  \node (l4) [right of=x]  {};
+  \node (y)  [right of=l4] {$y$};
+  \node (l5) [right of=y]  {};
+  \node (z)  [right of=l5] {$z$};
+  \node (l6) [right of=z]  {};
+  
+  \path (S)  edge []                   node {} (X2)
+             edge [bend right]         node {} (l1)
+             edge [bend left]          node {} (l6)
+        (X2) edge [dotted]             node {} (X1)
+             edge [dotted, bend right] node {} (l2)
+             edge [dotted, bend left]  node {} (l5)
+        (X1) edge [dotted]             node {} (X1)
+             edge [dotted, bend right] node {} (l3)
+             edge [dotted, bend left]  node {} (l4);
+  \end{tikzpicture}
+  \caption{De parse tree met de repeterende variabele $X$.}
+\end{figure}
+
+% TODO: Toepassing pompend lemma voor CFL
+% TODO: Algebra van CFL's
+% TODO: Ambiguiteit en DPDA
+% TODO: Contextgevoelige grammatica
+
+\section{Chomsky hi\"erarchie}
+
+De Chomsky hi\"erarchie is een hi\"erarchische rangschikking van talen. Elke klasse van talen in de hi\"erarchie zit vervat in een sterkere klasse van talen, met de grootste klasse (die van de Turing-herkenbare talen) zijnde een deelverzameling van $L_\Sigma$:
+\begin{itemize}
+\item Type-0: De klasse van de herkenbare talen heeft een onbeperkte grammatica, dat wil zeggen er geen restricties zijn op de grammaticale regels. Elke taal die door een Turingmachine herkent wordt zit in deze klasse.
+\item Type-1: De klasse van de contextgevoelige talen heeft een contextgevoelige grammatica, daarbij mogen de productieregels in tegenstelling tot een CFG zowel aan de linker- als rechterzijde een combinatie van variabelen en terminals bevatten. Elke taal die door een lineair begrensde automaat (Turingmachine) bepaalt wordt zit in deze klasse. Een LBA kan een beslissingsprobleem oplossen in $O(n)$-ruimte.
+\item Type-2: De klasse van de contextvrije talen heeft een contextvrije grammatica (CFG). Elke taal die door een push-down automaat bepaalt wordt zit in deze klasse. Het parsen van een string uit een taal $L_{CFG}$ kan in $O(n^2)$-tijd.
+\item Type-3: De klasse van de reguliere talen heeft een reguliere grammatica. Elke taal die door een eindige toestandsautomaat bepaalt wordt zit in deze klasse. Een string uit een taal $L_{RE}$ kan herkend worden in $O(n)$-tijd.
+\end{itemize}
+
+\begin{figure}[ht]
+\centering
+  \begin{tikzpicture}
+  \path
+    (0,0) rectangle (8,6) [draw]
+    (1.5,5.5) node {$L_\Sigma = \powerset(\sstar)$}
+    (4,2.75) coordinate (A) node[above=1.5cm] {Turing-herkenbare talen} ellipse (3.5 and 2.5) [draw]
+    (4,2.25) coordinate (B) node[above=1cm] {Contextsensitieve talen} ellipse (3 and 2) [draw]
+    (4,1.75) coordinate (C) node[above=0.5cm] {Contextvrije talen} ellipse (2.5 and 1.5) [draw]
+    (4,1.25) coordinate (D) node {Reguliere talen} ellipse (2 and 1) [draw];
+  \end{tikzpicture}
+  \caption{Een voorstelling van de Chomsky-hi\"erarchy.}
+\end{figure}
+
+\section{Turingmachines}
+
+\begin{definitie}{Turingmachine}
+  Een Turingmachine (TM) is een 7-tal ($Q$, $\Sigma$, $\Gamma$, $\delta$, $q_s$, $q_a$, $q_r$) waarbij
+  \begin{itemize}
+  \item $Q$ een eindige verzameling toestanden
+  \item $\Sigma$ een eindig invoer alfabet dat $\#$ niet bevat
+  \item $\Gamma$ een eindig tape alfabet met $\# \in \Gamma$ en $\Sigma \subset \Gamma$
+  \item $q_s$ de starttoestand
+  \item $q_a$ de accepterende eindtoestand
+  \item $q_r$ de verwerpende eindtoestand verschillend van $Q_a$
+  \item \bm{$\delta: Q \times \Gamma \rightarrow Q \times \Gamma \times \{L, R, S\}$}\\$\delta$ de (totale) transitiefunctie
+  \end{itemize}
+\end{definitie}
+
+$\#$ wordt gebruikt om aan te geven dat een positie op de band van de TM nog niet beschreven is. We noemen dit het blanco symbool.
+
+% TODO: Werking TM
+
+\begin{definitie}{Opdeling van $\sstar$ door een TM}
+  Een TM kan $\sstar$ in drie disjuncte stukken opdelen:
+  \begin{itemize}
+  \item $L_{TM}$: De taal met alle strings die door de TM worden geaccepteerd.
+  \item $\infty_{TM}$: De taal met alle strings waarvoor de TM niet stopt.
+  \item De resterende strings die door de TM worden verworpen.
+  \end{itemize}
+\end{definitie}
+
+\begin{definitie}{(Turing-)herkenbaarheid}
+  \vspace{-5mm}\begin{itemize}
+  \item Een Turingmachine $TM$ herkent een taal $L_{TM}$.
+  \item Een taal $L$ is herkenbaar indien er een Turingmachine $TM$ bestaat zodanig dat $L = L_{TM}$.
+  \end{itemize}
+\end{definitie}
+
+\begin{definitie}{Co-herkenbaarheid}
+  Een taal $L$ is co-herkenbaar indien $\overline{L}$ herkenbaar is.
+\end{definitie}
+
+\begin{definitie}{(Turing-)beslisbaarheid}
+  \vspace{-5mm}\begin{itemize}
+  \item Een Turingmachine $TM$ beslist een taal $L_{TM}$ indien $TM$ $L$ herkent en $\infty_{TM} = \emptyset$.
+  \item Een taal $L$ is beslisbaar indien er een Turingmachine $TM$ bestaat zodanig die $L$ beslist.
+  \item Een taal $L$ is beslisbaar indien ze herkenbaar en co-herkenbaar is.
+  \end{itemize}
+\end{definitie}
+
+\begin{definitie}{Co-beslisbaarheid}
+  Een taal $L$ die beslisbaar is is ook co-beslisbaar.
+\end{definitie}
+
+\begin{bewijs}
+  We bewijzen co-beslisbaarheid.\\[.2cm]
+  Als een beslisser $B$ de taal $L$ beslist, dan stopt die beslisser voor elke invoer bij de accepterende eindtoestand $q_a$ of de verwerpende eindtoestand $q_r$. We kunnen een beslisser $B'$ construeren voor $\overline{L}$ door bij $B$ de toestanden $q_a$ en $q_r$ om te wisselen. Omdat $B$ ook stopt voor alle strings die niet tot de taal behoren zal $B'$ die strings accepteren en alle strings die $B$ accepteert verwerpen. Bijgevolg is $\overline{L}$ beslisbaar.
+\end{bewijs}
+
+\begin{bewijs}
+  We bewijzen dat een taal beslisbaar is als ze herkenbaar en co-herkenbaar is.\\[.2cm]
+  Stel een machine $M_1$ herkent $L$ en een machine $M_2$ herkent $\overline{L}$. We construeren nu een machine $M$ die voor een string beide machines $M_1$ en $M_2$ laat lopen. Indien $M_1$ de string accepteert, dan accepteert $M$ de string. Indien $M_2$ de string accepteert, dan verwerpt $M$ de string. Omdat $M_1$ alle strings accepteert uit $L$ en $M_2$ alle strings uit $\overline{L}$, zal $M$ voor elke invoer stoppen in een eindtoestand. Bijgevolg is $M$ een beslisser voor $L$, dus is $L$ beslisbaar.
+\end{bewijs}
 
 \include{voorbeelden}
 \include{examenvragen}
