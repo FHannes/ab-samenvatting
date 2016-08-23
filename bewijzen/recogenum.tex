@@ -1,0 +1,8 @@
+  Het Halting-probleem geeft aan dat een Turingmachine niet noodzakelijk stopt voor elke string. Daarom construeren we een enumerator $Enu$ voor een herkenbare taal $L$ bepaald door $TM$ als volgt:
+ 
+  We construeren
+  \begin{itemize}
+  \item een Turingmachine $TM_{gen}$ die gegeven een getal $n$, de $n$ eerste strings van $\sstar$ op de band zet.
+  \item een Turingmachine $TM_n$ die gegeven een getal $N$, op elk van de $n$ strings, $n$ stappen van $TM$ uitvoert. Als $TM$ daarbij een string accepteert, dan wordt die weggeschreven op de outputband van $Enu$.
+  \item een Turingmachine $TM_{driver}$ die opeenvolgende getallen $n$ genereert en vervolgens $TM_{gen}$ en $TM_n$ oproept.
+  \end{itemize}

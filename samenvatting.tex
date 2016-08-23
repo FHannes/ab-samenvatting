@@ -12,6 +12,8 @@
 \usepackage{array}
 \usepackage{enumitem}
 \usepackage{bm}
+\usepackage{pifont}
+\usepackage{tabularx}
 \usepackage{tikz}
 \usetikzlibrary{arrows,automata,calc,fit,positioning}
 \usepackage{chngcntr}
@@ -51,11 +53,11 @@
   {\end{talgo}\end{mdframed}}
   
 \renewcommand{\qedsymbol}{$\blacksquare$}
-\newenvironment{bewijs}%
+\newenvironment{bewijs}[1]%
   {\begin{mdframed}[topline=true,
     rightline=true,
     leftline=true,
-    bottomline=true]\begin{proof}[Bewijs]\normalfont}%
+    bottomline=true]\begin{proof}[Bewijs]#1\\[.2cm]\normalfont}%
   {\end{proof}\end{mdframed}}
  
 \newenvironment{nfa}%
@@ -93,10 +95,19 @@
 \newcommand{\powerset}{\ensuremath{\mathcal{P}}}
 \newcommand{\partition}{\ensuremath{\mathfrak{P}}}
 \newcommand{\nat}{\ensuremath{\mathbb{N}}}
+\newcommand{\whole}{\ensuremath{\mathbb{Z}}}
 \newcommand{\dfastate}{\ensuremath{\mathcal{Q}}}
 \newcommand{\en}{\ensuremath{\text{ en }}}
 \newcommand{\of}{\ensuremath{\text{ of }}}
 \newcommand{\sstar}{\ensuremath{\Sigma^*}}
+\newcommand{\atm}{\ensuremath{{A_{TM}}}}
+\newcommand{\htm}{\ensuremath{{H_{TM}}}}
+\newcommand{\etm}{\ensuremath{{E_{TM}}}}
+\newcommand{\eqtm}{\ensuremath{{EQ_{TM}}}}
+\newcommand{\oatm}{\ensuremath{{O^\atm}}}
+
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
 
 \begin{document}
 
@@ -232,7 +243,7 @@ Een algebra is een verzameling met daarop een aantal inwendige operaties.
   \\ $\forall X \subseteq L: \bigwedge_X \in L \en \bigvee_X \in L$
 \end{definitie}
 
-\newpage\section{Talen}
+\newpage\section{Inleiding talen}
 
 \begin{definitie}{Een alfabet $\Sigma$}
   Een verzameling van symbolen.
@@ -510,6 +521,7 @@ Definitie \ref{def:cdfa} impliceert ook dat voor elke $a \in \Sigma$ een overgan
 De complete DFA wordt voornamelijk gebruikt in praktijk. Verder in dit document wordt vaak gebruik gemaakt van een DFA met de assumptie dat $\delta$ een totale functie is. Daarbij wordt impliciet gesteld dat voor een niet-complete DFA eerst de constructie van de equivalente complete DFA wordt uitgevoerd.
 
 \begin{algoritme}{Transformatie NFA naar DFA}
+  \label{alg:nfadfa}
   We construeren een DFA ($Q_d$, $\Sigma$, $\delta_d$, $q_{sd}$, $F_d$) uit een NFA ($Q_n$, $\Sigma$, $\delta_n$, $q_{sn}$, $F_n$) zodanig dat $L_{NFA} = L_{DFA}$ als volgt:
   \begin{itemize}
   \item $Q_d = \powerset(Q_n)$: Elke toestand van de DFA is een verzameling van toestanden van de NFA. Onbereikbare toestanden zullen we later verwijderen, waardoor zal gelden: $Q_d \subseteq \powerset(Q_n)$.
@@ -539,8 +551,7 @@ Elke reguliere taal wordt bepaald door een DFA, omdat elke reguliere taal wordt 
   \end{equation*}
 \end{definitie}
 
-\begin{bewijs}
-  We bewijzen dat $\delta^*(q, wa) = \delta(\delta^*(q, w), a)$ voor $a \in \Sigma, w \in \sstar_\epsilon$.\\[.2cm]
+\begin{bewijs}{We bewijzen dat $\delta^*(q, wa) = \delta(\delta^*(q, w), a)$ voor $a \in \Sigma, w \in \sstar_\epsilon$.}
   Bewijs met inductie op basis van definitie \ref{def:deltaster}:
   \begin{itemize}
   \item Stel $w = \epsilon$, dan geldt:\\$\delta^*(q, \epsilon a) = \delta^*(q, a \epsilon) = \delta^*(\delta(q, a), \epsilon) = \delta(q, a) = \delta(\delta^*(q, \epsilon), a)$
@@ -616,8 +627,7 @@ De equivalentierelatie $\sim_{DFA}$ is een $MN(L_{DFA})$-relatie op $\sstar$.
   \end{itemize}
 \end{definitie}
 
-\begin{bewijs}
-  We bewijzen dat een $MN(L)$-relatie enkel bestaat alss de taal $L$ regulier is.\\[.2cm]
+\begin{bewijs}{We bewijzen dat een $MN(L)$-relatie enkel bestaat alss de taal $L$ regulier is.}
   \input{bewijzen/mnlregulier}
 \end{bewijs}
 
@@ -648,8 +658,7 @@ Het pompend lemma kan niet gebruikt worden om te bewijzen dat een taal regulier 
   \end{enumerate}
 \end{definitie}
 
-\begin{bewijs}
-  We bewijzen de eigenschappen van het pompend lemma. \\[.2cm]
+\begin{bewijs}{We bewijzen de eigenschappen van het pompend lemma.}
   Voor een DFA die een taal $L$ bepaalt nemen we een pomplengte $d = \#Q + 1$ en een willekeurige string $s = a_1a_2a_3...a_n$ met $n \geq d$. De accepterende sequentie van toestanden ($q_s = q_1$, $q_2$, ..., $q_f$) voor s heeft een lengte strikt groter dan het aantal toestanden in $Q$, dus er zijn bij de eerste $d$ toestanden zeker twee toestanden gelijk omdat er maar $d-1$ toestanden zijn. Stel dat $q_i$ en $q_j$ gelijk zijn met $i < j \leq d$, dan nemen we
   \begin{equation*}
   \begin{cases}
@@ -842,8 +851,7 @@ Om een meest-linkse afleiding te bekomen moeten we in algoritme \ref{alg:cfgpda}
 
 Net zoals bij het pompend lemma voor reguliere talen, is het niet mogelijk om met deze variant te bewijzen dat een taal regulier is, omdat het een eigenschap is van een CFL, maar er zijn ook niet-contextvrije talen die die eigenschap zouden kunnen hebben. Het is enkel mogelijk om aan te tonen dat als deze eigenschap niet geldig is, dat een taal niet contextvrij is.
 
-\begin{bewijs}
-  We bewijzen het pompend lemma voor contextvrije talen.\\[.2cm]
+\begin{bewijs}{We bewijzen het pompend lemma voor contextvrije talen.}
   Voor een taal $L$ nemen we een CFG in CNF, waardoor er voor elke $s \in L$ een parse tree bestaat. Omdat de CFG in CNF staat, weten we dat elk blad onderaan de boom een terminal is, die (voor een niet-lege string $s$) volgt uit een productie met vorm ``$A \rightarrow \alpha$". Elke andere knoop in de boom moet dan volgen uit een productie met vorm ``$A \rightarrow BC$". Daarom kunnen we weggen dat indien we alle bladeren van de boom wegsnoeien, we een perfecte binaire boom bekomen, die een hoogte heeft van minstens $log_2|s|$.
   
   Het langste enkelvoudig pad vanaf de wortel van de parse tree moet minstens een lengte hebben van $log_2|s| + 1$. We nemen een string $s \in L$ waarvoor geldt dat $log_2|s| + 1 > n$ met $n = \#V + 1$ Dus er moet minstens \'e\'en variabele $X$ herhaald worden. Vanwege de definitie van de CNF (definitie \ref{def:cnf}) geldt dat $X \neq S$. We nemen op dat pad een $X_1$ en de dichtste herhaling $X_2$ (zie figuur \ref{fig:pumptree}). We kunnen nu de afleiding construeren als
@@ -912,7 +920,7 @@ Net zoals bij het pompend lemma voor reguliere talen, is het niet mogelijk om me
 % TODO: Ambiguiteit en DPDA
 % TODO: Contextgevoelige grammatica
 
-\section{Chomsky hi\"erarchie}
+\newpage\section{Chomsky hi\"erarchie}
 
 De Chomsky hi\"erarchie is een hi\"erarchische rangschikking van talen. Elke klasse van talen in de hi\"erarchie zit vervat in een sterkere klasse van talen, met de grootste klasse (die van de Turing-herkenbare talen) zijnde een deelverzameling van $L_\Sigma$:
 \begin{itemize}
@@ -936,9 +944,10 @@ De Chomsky hi\"erarchie is een hi\"erarchische rangschikking van talen. Elke kla
   \caption{Een voorstelling van de Chomsky-hi\"erarchy.}
 \end{figure}
 
-\section{Turingmachines}
+\newpage\section{Turingmachines}
 
 \begin{definitie}{Turingmachine}
+  \label{def:tm}
   Een Turingmachine (TM) is een 7-tal ($Q$, $\Sigma$, $\Gamma$, $\delta$, $q_s$, $q_a$, $q_r$) waarbij
   \begin{itemize}
   \item $Q$ een eindige verzameling toestanden
@@ -987,15 +996,424 @@ $\#$ wordt gebruikt om aan te geven dat een positie op de band van de TM nog nie
   Een taal $L$ die beslisbaar is is ook co-beslisbaar.
 \end{definitie}
 
-\begin{bewijs}
-  We bewijzen co-beslisbaarheid.\\[.2cm]
+\begin{bewijs}{We bewijzen co-beslisbaarheid.}
   Als een beslisser $B$ de taal $L$ beslist, dan stopt die beslisser voor elke invoer bij de accepterende eindtoestand $q_a$ of de verwerpende eindtoestand $q_r$. We kunnen een beslisser $B'$ construeren voor $\overline{L}$ door bij $B$ de toestanden $q_a$ en $q_r$ om te wisselen. Omdat $B$ ook stopt voor alle strings die niet tot de taal behoren zal $B'$ die strings accepteren en alle strings die $B$ accepteert verwerpen. Bijgevolg is $\overline{L}$ beslisbaar.
 \end{bewijs}
 
-\begin{bewijs}
-  We bewijzen dat een taal beslisbaar is als ze herkenbaar en co-herkenbaar is.\\[.2cm]
+\begin{bewijs}{We bewijzen dat een taal beslisbaar is als ze herkenbaar en co-herkenbaar is.}
   Stel een machine $M_1$ herkent $L$ en een machine $M_2$ herkent $\overline{L}$. We construeren nu een machine $M$ die voor een string beide machines $M_1$ en $M_2$ laat lopen. Indien $M_1$ de string accepteert, dan accepteert $M$ de string. Indien $M_2$ de string accepteert, dan verwerpt $M$ de string. Omdat $M_1$ alle strings accepteert uit $L$ en $M_2$ alle strings uit $\overline{L}$, zal $M$ voor elke invoer stoppen in een eindtoestand. Bijgevolg is $M$ een beslisser voor $L$, dus is $L$ beslisbaar.
 \end{bewijs}
+
+Niet alle talen $L \in L_\Sigma$ zijn herkenbaar.
+% TODO: Bewijs
+
+% TODO: Grafische voorstelling Turingmachine
+% TODO: Berkeningen van een TM voorstellen en nabootsen
+% TODO: Deterministische Turinmachines
+% TODO: Encodering
+% TODO: Universele Turingmachine
+
+\begin{definitie}{Het acceptatieprobleem voor TM's}
+  Het acceptatieprobleem is de vraag of het mogelijk is om voor een gegeven Turingmachine $M$ en gegeven string $s$ te bepalen of $M$ $s$ accepteert.
+  \begin{equation*}
+  \atm = \{\langle M,s \rangle | M\text{ is een Turingmachine en }s \in L_M\}
+  \end{equation*}
+\end{definitie}
+
+Er bestaat geen Turingmachine $B$ die kan beslissen of een gegeven Turingmachine $M$ een gegeven string $s$ accepteert. De taal $\atm$ is niet beslisbaar.
+
+\begin{bewijs}{We bewijzen dat $\atm$ niet beslisbaar is.}
+We bewijzen dit door contradictie. Stel dat er een beslisser $B$ bestaat voor $\atm$. Bij een input $\langle M,s \rangle$ accepteert $B$ $M$ als $M$ $s$ accepteert en $B$ verwerpt $M$ als $M$ $S$ verwerpt of blijft lopen.
+
+We construeren nu een contradictiemachine $C$ als
+\begin{equation*}
+C(\langle M \rangle) = opposite(B(\langle M,M \rangle))\text{ voor elke Turingmachine M}
+\end{equation*}
+De functie $opposite(x)$ is gedefinieerd als
+\begin{equation*}
+opposite(x) = \begin{cases}
+reject, & \text{ als } x = accept\\
+accept & \text{ als } x = reject
+\end{cases}
+\end{equation*}
+
+We nemen nu $C(\langle C \rangle) = opposite(B(\langle C,C \rangle))$:
+Als $C(\langle C \rangle) = accept$ ($C$ accepteert $C$), dan accepteert de beslisser $B$ de invoer $\langle C,C \rangle$, dus $B(\langle C,C \rangle) = accept$. Maar $opposite(B(\langle C,C \rangle))$ is dan $reject$, dat is een tegenstelling omdat dan geldt $C(\langle C \rangle) \neq opposite(B(\langle C,C \rangle))$.
+
+We kunnen nu zeggen dat de machine $C$ niet kan bestaan, dus de beslisser $B$ kan ook niet bestaan. Bij gevolg is $\atm$ niet beslisbaar.
+\end{bewijs}
+
+\begin{definitie}{Het Halting-probleem voor TM's}
+  Het Halting-probleem is de vraag of het mogelijk is om voor een gegeven Turingmachine $M$ en gegeven string $s$ te bepalen of $M$ stopt bij de invoer van $s$ m.a.w. dat $M$ $S$ accepteert of verwerpt.
+  \begin{equation*}
+  \htm = \{\langle M,s \rangle | M\text{ is een Turingmachine die stopt bij invoer }s \in L_M\}
+  \end{equation*}
+\end{definitie}
+
+\begin{bewijs}{We bewijzen dat $\htm$ niet beslisbaar is.}
+Stel dat $\htm$ beslisbaar is door een beslisser $H$. We construeren nu een beslisser $B$ voor $\atm$ als volgt:
+
+Bij een invoer $\langle M,s \rangle$ laat $B$ de machine $H$ lopen op $\langle M,s \rangle$.
+\begin{itemize}
+\item Indien $H(\langle M,s \rangle) = accept$, dan stopt $M$ voor een invoer $s$ (dus $M(s) = accept$ of $M(s) = reject$). $B$ geeft als resultaat $M(s)$.
+\item indien $H(\langle M,s \rangle) = reject$, dan stopt $M$ niet voor een invoer $s$. $B$ geeft als resultaat $reject$.
+\end{itemize}
+Omdat $\atm$ niet beslisbaar is, kan $B$ niet bestaan, dus kan ook $H$ niet bestaan. Bij gevolg is $\htm$ niet beslisbaar.
+
+We zeggen dat $\atm$ reduceerbaar is naar $\htm$.
+\end{bewijs}
+
+\begin{bewijs}{We bewijzen dat $\atm$ herkenbaar is.}
+  Het is mogelijk een herkenner $H$ voor $\atm$ te construeren die bij een invoer $\langle M,s \rangle$ $M$ laat lopen op $s$. $H$ accepteert de invoer $\langle M,s \rangle$ als $M$ de invoer $s$ accepteert en verwerpt de invoer als $M$ niet stopt bij invoer $s$ of $s$ verwerpt.
+\end{bewijs}
+
+\begin{bewijs}{We bewijzen dat $\htm$ herkenbaar is.}
+  Het is mogelijk een herkenner $H$ voor $\htm$ te construeren die bij een invoer $\langle M,s \rangle$ $M$ laat lopen op $s$. $H$ accepteert de invoer $\langle M,s \rangle$ als $M$ stopt bij invoer $s$ en verwerpt de invoer als $M$ niet stopt bij invoer $s$.
+\end{bewijs}
+
+\begin{bewijs}{We bewijzen dat $\overline{\atm}$ niet herkenbaar is.}
+  Stel dat $\overline{\atm}$ herkenbaar is en we weten dat $\atm$ herkenbaar is. Dan volgt dat $\atm$ beslisbaar is, wat niet mogelijk is. Bij gevolg kan $\overline{\atm}$ niet herkenbaar zijn. 
+\end{bewijs}
+
+\begin{bewijs}{We bewijzen dat $\overline{\htm}$ niet herkenbaar is.}
+  Stel dat $\overline{\htm}$ herkenbaar is en we weten dat $\atm$ herkenbaar is. Dan volgt dat $\htm$ beslisbaar is, wat niet mogelijk is. Bij gevolg kan $\overline{\htm}$ niet herkenbaar zijn. 
+\end{bewijs}
+
+\subsection{Enumeratormachine}
+
+\begin{definitie}{Enumeratormachine}
+  \input{definities/enum}
+\end{definitie}
+
+Een enumeratormachine produceert (enumereert) een verzameling strings op de outputband die de taal de taal vormt die door die machine bepaalt wordt. Een enumeratormachine stopt niet altijd of stopt niet altijd bij het uitschrijven van een individuele string.
+
+\begin{bewijs}{We bewijzen dat een taal die door een enumerator bepaald wordt, herkenbaar is.}
+  \input{bewijzen/enumrecog}
+\end{bewijs}
+
+\begin{bewijs}{We bewijzen dat elke herkenbare taal door een enumerator\\ge\"enumereerd wordt.}
+  \input{bewijzen/recogenum}
+\end{bewijs}
+
+\subsection{Beslisbare talen}
+
+\begin{bewijs}{We bewijzen dat $A_{DFA}$ beslisbaar is.}
+  Voor $A_{DFA} = \{\langle D,s \rangle | D \text{ is een DFA en } D \text{ accepteert } s\}$ construeren we een beslisser $B$ als volgt:
+ 
+  $B$ krijgt een input $\langle D,s \rangle$. $B$ simuleert de uitvoering van $D$ op $S$. Als $D$ $S$ accepteert, dan accepteert $B$ de invoer. Als $D$ $S$ verwerpt, dan verwerpt $B$ de invoer. Een DFA stopt altijd, dus is $B$ een beslisser voor $A_{DFA}$.
+\end{bewijs}
+
+\begin{bewijs}{We bewijzen dat $A_{NFA}$ beslisbaar is.}
+  Voor $A_{NFA} = \{\langle N,s \rangle | N \text{ is een NFA en } N \text{ accepteert } s\}$ construeren we een beslisser $B$ als volgt:
+ 
+ $B$ krijgt een input $\langle N,s \rangle$. De NFA $N$ wordt omgezet naar een DFA met algoritme \ref{alg:nfadfa}. Nu kunnen we een beslisser $B_D$ construeren voor die DFA en die laten lopen op $s$. $B$ geeft de uitvoer van $B_D$ terug.
+\end{bewijs}
+
+\begin{bewijs}{We bewijzen dat $A_{RegExp}$ beslisbaar is.}
+  Voor $A_{RegExp} = \{\langle RE,s \rangle | RE \text{ is een reguliere expressie en } RE \text{ accepteert } s\}$ construeren we een beslisser $B$ als volgt:
+ 
+ $B$ krijgt een input $\langle RE,s \rangle$. De reguliere expressie $RE$ wordt omgezet naar een NFA. Nu kunnen we een beslisser $B_N$ construeren voor die NFA en die laten lopen op $s$. $B$ geeft de uitvoer van $B_N$ terug.
+\end{bewijs}
+
+% TODO: E_DFA is beslisbaar
+% TODO: EQ_DFA is beslisbaar
+% TODO: A_CFG is beslisbaar
+% TODO: E_CFG is beslisbaar
+% TODO: ES_CFG is beslisbaar
+% TODO: Elke CFL is beslisbaar
+% TODO: REGULAR_TM is niet beslisbaar: $REGULAR_{TM} = \{\langle M \rangle | M \text{ is een Turingmachine en } L_M \text{ is een reguliere taal}\}$
+% TODO: EQ_TM is niet beslisbaar
+% TODO: ALL_CFG is niet beslisbaar
+
+\subsubsection{Overzicht}
+De onderstaande tabel geeft voor heel wat talen weer of ze herkenbaar en beslisbaar zijn:\\[.2cm]
+\def\tabularxcolumn#1{m{#1}}
+\begin{tabularx}{\textwidth}{c|c|c|X}
+  \textbf{Taal} & \textbf{H} & \textbf{B} & \textbf{Beschrijving} \\ \hline
+  $A_{DFA}$ & \cmark & \cmark & De taal met alle DFA's die een bepaalde string accepteren.\\ \hline
+  $E_{DFA}$ & \cmark & \cmark & De taal met alle DFA's die de lege taal bepalen.\\ \hline
+  $EQ_{DFA}$ & \cmark & \cmark & De taal met alle koppels van equivalente DFA's.\\ \hline
+  $A_{NFA}$ & \cmark & \cmark & De taal met alle NFA's die een bepaalde string accepteren.\\ \hline
+  $A_{RegEx}$ & \cmark & \cmark & De taal met alle reguliere expressies die een bepaalde string accepteren.\\ \hline
+  $A_{CFG}$ & \cmark & \cmark & De taal met alle CFG's die een bepaalde string accepteren.\\ \hline
+  $E_{CFG}$ & \cmark & \cmark & De taal met alle CFG's die de lege taal bepalen.\\ \hline
+  $ES_{CFG}$ & \cmark & \cmark & De taal met alle CFG's die de lege string genereren.\\ \hline
+  $L_{CFG}$ & \cmark & \cmark & Een contextvrije taal bepaald door een CFG.\\ \hline
+  $ALL_{CFG}$ & \cmark & \xmark & De taal met alle CFG's die de taal $\sstar$ bepalen.\\ \hline
+  $A_{LBA}$ & \cmark & \cmark & De taal met alle LBA's die een bepaalde string accepteren.\\ \hline
+  $E_{LBA}$ & \cmark & \xmark & De taal met alle LBA's die de lege taal bepalen.\\ \hline
+  $\atm$ & \cmark & \xmark & De taal met alle Turingmachines die voor een bepaalde string, die string accepteren.\\ \hline
+  $\htm$ & \cmark & \xmark & De taal met alle Turingmachines die voor een bepaalde string, die string accepteren of verwerpen.\\ \hline
+  $\etm$ & \cmark & \xmark & De taal met alle Turingmachines die de lege taal bepalen.\\ \hline
+  $\eqtm$ & \xmark & \xmark & De taal met alle koppels van equivalente Turingmachines.\\ \hline
+  $REGULAR_{TM}$ & \cmark & \xmark & De taal met alle Turingmachines die een reguliere taal bepalen.\\
+\end{tabularx}
+\def\tabularxcolumn#1{p{#1}}
+
+% TODO: Aftelbaarheid
+
+\subsection{Stelling van Rice}
+
+Een eigenschap $P$ van Turingmachines verdeelt die in twee verzamelingen. De machines met die eigenschap $Pos_P = \{M|P(M)=true\}$ en de machines zonder die eigenschap $Neg_P = \{M|P(M)=false\}$. Samen vormen ze een partitie $\{Pos_P, Neg_P\}$ van de verzameling van alle Turingmachines.
+
+\begin{definitie}{Niet-triviale eigenschap}
+  Een eigenschap $P$ is niet triviaal indien $Pos_P \neq \emptyset$ en $Neg_P \neq \emptyset$.
+\end{definitie}
+
+\begin{definitie}{Taal-invariante eigenschap}
+  Een eigenschap $P$ is taal-invariant als alle machines die dezelfde taal bepalen ook die eigenschap gemeenschappelijk hebben (of geen enkel van die machines die eigenschap heeft).
+  \begin{equation*}
+  L_{M_1} = L_{M_2} \Rightarrow P(M_1) = P(M_2)
+  \end{equation*}
+\end{definitie}
+
+\begin{definitie}{Eerste stelling van Rice}
+  Voor elke niet-triviale, taal-invariante eigenschap $P$ geldt dat $Pos_P$ niet beslisbaar is. (Ook $Neg_P$ is niet beslisbaar, maar dat volgt uit $Neg_P = \overline{Pos_P}$.)
+\end{definitie}
+
+\begin{bewijs}{We bewijzen de eerste stelling van Rice}
+  Stel dat $M_\emptyset$ die de lege taal bepaalt, een eigenschap $P$ niet heeft. Omdat $P$ niet-triviaal is, moet er een machine $X$ bestaan die de taal $L_X$ bepaalt en de eigenschap $P$ wel heeft.
+
+  Stel dat er een beslisser $B$ bestaan voor $Pos_P$, dan kunnen we een beslisser $A$ voor $A_{TM}$ construeren. Voor een gegeven invoer $\langle M,s \rangle$ construeren we een hulpmachine $H_{M,s}$ waarvoor geldt
+  \begin{itemize}
+  \item $H_{M,s}$ laat $M$ lopen op $s$.
+  \item Als $M$ $s$ accepteert, dan laat $H_{M,s}$ $X$ lopen op een invoer $x$ en accepteert indien $X$ $x$ accepteert.
+  \end{itemize}
+  
+  We kunnen zeggen dat voor $H_{M,s}$ geldt dat het de taal $L_X$ bepaalt indien $M$ $s$ accepteert en de lege taal bepaalt indien $M$ $s$ niet accepteert. Dat wilt zeggen dat $H_{M,s}$ de eigenschap $P$ heeft indien $M$ $s$ accepteert en de eigenschap $P$ niet heeft indien $M$ $s$ niet accepteert.
+  
+  Bijgevolg kunnen we zeggen dat $A$ een invoer $\langle M,s \rangle$ accepteert als $B$ $H_{M,s}$ accepteert en de invoer verwerpt als $B$ $H_{M,s}$ verwerpt. Dus $A$ is een beslisser voor $\atm$, wat niet mogelijk is. Daarom kan de beslisser $B$ voor $Pos_P$ ook niet bestaan.
+  
+  We zeggen dat $\atm$ reduceerbaar is naar $Pos_P$.
+  
+  Als $M_\emptyset$ de eigenschap $P$ wel heeft, kunnen we het bewijs uitvoeren voor $\overline{P}$. Omdat we dan bewijzen dat $Pos_{\overline{P}} = Neg_P$ onbeslisbaar is, weten we dat ook $Pos_P = \overline{Neg_P}$ onbeslisbaar is.
+\end{bewijs}
+
+% TODO: Tweede stelling van Rice?
+% TODO: Post Correspondence Problem
+
+\subsection{Reductie}
+
+\begin{definitie}{Turing-berekenbare functie}
+  Een functie $f$ is Turing-berkenbaar als er een Turingmachine bestaat die bij een invoer van $s$, stopt met $f(s)$ op de band.
+\end{definitie}
+
+\begin{definitie}{Reductie van talen}
+  Een taal $L_1$ over $\Sigma_1$ kan gereduceerd worden naar een taal $L_2$ over $\Sigma_2$ als er een afbeelding \bm{$f: \sstar_1 \rightarrow \sstar_2$} bestaat zodanig dat $f(L_1) \subseteq L_2$ en $f(\overline{L_1}) \subseteq \overline{L_2}$ met $f$ een Turing-berkenbare functie.
+  \begin{equation*}
+  L_1 \leq_m L_2
+  \end{equation*}
+\end{definitie}
+
+\begin{itemize}
+\item Als $L_1 \leq_m L_2$ en $L_1$ is niet beslisbaar, dan is $L_2$ niet beslisbaar.
+\item Als $L_1 \leq_m L_2$ en $L_2$ is beslisbaar, dan is $L_1$ beslisbaar.
+\item Als $L_1 \leq_m L_2$ en $L_1$ is niet herkenbaar, dan is $L_2$ niet herkenbaar.
+\item Als $L_1 \leq_m L_2$ en $L_2$ is herkenbaar, dan is $L_1$ herkenbaar.
+\end{itemize}
+
+We kunnen bewijzen dat $\etm$ niet beslisbaar is met de functie $f$ die  $E(\langle M \rangle)$ afbeeldt op $EQ(\langle M,M_\emptyset \rangle)$. We noteren $\etm \leq_m \eqtm$.
+
+% TODO: Bewijs dat als L1 naar L2 reduceert, dat \overline{L1} ook naar \overline{L2} reduceert.
+% TODO: Bewijs EQ_TM is net herkenbaar en niet co-herkenbaar
+
+\subsection{Orakelmachines}
+
+\begin{definitie}{Orakelmachine}
+  Een orakelmachine is een Turingmachine die vragen kan stellen aan een orakel over een taal/probleem. Het orakel kan in een eindig (klein) aantal stappen een antwoord teruggeven aan de orakelmachine.
+\end{definitie}
+
+We kunnen een orakelmachine $\oatm$ bouwen die $\atm$ beslist. De verzameling van orakelmachines met $\oatm$ is strikt sterker van de verzameling van de Turingmachines omdat die meer talen beslist/herkent. Aangezien dat heel wat talen niet beslisbaar (of zelfs herkenbaar) zijn omdat $\atm$ niet beslisbaar is.
+
+\begin{bewijs}{We bewijzen dat er een $\oatm$ bestaat die $\etm$ beslist.}
+  We construeren een Orakelmachine $\oatm$. Bij input $\langle M \rangle$ doet $\oatm$:
+  \begin{itemize}
+  \item Construeer een Turingmachine $P$ die bij input $w$:
+  \begin{itemize}
+  \item $M$ laat lopen op alle strings van $\sstar$.
+  \item Als $M$ eender welke string van $\sstar$ accepteert, dan accepteert $P$ de input $w$. ($P$ accepteert voor eendere welke $w$ zo lang dat $M$ minstens \'e\'en string accepteert en dus niet de lege taal bepaalt.)
+  \end{itemize}
+  \item $\oatm$ vraagt aan het orakel of $\langle P,w \rangle \in \atm$.
+  \item Als het orakel ``ja'' antwoordt, dan verwerpt $\oatm$ de invoer, omdat $M$ niet de lege taal bepaalt. Anders accepteert het de invoer.
+  \end{itemize}
+  
+  $\oatm$ is een beslisser voor de taal $\etm$.
+\end{bewijs}
+
+\begin{definitie}{Turingreduceerbaarheid}
+  Een taal $A$ is Turingeduceerbaar naar een taal $B$ indien er een orakelmachine $O^B$ bestaat die $A$ beslist. We zeggen dat $A$ beslisbaar is t.o.v. $B$.
+  \begin{equation*}
+  A \leq_T B
+  \end{equation*}
+\end{definitie}
+
+\begin{itemize}
+\item Indien $A \leq_T B$ en $B$ is beslisbaar, dan is $A$ beslisbaar.
+\item $\leq_m$ is fijner dan $\leq_T$, dus $A \leq_m B \rightarrow A \leq_T B$
+\end{itemize}
+
+De taal $\{O|O\text{ is een orakelmachine met een orakel voor }\atm\}$ kan niet elke taal beslissen want die verzameling is aftelbaar en de verzameling van alle talen $\l_\Sigma$ is niet-aftelbaar. Dus er bestaat minstens \'e\'en taal X die niet beslisbaar is met de hulp van een orakel voor $\atm$.
+
+% TODO: Turingberekenbare functies!!
+% TODO: Bezige bever en stijgende functies
+
+\newpage\section{$\Lambda$-calculus}
+
+$\lambda$-calculus is een herschijfsysteem dat de basis vormt voor functionele programmeertalen zoals Haskell.
+
+\begin{definitie}{$\lambda$-expressie}
+  Een $\lambda$-expressie $<exp>$ kan \'e\'en van de volgende vormen aannemen:
+  \begin{itemize}
+  \item $<const>$: Een constante.
+  \item $<var>$: Een variabele.
+  \item $<exp> <exp>$: De toepassing van een functie op een argument.
+  \item $\lambda<var>. <exp>$: Een $\lambda$-abstractie die een variabele bindt.
+  \item $(<exp>)$: Een expressie omsloten door haakjes.
+  \end{itemize}
+\end{definitie}
+
+\begin{definitie}{Currying}
+  Het toepassen van een functie in een $\lambda$-expressie kan steeds maar op \'e\'en argument. Currying is een techniek die wordt toegepast om een functie te herschrijven naar een opeenvolging van functietoepassingen op telkens \'e\'en element.
+\end{definitie}
+
+Een simpel voorbeeld van currying is de functie $+$ voor natuurlijke getallen:\\
+\bm{$+: \nat \times \nat \rightarrow \nat$}\\
+$(+\ a\ b)$
+
+Deze functie wordt d.m.v. currying vertaalt naar:\\
+\bm{$+: \nat \rightarrow (\nat \rightarrow \nat)$}\\
+$((+\ a)\ b)$
+
+Bij bovenstaande functie is $(+\ a)$ een functie die een getal $i$ afbeeldt op $a + i$.
+
+\begin{definitie}{Deel-expressie}
+  Een deel-expressie van een $\lambda$-expressie is een geneste $\lambda$-expressie.
+\end{definitie}
+
+\begin{definitie}{Redex}
+  Een deel-expressie van een $\lambda$-expressie is een redex indien zijn parameters getallen zijn en de expressie reduceerbaar is.
+\end{definitie}
+
+\begin{definitie}{Reductie}
+  Een reductie is het reduceren van de redex in een $\lambda$-expressie door meestal een functie evaluatie uit te voeren. Gewoonlijk wordt de meest linkse redex eerst gereduceerd.
+\end{definitie}
+
+\begin{definitie}{Normaalvorm}
+  Een $\lambda$-expressie in normaalvorm is een expressie die geen redex bevat. Niet elke $\lambda$-expressie heeft een normaalvorm. Indien er een equivalente normaalvorm bestaat voor een expressie, dan bestaat er een rij reductieregels die die expressie omvormen tot de normaalvorm.
+\end{definitie}
+
+\begin{definitie}{$\lambda$-abstractie}
+  Een $\lambda$-abstractie is een functie definitie van de vorm:
+  \begin{itemize}
+  \item $\lambda$
+  \item $<var>$: \'E\'en variabele.
+  \item $.$: Dit punt scheidt de definitie van de variabele van het lichaam van de functie.
+  \item $<exp>$: De expressie die aangeeft hoe de functie moet berekent worden.
+  \end{itemize}
+\end{definitie}
+
+Een alternatieve notatie voor een $\lambda$-expressie met twee (of meerdere) variabelen bestaat ook. Een voorbeeld: $(\lambda x\ y.(+\ x\ y)) = (\lambda x.(\lambda y.(+\ x\ y)))$
+
+\begin{definitie}{Vrije/gebonden variabele}
+  Een variabele in een $\lambda$-expressie is gebonden indien die expressie genest is in een $\lambda$-abstractie die de variabele met die naam definieert. Een variabele die vrij is, is niet gedefinieerd. We zeggen dat een variabele $x$ vrij is in een expressie $E$ indien:
+  \begin{itemize}
+  \item $E == x$
+  \item $E == (A\ B)$ en er is een vrij voorkomen van $x$ in $A$ of $B$.
+  \item $E == (\lambda y. A)$ en $x \neq y$ en er is een vrij voorkomen van $x$ in $A$
+  \end{itemize}
+\end{definitie}
+
+Een variabele gedefinieerd in een $\lambda$-abstractie wordt gebonden aan alle vrije voorkomens van die variabele in de deelexpressie (en verder geneste deelexpressies) van die $\lambda$-abstractie.
+
+\subsection{Herschrijfregels van $\lambda$-calculus}
+
+Elke conversie regel is een samenstelling van een reductieregel ($\longrightarrow$) en een abstractieregel ($\longleftarrow$) die een equivalentie beschrijft. Een abstractie is de inverse operatie van een reductie. Twee expressies $A$ en $B$ zij equivalent onder een rij conversie als $\stackrel{*}{\longleftrightarrow}$. Indien er een rij reducties bestaat die $A$ naar $B$ reduceert, schrijven we $\stackrel{*}{\longrightarrow}$.
+
+\begin{definitie}{$\beta$-reductie}
+  $\beta$-reductie ($\stackrel{\beta}{\longrightarrow}$) is een syntactische herschrijfregel die een $\lambda$-abstractie herschrijft naar het lichaam van die $\lambda$-abstractie met de formele parameter vervangen door het argument. Deze reductie wordt gebruikt bij een functietoepassing.
+\end{definitie}
+
+Een voorbeeld van $\beta$-reductie: $(\lambda x.\ +\ x\ x)\ 5 \stackrel{\beta}{\longrightarrow} +\ 5\ 5$.
+
+\begin{definitie}{$\beta$-abstractie}
+  $\beta$-abstractie ($\stackrel{\beta}{\longleftarrow}$) is een syntactische herschrijfregel die de inverse operatie van een $\beta$-reductie uitvoert door een expressie in een $\lambda$-abstractie te plaatsen en \'e\'en (of meerdere gelijke) deelexpressies te vervangen door de formele parameter, zodanig dat de expressie een argument wordt.
+\end{definitie}
+
+Een voorbeeld van $\beta$-abstractie: $+\ 5\ 5 \stackrel{\beta}{\longrightarrow} (\lambda x.\ +\ x\ x)\ 5$.
+
+\begin{definitie}{$\alpha$-reductie of $\alpha$-abstractie}
+  $\alpha$-reductie ($\stackrel{\alpha}{\longrightarrow}$) is een herschrijfregel (hernoemingsregel) die alle vrije voorkomens van de formele parameter in het lichaam van een $\lambda$-abstractie hernoemt. De $\alpha$-abstractie operatie is identiek aan $\alpha$-reductie ($\stackrel{\alpha}{\longleftarrow}$), dus kunnen voor beiden de term $\alpha$-conversie ($\stackrel{\alpha}{\longleftrightarrow}$) gebruiken.
+\end{definitie}
+
+Een voorbeeld van $\alpha$-conversie: $(\lambda x.\ +\ x\ x) \stackrel{\alpha}{\longleftrightarrow} (\lambda y.\ +\ y\ y)$.
+
+\begin{definitie}{$\eta$-reductie of $\eta$-abstractie}
+  $\eta$-reductie ($\stackrel{\eta}{\longrightarrow}$) is een herschrijfregel die een functietoepassing waaraan een $\lambda$-abstractie slechts een parameter doorgeeft herschrijft naar zijn equivalent zonder de $\lambda$-abstractie. De $\eta$-abstractie operatie is de inverse van $\eta$-reductie ($\stackrel{\eta}{\longleftarrow}$). We spreken over een regel die equivalentie aantoont dus wordt meestal $\eta$-conversie ($\stackrel{\eta}{\longleftrightarrow}$) gebruikt.
+\end{definitie}
+
+Een voorbeeld van $\eta$-conversie: $(\lambda x.\ F\ x) \stackrel{\eta}{\longleftrightarrow} F$.
+
+% TODO: Name capture problem
+
+\begin{definitie}{$\delta$-reductie of $\delta$-abstractie}
+  $\delta$-reductie ($\stackrel{\delta}{\longrightarrow}$) is een herschrijfregel die functies intern aan de taal toepast op een argument in de expressie. De $\delta$-abstractie operatie is de inverse van $\delta$-reductie die een expressie vervangt door een expressie en een interne operatie die samen equivalent zijn aan de originele expressie.
+\end{definitie}
+
+Een voorbeeld van $\delta$-conversie: $+\ 5\ 5 \stackrel{\delta}{\longleftrightarrow} 10$.
+
+% TODO: Church numerals
+
+\begin{definitie}{Oneindige lus}
+  Een oneindige lus is een expressie die nooit in normaalvorm kan gebracht worden. Een oneindige lus kan zeer makkelijk gemodelleerd worden als $(\lambda x. x\ x)(\lambda x. x\ x)$ omdat bij elke reductie terug dezelfde expressie verkregen wordt.
+\end{definitie}
+
+\subsection{Reductie in normaalorde}
+
+\begin{definitie}{Church-Rosser I (CR1)}
+  Church-Rosser I verwijst naar de eerste stelling van Church en Rosser. Die stelling zegt dat indien $E_1 \stackrel{*}{\longleftrightarrow} E_2$ geldt, dat er een expressie $E$ moet bestaan in normaalvorm zodanig dat $E_1 \stackrel{*}{\longrightarrow} E$ en $E_2 \stackrel{*}{\longrightarrow} E$.
+\end{definitie}
+
+\begin{bewijs}{We bewijzen de uniciteit van de normaalvorm.}
+  Stel dat $E \stackrel{*}{\longleftrightarrow} E_1$ en $E \stackrel{*}{\longleftrightarrow} E_2$ gelden, waarbij dat $E_1$ en $E_2$ in normaalvorm staan. Dan moet gelden dat $E_1 \stackrel{*}{\longleftrightarrow} E_2$. Volgend CR1 moet dan gelden dat er een normaalvorm $F$ bestaat zodanig dat $E_1 \stackrel{*}{\longleftrightarrow} F$ en $E_2 \stackrel{*}{\longleftrightarrow} F$. Omdat $E_1$ en $E_2$ reeds in normaalvorm staan, zijn er in geen van beiden expressies nog redexen die gereduceerd kunnen worden, dus concluderen we dat (eventuaal onder $\alpha$-conversie) $E_1 = F = E_2$.
+\end{bewijs}
+
+\begin{definitie}{Reductie in normaalorde}
+Bij reductie in normaalorde wordt steeds de meest linkse buitenste redex eerst gereduceerd.
+\end{definitie}
+
+Reductie in normaalorde garandeert dat een normaalvorm gevonden wordt (indien mogelijk), maar is niet noodzakelijk optimaal. Het is mogelijk dat een andere reductieorde een reductierij oplevert met minder stappen. Een voorbeeld daarvan is de ``call-by-value'' techniek, waarbij eerst een argument voor een functie wordt gereduceerd. Een expressie die wordt doorgegeven als argument voor reductie, kan mogelijk meerdere keren ge\"evalueerd worden.
+
+\begin{definitie}{Church-Rosser II (CR2)}
+  Church-Rosser II verwijst naar de tweede stelling van Church en Rosser. Die stelling zegt dat indien $E \stackrel{*}{\longleftrightarrow} N$  bestaat met $N$ in normaalvorm, dat er een rij reducties moet bestaan in normaal orde van $E$ naar $N$.
+\end{definitie}
+
+\begin{definitie}{Turing-equivalente $\lambda$-calculus}
+  \label{def:tmlambda}
+  $\lambda$-calculus kan alle Turing-berekenbare functies voorstellen, omdat:
+  \begin{itemize}
+  \item De reductie naar normaalvorm van een expressie heeft steeds slechts \'e\'en resultaat als die reductie een eindig aantal stappen heeft, namelijk de redex, ongeacht de reductieorde. We weten dat een Turingmachine slechts \'e\'en taal bepaalt.
+  \item Wanneer een expressie niet naar normaalvorm gereduceerd kan worden, is er een lus waardoor de reductie nooit eindigt. Ook de uitvoering van een Turingmachine stopt niet altijd.
+  \end{itemize}
+\end{definitie}
+
+Uit definitie \ref{def:tmlambda} volgt dat elke Turingmachine in $\lambda$-calculus kan worden voorgesteld. $\lambda$-calculus en Turingmachine zijn equivalent, dus ook elke $\lambda$-calculus expressie moet door een Turingmachine ge\"evalueerd kunnen worden.
+
+\subsection{Recursieve functies}
+
+Indien een $\lambda$-calculus toelaat om functies bij naam te defini\"eren of naar zichzelf te laten verwijzen, is het mogelijk om recursieve functies op te stellen. Dat is echter ook mogelijk in pure $\lambda$-calculus met een vastpuntcombinator.
+
+\begin{definitie}{Vastpuntcombinator}
+  Een vastpuntcombinator (FPC) is een functie $Y$ die voldoet aan
+  \begin{equation*}
+  F: Y\ F = F\ (Y\ F)
+  \end{equation*}
+  De vastpuntcombinator van Curry wordt het vaak gebruikt en is gedefinieerd als
+  \begin{equation*}
+  \lambda f.\ (\lambda x.\ f\ (x\ x))\ (\lambda x.\ f\ (x\ x))
+  \end{equation*}
+\end{definitie}
+
+% TODO: Programmeertalen
 
 \include{voorbeelden}
 \include{examenvragen}
