@@ -14,6 +14,7 @@
 \usepackage{bm}
 \usepackage{pifont}
 \usepackage{tabularx}
+\usepackage{hyperref}
 \usepackage{tikz}
 \usetikzlibrary{arrows,automata,calc,fit,positioning}
 \usepackage{chngcntr}
@@ -61,7 +62,7 @@
   {\end{proof}\end{mdframed}}
  
 \newenvironment{nfa}%
-  {\begin{tikzpicture}[->,
+  {\begin{center}\begin{tikzpicture}[->,
     >=stealth',
     shorten >=1pt,
     auto,
@@ -70,10 +71,10 @@
   \tikzstyle{every state}=[fill=none,draw=black,text=black]
   \tikzstyle{accepting}=[accepting by double]
   \tikzstyle{every initial by arrow}=[initial text=]}%
-  {\end{tikzpicture}}
+  {\end{tikzpicture}\end{center}}
  
 \newenvironment{pda}%
-  {\begin{tikzpicture}[->,
+  {\begin{center}\begin{tikzpicture}[->,
     >=stealth',
     shorten >=1pt,
     auto,
@@ -82,7 +83,19 @@
   \tikzstyle{every state}=[fill=none,draw=black,text=black]
   \tikzstyle{accepting}=[accepting by double]
   \tikzstyle{every initial by arrow}=[initial text=]}%
-  {\end{tikzpicture}}
+  {\end{tikzpicture}\end{center}}
+ 
+\newenvironment{ugraph}%
+  {\begin{center}\begin{tikzpicture}[
+    >=stealth',
+    shorten >=1pt,
+    auto,
+    node distance=2cm,
+    semithick]
+  \tikzstyle{every state}=[fill=none,draw=black,text=black]
+  \tikzstyle{accepting}=[accepting by double]
+  \tikzstyle{every initial by arrow}=[initial text=]}%
+  {\end{tikzpicture}\end{center}}
   
 \newenvironment{enumalgo}%
   {\begin{enumerate}[leftmargin=1.5cm,label=Stap \arabic*:]}%
@@ -243,6 +256,26 @@ Een algebra is een verzameling met daarop een aantal inwendige operaties.
   \\ $\forall X \subseteq L: \bigwedge_X \in L \en \bigvee_X \in L$
 \end{definitie}
 
+\subsection{Grafentheorie}
+
+\begin{definitie}{Enkelvoudige graaf}
+  Een enkelvoudige graaf is een graaf waarbij tussen een paar knopen hoogstens \'e\'n boog loopt.
+\end{definitie}
+
+\begin{definitie}{Ongerichte graaf}
+  Een ongerichte graaf is een graaf waarbij geen enkele boog tussen een paar knopen voorzien is van een richting/pijl.
+\end{definitie}
+
+\begin{definitie}{Complementgraaf}
+  \label{def:graphcomplement}
+  Een complementgraaf is een enkelvoudige graaf $G$ die dezelfde knopen heeft als een enkelvoudige graaf $H$ en een boog heeft tussen elk paar knopen, waarvoor $H$ geen boog heeft.
+\end{definitie}
+
+\begin{definitie}{Component van een graaf}
+  \label{def:graphcomponent}
+  Een component van een (enkelvoudige ongerichte) graaf $G$ is deelgraaf die bestaat uit een verzameling knopen van $G$ die onderling verbonden zijn. Als een component $G$ een knoop $v$ bevat, dan moet het ook elke knoop bevatten die bereikbaar is vanuit $v$.
+\end{definitie} 
+  
 \newpage\section{Inleiding talen}
 
 \begin{definitie}{Een alfabet $\Sigma$}
@@ -507,16 +540,25 @@ Een NFA kan omgezet worden naar reguliere expressie door de NFA eerst om te zett
 
 \begin{definitie}{Een complete DFA}
   \label{def:cdfa}
-  Een DFA is compleet wanneer de overgangsfunctie $\delta$ totaal is. D.w.z. dat voor elke $a \in \Sigma$ een overgang mogelijk is vanuit elke toestand. Definitie \ref{def:dfa} beschrijft een parti\"ele DFA. Een parti\"ele (niet-complete) DFA kan omgevormd worden tot een complete DFA door een extra toestand $q_t$ toe te voegen waar alle niet-acceptabele strings in vast komen te zitten. We bepalen een nieuwe overgangsfunctie $\delta'$ voor $Q' = Q \cup \{q_t\}$:
+  Een DFA is compleet wanneer de overgangsfunctie $\delta$ totaal is. D.w.z. dat voor elke $a \in \Sigma$ een overgang mogelijk is vanuit elke toestand. Definitie \ref{def:dfa} beschrijft een parti\"ele DFA, elke complete DFA is uiteraard ook een parti\"ele DFA.
+\end{definitie}
+
+\begin{algoritme}{Parti\"ele naar complete DFA}
+  \label{alg:cdfa}
+  Indien de parti\"ele DFA niet reeds een complete DFA is, construeren we een equivalente complete DFA als volgt:
+  \begin{enumalgo}
+  \item We bepalen een nieuwe verzameling toestanden $Q' = Q \cup \{q_t\}$, met een nieuwe toestand $q_t$.
+  \item We bepalen een nieuwe overgangsfunctie $\delta'$ voor $Q' = Q \cup \{q_t\}$ waarvoor geldt
   \begin{equation*}
   \forall q \in Q', a \in \Sigma: \delta'(q, a) = \begin{cases}
     \delta(q, a), & \text{als}\ \delta(q, a) \neq \phi\\
     q_t & \text{anders}
   \end{cases}
   \end{equation*}
-\end{definitie}
+  \end{enumalgo}
+\end{algoritme}
 
-Definitie \ref{def:cdfa} impliceert ook dat voor elke $a \in \Sigma$ een overgang bestaat van $q_t$ naar $q_t$, waarin $t$ staat voor ``trash".
+Algoritme \ref{alg:cdfa} impliceert ook dat voor elke $a \in \Sigma$ een overgang $\delta(q_t,a)=q_t$ bestaat van $q_t$ naar $q_t$, waarin $t$ staat voor ``trash''. Bovendien kunnen er ook bogen bestaan van $q \in F$ naar $q_t$. Een voorbeeld van hoe een complete DFA voor een gegeven parti\"ele DFA eruit ziet wordt gegeven in sectie \ref{ex:dfatotal}.
 
 De complete DFA wordt voornamelijk gebruikt in praktijk. Verder in dit document wordt vaak gebruik gemaakt van een DFA met de assumptie dat $\delta$ een totale functie is. Daarbij wordt impliciet gesteld dat voor een niet-complete DFA eerst de constructie van de equivalente complete DFA wordt uitgevoerd.
 
@@ -572,15 +614,66 @@ Elke reguliere taal wordt bepaald door een DFA, omdat elke reguliere taal wordt 
   Twee toestanden zijn finaal-verschillend indien ze niet f-gelijk zijn.
 \end{definitie}
 
-Een minimale DFA wordt opgesteld door f-gelijke toestanden samen te nemen. Om het minimaliseren te vergemakkelijken stellen we een totale functie  $\delta'$ op van $\delta$ waarbij in elke toestand voor elk ontbrekend symbool uit het alfabet een overgang wordt toegevoegd zodanig dat $\delta'(q_i, a)=q_i$.
+\begin{algoritme}{f-gelijke toestanden bepalen}
+  \label{alg:dfafeq}
+  We stellen een graaf V op met als knopen de toestanden van een gegeven DFA. We duiden een boog in $V$ tussen twee knopen $q_1$ en $q_2$ aan als $(q_1,q_2) \in V$.
+  \begin{enumalgo}
+  \item We voegen aan de graaf V een boog toe tussen elk paar knopen waarvan er precies \'e\'en in $F$ zit.
+  \item Indien er een paar knopen $p$ en $q$ bestaat, zodanig dat $(p,q) \notin V$ en $\exists a \in \Sigma: (\delta(p, a),\delta(q, a)) \in V$, dan:
+  \begin{itemize}
+  \item Voeg een boog $(p,q)$ toe aan $V$.
+  \item Herhaal stap 2.
+  \end{itemize}
+  Anders, ga naar stap 3.
+  \item Stel de complementsgraaf (definitie \ref{def:graphcomplement}) $G$ van $V$ op. De toestanden van elk component (definitie \ref{def:graphcomponent}) van $G$ zijn onderling f-gelijk. De toestanden van twee verschillende componenten van $G$ zijn f-verschillend van elkaar.
+  \end{enumalgo}
+\end{algoritme}
 
-% TODO: Algoritme minimale DFA
+Sectie \ref{ex:dfafeq} toont een voorbeeld van algoritme \ref{alg:dfafeq} om de f-gelijke toestanden van een DFA te bepalen.
+
+We kunnen een equivalentierelatie $\sim_f$ defini\"eren over $Q$ zodanig dat
+\begin{equation*}
+A \sim_f B \Leftrightarrow A \text{ en } B \text{ zijn f-gelijk}
+\end{equation*}
+De equivalentieklassen gedefinieerd door $\sim_f$ bevatten alle toestanden die we moeten samennemen om een DFA te minimaliseren.
+
+\begin{algoritme}{f-gelijke toestanden bepalen (Alternatief)}
+  \label{alg:dfafeqpart}
+  We geven een alternatieve aanpak voor het bepalen van f-gelijke toestanden, door een partitie van de toestanden in $Q$ te verfijnen (definitie \ref{def:partfine}). Deze methode werkt op dezelfde wijze als de methode beschreven in algoritme \label{alg:dfafeq}, maar is in praktijk vaak makkelijker om manueel uit te voeren.
+  \begin{enumalgo}
+  \item We weten dat alle eindtoestanden f-verschillend zijn van alle andere toestanden. Daarom stellen we een partitie op van Q zodanig dat $P_0 = \{F, Q-F\}$.
+  \item Bij de $i$-de iteratie verfijnen we de partitie $P_{i-1}$ zodanig dat $P_i \leq P_{i-1}$. Elk paar toestanden dat voor elk symbool een overgang heeft naar de zelfde deelverzameling van de partitie $P_{i-1}$ nemen we nu samen in een deelverzameling $P_i$. Herhaal stap 2 tot $P_i = P_{i-1}$, dan is $P_i$ een partitie van $Q$ zodanig dat de toestanden van elke deelverzameling van $P_i$ f-verschillend zijn van die van elke andere deelverzameling.
+  \end{enumalgo}
+\end{algoritme}
+
+Sectie \ref{ex:dfafeqpart} beschrijft een voorbeeld van het alternatief algoritme (\ref{alg:dfafeqpart}) om de f-gelijke toestanden van een DFA te bepalen.
+
+\begin{definitie}{Minimale DFA}
+  Een minimale DFA is een DFA waarvan men kan zeggen dat het niet mogelijk is om een equivalente DFA op te stellen met minder toestanden die dezelfde taal bepaalt.
+\end{definitie}
+
+\begin{algoritme}{DFA naar DFA$_{min}$}
+  \label{alg:dfamin}
+  \begin{enumalgo}
+  \item Verwijder alle toestanden van waaruit het niet mogelijk is om een eindtoestand $q \in F$ te bereiken en alle toestanden die niet bereikbaar zijn.
+  \item Transformeer (indien nodig) de DFA naar een volledige DFA met algoritme \ref{alg:cdfa}.
+  \item Bepaal de f-gelijke toestanden van de DFA met algoritme \ref{alg:dfafeq}.
+  \item Neem alle f-gelijke toestanden samen in een enkele toestand, zodanig dat alle uitgaande bogen van alle f-gelijke toestanden nu uit hun gecombineerde toestand vertrekken en alle bogen die toekwamen in de f-gelijke toestanden nu toekomen in hun gecombineerde toestand.
+  \item Verwijder (indien toegevoegd in stap 2) de toestand $q_t$, vanuit deze toestand is het niet mogelijk om de eindtoestand te bereiken.
+  \end{enumalgo}
+  De resulterende DFA is een minimale DFA.
+\end{algoritme}
+
+Sectie \ref{ex:dfamin} toont een voorbeeld van de minimalisatie van een DFA, gebruikmakende van algoritme \ref{alg:dfamin}.
+
 % TODO: Bewijs minimale DFA heeft minimaal aantal toestanden
 % TODO: Isomorfe DFA's
+% TODO: NFA kleiner dan DFA_min?
 
 \subsection{Myhill-Nerode relaties op $\sstar$}
 
 \begin{definitie}{$\partition_1$ is fijner dan $\partition_2$}
+  \label{def:partfine}
   Als een partie $\partition_1$ fijner is dan een $\partition_2$, dan zit elk element van $\partition_1$ vervat in een element van $\partition_2$. $\{\partition_1$, $\partition_2\}$ vormt een tralie waar geldt dat $\partition_1 \leq \partition_2$.
 \end{definitie}
 
@@ -1011,7 +1104,11 @@ Niet alle talen $L \in L_\Sigma$ zijn herkenbaar.
 % TODO: Berkeningen van een TM voorstellen en nabootsen
 % TODO: Deterministische Turinmachines
 % TODO: Encodering
-% TODO: Universele Turingmachine
+
+\begin{definitie}{Universele Turingmachine}
+  \label{def:utm}
+  Een universele Turingmachine (UTM) is een Turingmachine die andere TM's kan simuleren. Een UTM heeft een programmaband waar een encodering (transitietabel, $q_s$, $q_a$, $q_r$, ...) van een TM wordt ingegeven. Vervolgens wordt een inputstring $s$ ingegeven op een geheugenband. De UTM is vervolgens in staat om de originele TM te simuleren op basis van het ingegeven ``programma'' en dezelfde uitvoer te genereren.
+\end{definitie}
 
 \begin{definitie}{Het acceptatieprobleem voor TM's}
   Het acceptatieprobleem is de vraag of het mogelijk is om voor een gegeven Turingmachine $M$ en gegeven string $s$ te bepalen of $M$ $s$ accepteert.
@@ -1044,6 +1141,7 @@ We kunnen nu zeggen dat de machine $C$ niet kan bestaan, dus de beslisser $B$ ka
 \end{bewijs}
 
 \begin{definitie}{Het Halting-probleem voor TM's}
+  \label{def:htm}
   Het Halting-probleem is de vraag of het mogelijk is om voor een gegeven Turingmachine $M$ en gegeven string $s$ te bepalen of $M$ stopt bij de invoer van $s$ m.a.w. dat $M$ $S$ accepteert of verwerpt.
   \begin{equation*}
   \htm = \{\langle M,s \rangle | M\text{ is een Turingmachine die stopt bij invoer }s \in L_M\}
@@ -1257,7 +1355,7 @@ De taal $\{O|O\text{ is een orakelmachine met een orakel voor }\atm\}$ kan niet 
 % TODO: Turingberekenbare functies!!
 % TODO: Bezige bever en stijgende functies
 
-\newpage\section{$\Lambda$-calculus}
+\newpage\section{Lambda calculus}
 
 $\lambda$-calculus is een herschijfsysteem dat de basis vormt voor functionele programmeertalen zoals Haskell.
 
@@ -1325,7 +1423,7 @@ Een alternatieve notatie voor een $\lambda$-expressie met twee (of meerdere) var
 
 Een variabele gedefinieerd in een $\lambda$-abstractie wordt gebonden aan alle vrije voorkomens van die variabele in de deelexpressie (en verder geneste deelexpressies) van die $\lambda$-abstractie.
 
-\subsection{Herschrijfregels van $\lambda$-calculus}
+\subsection{Herschrijfregels van lambda calculus}
 
 Elke conversie regel is een samenstelling van een reductieregel ($\longrightarrow$) en een abstractieregel ($\longleftarrow$) die een equivalentie beschrijft. Een abstractie is de inverse operatie van een reductie. Twee expressies $A$ en $B$ zij equivalent onder een rij conversie als $\stackrel{*}{\longleftrightarrow}$. Indien er een rij reducties bestaat die $A$ naar $B$ reduceert, schrijven we $\stackrel{*}{\longrightarrow}$.
 
@@ -1387,16 +1485,25 @@ Reductie in normaalorde garandeert dat een normaalvorm gevonden wordt (indien mo
   Church-Rosser II verwijst naar de tweede stelling van Church en Rosser. Die stelling zegt dat indien $E \stackrel{*}{\longleftrightarrow} N$  bestaat met $N$ in normaalvorm, dat er een rij reducties moet bestaan in normaal orde van $E$ naar $N$.
 \end{definitie}
 
+\begin{definitie}{Turing-compleetheid}
+  \label{def:tmcompleet}
+  Een systeem is Turing-compleet indien het elke Turing-berekenbare functie kan voorstellen. Zulk systeem kan ook een Universele Turingmachine (definitie \ref{def:utm}) simuleren.
+\end{definitie}
+
+\begin{definitie}{Turing-equivalentie}
+  Een systeem is Turing-equivalent indien het Turing-compleet is (definitie \ref{def:tmcompleet}) en indien het kan gesimuleerd worden door een Universele Turingmachine (definitie \ref{def:utm}).
+\end{definitie}
+
 \begin{definitie}{Turing-equivalente $\lambda$-calculus}
   \label{def:tmlambda}
-  $\lambda$-calculus kan alle Turing-berekenbare functies voorstellen, omdat:
+  $\lambda$-calculus is Turing-equivalent omdat het alle Turing-berekenbare functies voorstellen kan voorstellen en bovendien de verzameling van functies die het kan voorstellen even sterk is als die van Turingmachines. Turing-compleetheid van $\lambda$-calculus volgt intu\"itief uit de volgende eigenschappen:
   \begin{itemize}
   \item De reductie naar normaalvorm van een expressie heeft steeds slechts \'e\'en resultaat als die reductie een eindig aantal stappen heeft, namelijk de redex, ongeacht de reductieorde. We weten dat een Turingmachine slechts \'e\'en taal bepaalt.
-  \item Wanneer een expressie niet naar normaalvorm gereduceerd kan worden, is er een lus waardoor de reductie nooit eindigt. Ook de uitvoering van een Turingmachine stopt niet altijd.
+  \item Wanneer een expressie niet naar normaalvorm gereduceerd kan worden, is er een lus waardoor de reductie nooit eindigt. Het Halting-probleem (definitie \ref{def:htm}) bestaat dus ook voor $\lambda$-calculus, net zoals ook de uitvoering van een Turingmachine stopt niet altijd.
   \end{itemize}
 \end{definitie}
 
-Uit definitie \ref{def:tmlambda} volgt dat elke Turingmachine in $\lambda$-calculus kan worden voorgesteld. $\lambda$-calculus en Turingmachine zijn equivalent, dus ook elke $\lambda$-calculus expressie moet door een Turingmachine ge\"evalueerd kunnen worden.
+Intu\"itief is het makkelijk voor te stellen dat er voor elke Turingmachine die een taal $L_{TM}$ bepaalt een Turing-berekenbare functie bestaat die voor elke string $s \in L_{TM}$, $accept$ als uitvoer geeft en voor elke string $s \in \overline{L_{TM}}$, $reject$ als uitvoer geeft. Omdat $\lambda$-calculus Turing-compleet is moet er een $\lambda$-expressie bestaan die hetzelfde doet. Omgekeerd is het ook logisch dat er een Turing-berekenbare functie bestaat die een $\lambda$-expressie kan afbeelden op zijn normaalvorm.
 
 \subsection{Recursieve functies}
 
@@ -1407,7 +1514,7 @@ Indien een $\lambda$-calculus toelaat om functies bij naam te defini\"eren of na
   \begin{equation*}
   F: Y\ F = F\ (Y\ F)
   \end{equation*}
-  De vastpuntcombinator van Curry wordt het vaak gebruikt en is gedefinieerd als
+  De vastpuntcombinator van Curry wordt veel gebruikt en is gedefinieerd als
   \begin{equation*}
   \lambda f.\ (\lambda x.\ f\ (x\ x))\ (\lambda x.\ f\ (x\ x))
   \end{equation*}

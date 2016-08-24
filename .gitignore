@@ -6,6 +6,7 @@ rev
 *.pdf
 *.synctex.gz
 *.toc
+*.out
 
 % Latexmk
 *.fls

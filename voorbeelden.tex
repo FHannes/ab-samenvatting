@@ -123,3 +123,212 @@ Reductie 3:\\
 \end{nfa}
 
 \paragraph{Stap 3} De RE voor de NFA is ``$b^*a(a|b)^*$".
+
+\subsection{Parti\"ele DFA naar complete DFA}
+\label{ex:dfatotal}
+
+\textit{In dit voorbeeld laten we de bogen van $q \in F$ naar $q_t$ weg om de leesbaarheid te bevorderen. Het is echter belangrijk deze niet te vergeten om een echte complete DFA te vormen!}
+
+\begin{nfa}
+  \node[initial,state]   (q1)               {$q_1$};
+  \node[state]           (q3) [right of=q1] {$q_3$};
+  \node[state]           (q2) [above of=q3] {$q_2$};
+  \node[state,accepting] (q4) [right of=q3] {$q_4$};
+  \node[state]           (q5) [below of=q3] {$q_5$};
+  
+  \path (q1) edge [] node {$a$} (q2)
+             edge [] node {$b$} (q3)
+             edge [] node {$c$} (q5)
+        (q2) edge [] node {$c$} (q4)
+        (q3) edge [] node {$c$} (q4)
+        (q5) edge [] node {$d$} (q4);
+  \addvmargin{1mm}
+\end{nfa}
+
+Voor de gegeven DFA doen we de omzetting $\delta_{partieel} \longrightarrow \delta_{totaal}$. We voegen een ``trash'' toestand toe waar we alle ontbrekende bogen naar afleiden.
+
+\begin{nfa}
+  \node[initial,state]   (q1)               {$q_1$};
+  \node[state]           (q3) [right of=q1] {$q_3$};
+  \node[state]           (q2) [above of=q3] {$q_2$};
+  \node[state,accepting] (q4) [right of=q3] {$q_4$};
+  \node[state]           (q5) [below of=q3] {$q_5$};
+  \node[state,dashed]    (qt) [left of=q1]  {$q_t$};
+  
+  \path (q1) edge []                  node              {$a$}       (q2)
+             edge []                  node              {$b$}       (q3)
+             edge []                  node              {$c$}       (q5)
+             edge [dashed,bend right] node [above]      {$d$}       (qt)
+        (q2) edge []                  node              {$c$}       (q4)
+             edge [dashed,bend right] node [above left] {$a,b,d$}   (qt)
+        (q3) edge []                  node              {$c$}       (q4)
+             edge [dashed,bend left]  node              {$a,b,d$}   (qt)
+        (q5) edge []                  node              {$d$}       (q4)
+             edge [dashed,bend left]  node              {$a,b,c$}   (qt)
+        (qt) edge [dashed,loop left]  node              {$a,b,c,d$} (qt);
+  \addvmargin{1mm}
+\end{nfa}
+
+De resulterende automaat is nog steeds een geldige DFA, maar heeft nu de toestand $q_t$ van waaruit het niet mogelijk is om de eindtoestand $q_4$ te bereiken.
+
+\subsection{DFA f-gelijk}
+\label{ex:dfafeq}
+
+We willen de f-gelijke toestanden van een DFA bepalen waarvan we eerst de parti\"ele overgangsfunctie totaal hebben gemaakt. We nemen het resultaat van het voorbeeld in sectie \ref{ex:dfatotal}.
+
+We beginnen met de initiatie van het algoritme om de f-gelijke toestanden te bepalen en stellen de initi\"ele graaf $V$.
+
+\begin{ugraph}
+  \node[state]        (q1)                     {$q_1$};
+  \node[state]        (q2) [above right of=q1] {$q_2$};
+  \node[state]        (q3) [right of=q2]       {$q_3$};
+  \node[state]        (q4) [below right of=q3] {$q_4$};
+  \node[state]        (q5) [below left of=q4]  {$q_5$};
+  \node[state,dashed] (qt) [left of=q5]        {$q_t$};
+  
+  \path (q1) edge []       node {} (q4)
+        (q2) edge []       node {} (q4)
+        (q3) edge []       node {} (q4)
+        (q5) edge []       node {} (q4)
+        (qt) edge [dashed] node {} (q4);
+  \addvmargin{1mm}
+\end{ugraph}
+
+We kiezen twee willekeurige knopen die nog ``onbeslist'' zijn, of m.a.w. die nog niet verbonden zijn in $V$. We nemen $q_1$ en $q_5$ en vinden dat $(\delta(q_1, d), \delta(q_5, d)) = (q_t, q_4) \in V$. We voegen de boog $(q_1, q_5)$ toe aan $V$.
+
+\begin{ugraph}
+  \node[state]        (q1)                     {$q_1$};
+  \node[state]        (q2) [above right of=q1] {$q_2$};
+  \node[state]        (q3) [right of=q2]       {$q_3$};
+  \node[state]        (q4) [below right of=q3] {$q_4$};
+  \node[state]        (q5) [below left of=q4]  {$q_5$};
+  \node[state,dashed] (qt) [left of=q5]        {$q_t$};
+  
+  \path (q1) edge []       node {} (q4)
+             edge []       node {} (q5)
+        (q2) edge []       node {} (q4)
+        (q3) edge []       node {} (q4)
+        (q5) edge []       node {} (q4)
+        (qt) edge [dashed] node {} (q4);
+  \addvmargin{1mm}
+\end{ugraph}
+
+We kiezen opnieuw twee willekeurige knopen die nog ``onbeslist'' zijn, of m.a.w. die nog niet verbonden zijn in $V$. We nemen $q_1$ en $q_2$ en vinden dat $(\delta(q_1, c), \delta(q_5, c)) = (q_5, q_4) \in V$. We voegen de boog $(q_1, q_2)$ toe aan $V$.
+
+\begin{ugraph}
+  \node[state]        (q1)                     {$q_1$};
+  \node[state]        (q2) [above right of=q1] {$q_2$};
+  \node[state]        (q3) [right of=q2]       {$q_3$};
+  \node[state]        (q4) [below right of=q3] {$q_4$};
+  \node[state]        (q5) [below left of=q4]  {$q_5$};
+  \node[state,dashed] (qt) [left of=q5]        {$q_t$};
+  
+  \path (q1) edge []       node {} (q2)
+             edge []       node {} (q4)
+             edge []       node {} (q5)
+        (q2) edge []       node {} (q4)
+        (q3) edge []       node {} (q4)
+        (q5) edge []       node {} (q4)
+        (qt) edge [dashed] node {} (q4);
+  \addvmargin{1mm}
+\end{ugraph}
+
+We herhalen de iteratiestap tot we er geen enkel paar knopen meer voldoet aan de voorwaarden en we de volgende graaf $V$ bekomen:
+
+\begin{ugraph}
+  \node[state]        (q1)                     {$q_1$};
+  \node[state]        (q2) [above right of=q1] {$q_2$};
+  \node[state]        (q3) [right of=q2]       {$q_3$};
+  \node[state]        (q4) [below right of=q3] {$q_4$};
+  \node[state]        (q5) [below left of=q4]  {$q_5$};
+  \node[state,dashed] (qt) [left of=q5]        {$q_t$};
+  
+  \path (q1) edge []       node {} (q2)
+             edge []       node {} (q3)
+             edge []       node {} (q4)
+             edge []       node {} (q5)
+        (q2) edge []       node {} (q4)
+             edge []       node {} (q5)
+        (q3) edge []       node {} (q4)
+             edge []       node {} (q5)
+        (q5) edge []       node {} (q4)
+        (qt) edge [dashed] node {} (q1)
+             edge [dashed] node {} (q2)
+             edge [dashed] node {} (q3)
+             edge [dashed] node {} (q4)
+             edge [dashed] node {} (q5);
+  \addvmargin{1mm}
+\end{ugraph}
+
+Vervolgens bepalen we de complementgraaf $G$ van $V$:
+
+\begin{ugraph}
+  \node[state]        (q1)                     {$q_1$};
+  \node[state]        (q2) [above right of=q1] {$q_2$};
+  \node[state]        (q3) [right of=q2]       {$q_3$};
+  \node[state]        (q4) [below right of=q3] {$q_4$};
+  \node[state]        (q5) [below left of=q4]  {$q_5$};
+  \node[state,dashed] (qt) [left of=q5]        {$q_t$};
+  
+  \path (q2) edge [] node {} (q3);
+  \addvmargin{1mm}
+\end{ugraph}
+
+De complementgraaf $G$ bevat een boog tussen $q_2$ en $q_3$, welke een component vormen en dus onderling f-gelijk zijn. Alle andere componenten bevatten slechts een enkele toestand.
+
+\subsection{DFA f-gelijk (partities verfijnen)}
+\label{ex:dfafeqpart}
+
+We willen de f-gelijke toestanden van een DFA bepalen waarvan we eerst de parti\"ele overgangsfunctie totaal hebben gemaakt. We nemen het resultaat van het voorbeeld in sectie \ref{ex:dfatotal}.
+
+De eerste partitie wordt opgesteld als een partitie die de toestanden in de eind- en niet-eindtoestanden verdeelt:
+
+\begin{equation*}
+P_0 = \{\{q_1,q_2,q_3,q_5,q_t\},\{q_4\}\}
+\end{equation*}
+
+Nu voeren we iteratiestappen uit. We partitioneren elke deelverzameling van de partities zodanig dat voor elk symbool, er vanuit beiden toestanden een overgang is naar dezelfde deelverzameling van de partitie.
+
+\begin{equation*}
+P_1 = \{\{q_1\},\{q_2,q_3\},\{q_5\},\{q_t\},\{q_4\}\}
+\end{equation*}
+
+Voor de gegeven DFA loopt het partitioneren af na een enkele stap. Het is niet mogelijk om de partitie nog verder te verfijnen. Elke deelverzameling van de partitie bevat nu de f-gelijke toestanden van de DFA.
+
+\subsection{DFA minimaliseren}
+\label{ex:dfamin}
+
+We zullen een DFA minimaliseren, zoals die gegeven is aan het begin van sectie \ref{ex:dfatotal}. We moeten geen knopen verwijderen bij deze DFA. Het compleet maken van de DFA wordt uitgevoerd in sectie \ref{ex:dfatotal} en in sectie \ref{ex:dfafeq} (of \ref{ex:dfafeqpart}) worden de f-gelijke toestanden bepaalt. We stellen de volgende DFA op:
+
+\begin{nfa}
+  \node[initial,state]   (q1)                     {$q_1$};
+  \node[state]           (q2) [above right of=q1] {$q_{23}$};
+  \node[state,accepting] (q4) [below right of=q2] {$q_4$};
+  \node[state]           (q5) [below right of=q1] {$q_5$};
+  \node[state,dashed]    (qt) [left of=q1]        {$q_t$};
+  
+  \path (q1) edge []                  node              {$a,b$}     (q2)
+             edge []                  node              {$c$}       (q5)
+             edge [dashed,bend right] node [above]      {$d$}       (qt)
+        (q2) edge []                  node              {$c$}       (q4)
+             edge [dashed,bend right] node [above left] {$a,b,d$}   (qt)
+        (q5) edge []                  node              {$d$}       (q4)
+             edge [dashed,bend left]  node              {$a,b,c$}   (qt)
+        (qt) edge [dashed,loop left]  node              {$a,b,c,d$} (qt);
+  \addvmargin{1mm}
+\end{nfa}
+
+Tenslotte verwijderen we nog de ``trash''-toestand (of hulptoestand) die we eerder hebben toegevoegd om een totale overgangsfunctie te bekomen. De resulterende DFA is minimaal:
+
+\begin{nfa}
+  \node[initial,state]   (q1)                     {$q_1$};
+  \node[state]           (q2) [above right of=q1] {$q_{23}$};
+  \node[state,accepting] (q4) [below right of=q2] {$q_4$};
+  \node[state]           (q5) [below right of=q1] {$q_5$};
+  
+  \path (q1) edge []                  node              {$a,b$}     (q2)
+             edge []                  node              {$c$}       (q5)
+        (q2) edge []                  node              {$c$}       (q4)
+        (q5) edge []                  node              {$d$}       (q4);
+  \addvmargin{1mm}
+\end{nfa}
