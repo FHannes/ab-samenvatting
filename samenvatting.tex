@@ -256,6 +256,20 @@ Een algebra is een verzameling met daarop een aantal inwendige operaties.
   \\ $\forall X \subseteq L: \bigwedge_X \in L \en \bigvee_X \in L$
 \end{definitie}
 
+\begin{definitie}{Injectie}
+  \label{def:inj}
+  Een injectie is een afbeelding $f$ die elk element van een verzameling $A$ afbeeldt op een element van een verzameling $B$. Niet op alle elementen van $B$ moet een element van $A$ afgebeeld worden.
+\end{definitie}
+
+\begin{definitie}{Surjectie}
+  \label{def:surj}
+  Een surjectie is een afbeelding $f$ die elementen van een verzameling $A$ afbeeldt op elk element van een verzameling $B$. Niet voor alle elementen in $A$ moet een afbeelding bestaan.
+\end{definitie}
+
+\begin{definitie}{Bijectie}
+  Een bijectie is een afbeelding $f$ die elk element van een verzameling $A$ \'e\'en-op-\'e\'en afbeeldt op elk element uit een verzameling $B$. Het is zowel een injectie (definitie \ref{def:inj}) als een surjectie (definitie \ref{def:surj}).
+\end{definitie}
+
 \subsection{Grafentheorie}
 
 \begin{definitie}{Enkelvoudige graaf}
@@ -415,7 +429,6 @@ Eigenschappen van een NFA:
 Elke NFA beschrijft een reguliere taal en elke reguliere taal kan beschreven worden door een NFA ($L_E = L_{NFA_E}$). Figuur \ref{fig:regexnfa} toont de overgangen van de elementaire reguliere expressies naar de bijhorende NFA's.
 
 \begin{figure}[ht]
-\label{fig:regexnfa}
 \centering
 \renewcommand{\arraystretch}{1.5}
 \begin{tabular}{>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{10cm}}
@@ -476,6 +489,7 @@ $(E_1)^*$ & \begin{nfa}
 \end{nfa} \\
 \end{tabular}
 \caption{De overgang van een reguliere expressie naar een NFA.}
+\label{fig:regexnfa}
 \end{figure}
 
 \subsection{GNFA}
@@ -558,6 +572,17 @@ Een NFA kan omgezet worden naar reguliere expressie door de NFA eerst om te zett
   \end{enumalgo}
 \end{algoritme}
 
+\begin{nfa}
+  \node[initial,state]   (q1)               {$\{q_1\}$};
+  \node[state,accepting] (q2) [right=1.5cm of q1] {$\{q_1,q_2\}$};
+  
+  \path (q1) edge [loop above] node {$a$} (q1)
+             edge [bend left]  node [above] {$b$} (q2)
+        (q2) edge [loop above] node {$b$} (q2)
+             edge [bend left]  node [below] {$a$} (q1);
+  \addvmargin{1mm}
+\end{nfa}
+
 Algoritme \ref{alg:cdfa} impliceert ook dat voor elke $a \in \Sigma$ een overgang $\delta(q_t,a)=q_t$ bestaat van $q_t$ naar $q_t$, waarin $t$ staat voor ``trash''. Bovendien kunnen er ook bogen bestaan van $q \in F$ naar $q_t$. Een voorbeeld van hoe een complete DFA voor een gegeven parti\"ele DFA eruit ziet wordt gegeven in sectie \ref{ex:dfatotal}.
 
 De complete DFA wordt voornamelijk gebruikt in praktijk. Verder in dit document wordt vaak gebruik gemaakt van een DFA met de assumptie dat $\delta$ een totale functie is. Daarbij wordt impliciet gesteld dat voor een niet-complete DFA eerst de constructie van de equivalente complete DFA wordt uitgevoerd.
@@ -578,6 +603,8 @@ De complete DFA wordt voornamelijk gebruikt in praktijk. Verder in dit document 
   \item \bm{$\delta_n: Q_d \times \Sigma \rightarrow \powerset(Q_n)$}\\ $\delta_n(\dfastate, a) = \{x|x \in \bigcup_{q \in \dfastate}\delta_n(q, a)\}$ met $\dfastate \in Q_d$ en $a \in \Sigma$: De afbeelding die een toestand $\dfastate \in Q_d$ afbeeldt op de verzameling van alle toestanden die voor een gegeven symbool bereikbaar zijn vanuit elke toestand in $\dfastate$.
   \end{itemize}
 \end{algoritme}
+
+Sectie \ref{ex:nfadfa} toont enkele voorbeelden van de conversie van NFA's naar DFA's.
 
 Elke reguliere taal wordt bepaald door een DFA, omdat elke reguliere taal wordt bepaald door een NFA en elke NFA kan worden omgezet tot een DFA.
 
@@ -666,9 +693,52 @@ Sectie \ref{ex:dfafeqpart} beschrijft een voorbeeld van het alternatief algoritm
 
 Sectie \ref{ex:dfamin} toont een voorbeeld van de minimalisatie van een DFA, gebruikmakende van algoritme \ref{alg:dfamin}.
 
-% TODO: Bewijs minimale DFA heeft minimaal aantal toestanden
-% TODO: Isomorfe DFA's
-% TODO: NFA kleiner dan DFA_min?
+\begin{bewijs}{We bewijzen dat een minimale een minimaal aantal toestanden heeft.}
+  Stel $DFA_1$ ($Q_1$, $\Sigma$, $\delta_1$, $q_s$, $F_1$) met $Q_1 = \{q_s,q_1,q_2,...,q_n\}$ is een machine zonder onbereikbare toestanden waarvan elk paar toestanden f-verschillend zijn. Stel dat $DFA_2$ ($Q_2$, $\Sigma$, $\delta_2$, $q_s$, $F_2$) een DFA is met minder toestanden dan $DFA_1$.
+
+  \begin{itemize}
+  \item Elke toestand in $DFA_1$ is bereikbaar, dus er bestaan strings $s_i$ met $i=1...n$ zodanig dat $\delta^*_1(q_s,s_i)=q_i$.
+  \item $DFA_2$ heeft minder toestanden dan $DFA_1$, dus er is een $i$ en $j$ met $i \neq j$, zodanig dat er strings $s_i$ en $s_j$ zijn waarvoor $DFA_2$ meerdere keren in dezelfde toestand komen, dus $\delta^*_2(q_s,s_i)=\delta^*_2(q_s,s_j)$.
+  \item $q_i$ en $q_j$ zijn f-verschillend, dus er bestaat een string $v$ zodanig dat $\delta^*_2(q_i,v) \in F_1 \en \delta^*_2(q_j,v) \notin F_1$ of omgekeerd. Bij gevolg geldt ook $\delta^*_2(q_s,s_iv) \in F_1 \en \delta^*_2(q_s,q_jv) \notin F_1$ of omgekeerd. We zeggen dat $DFA_1$ van $s_iv$ en $s_jv$ just \'e\'en string accepteert.
+  \end{itemize}
+  
+  We kunnen nu aantonen dat $\delta^*_2(q_s,s_iv) = \delta^*_2(\delta^*_2(q_i),v) = \delta^*_2(\delta^*_2(q_j),v) = \delta^*_2(q_s,s_jv)$, wat betekent dat $DFA_1$ en $DFA_2$ niet dezelfde taal kunnen bepalen.
+\end{bewijs}
+
+Het is belangrijk te beseffen dat er geen DFA bestaat die dezelfde taal bepaald als een minimale DFA, met minder toestanden. Maar dat is niet noodzakelijk waar voor een NFA! Er kan namelijk een NFA bestaan die minder toestanden heeft dan ene minimale DFA en nog steeds dezelfde taal bepaalt. Dit is het gevolg van de beperkingen die bij een DFA worden opgelegd, die niet gelden voor een NFA, zoals het verbod op $\epsilon$-bogen en dat er voor een bepaald symbool hoogstens \'e\'en boog uit een toestand mag vertrekken. Daarom zal een DFA (zelfs een minimale DFA) die equivalent is met een NFA, vaak meer toestanden hebben. Een voorbeeld van een taal waar dit geldt is uitgewerkt in sectie \ref{ex:nfaldfamin}.
+
+\begin{definitie}{Isomorfe DFA's}
+  Een $DFA_1$ ($Q_1$, $\Sigma$, $\delta_1$, $q_{s1}$, $F_1$) is isomorf met een $DFA_2$ ($Q_2$, $\Sigma$, $\delta_2$, $q_{s2}$, $F_2$) indien enkel de namen van hun toestanden verschillen. Dus er bestaat een bijectie $b: Q_1 \rightarrow Q_2$ zodanig dat
+  \begin{itemize}
+  \item $b(F_1) = F_2$
+  \item $b(q_{s1}) = q_{s2}$
+  \item $\forall a \in \Sigma: b(\delta_1(q,a)) = \delta_2(b(q),a)$ (zie figuur \ref{fig:isodfa})
+  \end{itemize}
+\end{definitie}
+
+\begin{figure}[ht]
+\centering
+\begin{nfa}
+  \node [state] (q1)                     {$q_1$};
+  \node [state] (q2) [right=3cm of q1]   {$q_2$};
+  \node [state] (p1) [below=1.5cm of q1] {$p_1$};
+  \node [state] (p2) [below=1.5cm of q2] {$p_2$};
+  
+  \node (DFA1) [draw,fit=(q1) (q2),inner sep=.4cm] {};
+  \node (DFA2) [draw,fit=(p1) (p2),inner sep=.4cm] {};
+  
+  \node [yshift=.3cm] at (DFA1.south) {$DFA_1$};
+  \node [yshift=.3cm] at (DFA2.south) {$DFA_2$};
+  
+  \path (q1) edge [bend left=15] node {$a$} (q2)
+             edge []             node {$b$} (p1)
+        (q2) edge []             node {$b$} (p2)
+        (p1) edge [bend left=15] node {$a$} (p2);
+  \addvmargin{1mm}
+\end{nfa}
+\caption{Commutatief diagram voor $b$ en $\delta_i$.}
+\label{fig:isodfa}
+\end{figure}
 
 \subsection{Myhill-Nerode relaties op $\sstar$}
 
@@ -866,7 +936,6 @@ Met de CNF
 \end{definitie}
 
 \begin{figure}[!ht]
-  \label{fig:pdasstep}
   \centering
   \begin{pda}
   \node[state] (A) []               {};
@@ -876,6 +945,7 @@ Met de CNF
   \addvmargin{1mm}
   \end{pda}
   \caption{Een overgang van een PDA.}
+  \label{fig:pdasstep}
 \end{figure}
 
 \begin{nobreakparagraph}
@@ -971,7 +1041,6 @@ Net zoals bij het pompend lemma voor reguliere talen, is het niet mogelijk om me
 \end{bewijs}
 
 \begin{figure}[ht]
-  \label{fig:pumptree}
   \centering
   \begin{tikzpicture}[-,
     >=stealth',
@@ -1006,6 +1075,7 @@ Net zoals bij het pompend lemma voor reguliere talen, is het niet mogelijk om me
              edge [dotted, bend left]  node {} (l4);
   \end{tikzpicture}
   \caption{De parse tree met de repeterende variabele $X$.}
+  \label{fig:pumptree}
 \end{figure}
 
 % TODO: Toepassing pompend lemma voor CFL

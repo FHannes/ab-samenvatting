@@ -1,10 +1,10 @@
 \section{Voorbeelden}
 
-\subsection{NFA $\longrightarrow$ RE}
+\subsection{NFA naar RE}
 \label{ex:gnfa}
 
 \begin{nfa}
-  \node[state]           (S)                    {$S$};
+  \node[initial,state]   (S)                    {$S$};
   \node[state]           (A) [below right of=S] {$A$};
   \node[state,accepting] (E) [above right of=A] {$E$};
   
@@ -123,6 +123,148 @@ Reductie 3:\\
 \end{nfa}
 
 \paragraph{Stap 3} De RE voor de NFA is ``$b^*a(a|b)^*$".
+
+\subsection{NFA naar DFA}
+\label{ex:nfadfa}
+
+\subsubsection{Voorbeeld 1}
+
+\begin{nfa}
+  \node[initial,state]   (S)                    {$S$};
+  \node[state]           (A) [below right of=S] {$A$};
+  \node[state,accepting] (E) [above right of=A] {$E$};
+  
+  \path (S) edge []           node         {$a$}          (E)
+            edge []           node         {$a,\epsilon$} (A)
+        (A) edge [loop below] node         {$b$}          (A)
+            edge [bend right] node         {$a$}          (E)
+        (E) edge [loop right] node         {$a,b$}        (E)
+            edge [bend right] node [above] {$\epsilon$}   (A);
+  \addvmargin{1mm}
+\end{nfa}
+
+We construeren een tabel met alle toestanden van $Q_d = \powerset(Q_n)$ en de epsilon-bereikbare functie:
+
+\begin{center}
+\begin{tabular}{r|r}
+  $q \in Q_d$ & $eb(q)$ \\ \hline
+  $\{\}$ & $\{\}$ \\
+  $\{S\}$ & $\{S,A\}$ \\
+  $\{A\}$ & $\{A\}$ \\
+  $\{E\}$ & $\{A,E\}$ \\
+  $\{S,A\}$ & $\{S,A\}$ \\
+  $\{S,E\}$ & $\{S,A,E\}$ \\
+  $\{A,E\}$ & $\{A,E\}$ \\
+  $\{S,A,E\}$ & $\{S,A,E\}$ \\
+\end{tabular}
+\end{center}
+
+We stellen nu de verzamelingen voor $\delta_n(Q_d,a)$ en $\delta_n(Q_d,b)$ op:
+
+\begin{center}
+\begin{tabular}{r|r|r|r}
+  $q \in Q_d$ & $eb(q)$ & $\delta_n(q,a)$ & $\delta_n(q,b)$ \\ \hline
+  $\{\}$ & $\{\}$ & $\{\}$ & $\{\}$ \\
+  $\{S\}$ & $\{S,A\}$ & $\{A,E\}$ & $\{\}$ \\
+  $\{A\}$ & $\{A\}$ & $\{E\}$ & $\{A\}$ \\
+  $\{E\}$ & $\{A,E\}$ & $\{E\}$ & $\{E\}$ \\
+  $\{S,A\}$ & $\{S,A\}$ & $\{A,E\}$ & $\{A\}$ \\
+  $\{S,E\}$ & $\{S,A,E\}$ & $\{A,E\}$ & $\{E\}$ \\
+  $\{A,E\}$ & $\{A,E\}$ & $\{E\}$ & $\{A,E\}$ \\
+  $\{S,A,E\}$ & $\{S,A,E\}$ & $\{A,E\}$ & $\{A,E\}$ \\
+\end{tabular}
+\end{center}
+
+Tenslotte stellen nu de verzamelingen voor $\delta_d(Q_d,a)=eb(\delta_n(Q_d,a))$ en $\delta_d(Q_d,b)=eb(\delta_n(Q_d,b))$ op:
+
+\begin{center}
+\begin{tabular}{r|r|r|r|r|r}
+  $q \in Q_d$ & $eb(q)$ & $\delta_n(q,a)$ & $\delta_n(q,b)$ & $\delta_d(q,a)$ & $\delta_d(q,b)$ \\ \hline
+  $\{\}$ & $\{\}$ & $\{\}$ & $\{\}$ & $\{\}$ & $\{\}$ \\
+  $\{S\}$ & $\{S,A\}$ & $\{A,E\}$ & $\{\}$ & $\{A,E\}$ & $\{\}$ \\
+  $\{A\}$ & $\{A\}$ & $\{E\}$ & $\{A\}$ & $\{A,E\}$ & $\{A\}$ \\
+  $\{E\}$ & $\{A,E\}$ & $\{E\}$ & $\{E\}$ & $\{A,E\}$ & $\{A,E\}$ \\
+  $\{S,A\}$ & $\{S,A\}$ & $\{A,E\}$ & $\{A\}$ & $\{A,E\}$ & $\{A\}$ \\
+  $\{S,E\}$ & $\{S,A,E\}$ & $\{A,E\}$ & $\{E\}$ & $\{A,E\}$ & $\{A,E\}$ \\
+  $\{A,E\}$ & $\{A,E\}$ & $\{E\}$ & $\{A,E\}$ & $\{A,E\}$ & $\{A,E\}$ \\
+  $\{S,A,E\}$ & $\{S,A,E\}$ & $\{A,E\}$ & $\{A,E\}$ & $\{A,E\}$ & $\{A,E\}$ \\
+\end{tabular}
+\end{center}
+
+De resulterende DFA:
+
+\begin{nfa}
+  \node[initial,state]   (S)                    {$\{S,A\}$};
+  \node[state]           (A) [below right of=S] {$\{A\}$};
+  \node[state,accepting] (E) [above right of=A] {$\{A,E\}$};
+  
+  \path (S) edge []           node {$a$}   (E)
+            edge []           node {$b$}   (A)
+        (A) edge [loop below] node {$b$}   (A)
+            edge []           node {$a$}   (E)
+        (E) edge [loop right] node {$a,b$} (E);
+  \addvmargin{1mm}
+\end{nfa}
+
+\subsubsection{Voorbeeld 2}
+
+\begin{nfa}
+  \node[initial,state]   (q1)               {$q_1$};
+  \node[state,accepting] (q2) [right of=q1] {$q_2$};
+  
+  \path (q1) edge [loop above] node {$a,b$} (q1)
+             edge []           node {$b$}   (q2);
+  \addvmargin{1mm}
+\end{nfa}
+
+We construeren een tabel met alle toestanden van $Q_d = \powerset(Q_n)$ en de epsilon-bereikbare functie:
+
+\begin{center}
+\begin{tabular}{r|r}
+  $q \in Q_d$ & $eb(q)$ \\ \hline
+  $\{\}$ & $\{\}$ \\
+  $\{q_1\}$ & $\{q_1\}$ \\
+  $\{q_2\}$ & $\{q_2\}$ \\
+  $\{q_1,q_2\}$ & $\{q_1,q_2\}$ \\
+\end{tabular}
+\end{center}
+
+We stellen nu de verzamelingen voor $\delta_n(Q_d,a)$ en $\delta_n(Q_d,b)$ op:
+
+\begin{center}
+\begin{tabular}{r|r|r|r}
+  $q \in Q_d$ & $eb(q)$ & $\delta_n(q,a)$ & $\delta_n(q,b)$ \\ \hline
+  $\{\}$ & $\{\}$ & $\{\}$ & $\{\}$ \\
+  $\{q_1\}$ & $\{q_1\}$ & $\{q_1\}$ & $\{q_1,q_2\}$ \\
+  $\{q_2\}$ & $\{q_2\}$ & $\{\}$ & $\{\}$ \\
+  $\{q_1,q_2\}$ & $\{q_1,q_2\}$ & $\{q_1\}$ & $\{q_1,q_2\}$ \\
+\end{tabular}
+\end{center}
+
+Tenslotte stellen nu de verzamelingen voor $\delta_d(Q_d,a)=eb(\delta_n(Q_d,a))$ en $\delta_d(Q_d,b)=eb(\delta_n(Q_d,b))$ op:
+
+\begin{center}
+\begin{tabular}{r|r|r|r|r|r}
+  $q \in Q_d$ & $eb(q)$ & $\delta_n(q,a)$ & $\delta_n(q,b)$ & $\delta_d(q,a)$ & $\delta_d(q,b)$ \\ \hline
+  $\{\}$ & $\{\}$ & $\{\}$ & $\{\}$ & $\{\}$ & $\{\}$ \\
+  $\{q_1\}$ & $\{q_1\}$ & $\{q_1\}$ & $\{q_1,q_2\}$ & $\{q_1\}$ & $\{q_1,q_2\}$ \\
+  $\{q_2\}$ & $\{q_2\}$ & $\{\}$ & $\{\}$ & $\{\}$ & $\{\}$ \\
+  $\{q_1,q_2\}$ & $\{q_1,q_2\}$ & $\{q_1\}$ & $\{q_1,q_2\}$ & $\{q_1\}$ & $\{q_1,q_2\}$ \\
+\end{tabular}
+\end{center}
+
+De resulterende DFA:
+
+\begin{nfa}
+  \node[initial,state]   (q1)                     {$\{q_1\}$};
+  \node[state,accepting] (q2) [right=1.5cm of q1] {$\{q_1,q_2\}$};
+  
+  \path (q1) edge [loop above] node         {$a$} (q1)
+             edge [bend left]  node [above] {$b$} (q2)
+        (q2) edge [loop above] node         {$b$} (q2)
+             edge [bend left]  node [below] {$a$} (q1);
+  \addvmargin{1mm}
+\end{nfa}
 
 \subsection{Parti\"ele DFA naar complete DFA}
 \label{ex:dfatotal}
@@ -326,9 +468,139 @@ Tenslotte verwijderen we nog de ``trash''-toestand (of hulptoestand) die we eerd
   \node[state,accepting] (q4) [below right of=q2] {$q_4$};
   \node[state]           (q5) [below right of=q1] {$q_5$};
   
-  \path (q1) edge []                  node              {$a,b$}     (q2)
-             edge []                  node              {$c$}       (q5)
-        (q2) edge []                  node              {$c$}       (q4)
-        (q5) edge []                  node              {$d$}       (q4);
+  \path (q1) edge [] node {$a,b$} (q2)
+             edge [] node {$c$}   (q5)
+        (q2) edge [] node {$c$}   (q4)
+        (q5) edge [] node {$d$}   (q4);
   \addvmargin{1mm}
 \end{nfa}
+
+\subsection{Taal met NFA kleiner dan minimale DFA}
+\label{ex:nfaldfamin}
+
+Een voorbeeld van een taal waarvoor een NFA bestaat die kleiner is dan DFA$_{min}$ is de taal over $\Sigma = \{a,b\}$ bepaald door een reguliere expressie gegeven als
+\begin{equation*}
+  (a|b)^*a(a|b)(a|b)
+\end{equation*}
+
+Een NFA die dezelfde taal bepaalt is:
+
+\begin{nfa}
+  \node[initial,state]   (S)              {$S$};
+  \node[state]           (A) [right of=S] {$A$};
+  \node[state]           (B) [right of=A] {$B$};
+  \node[state,accepting] (E) [right of=B] {$E$};
+  
+  \path (S) edge [loop above] node {$a,b$} (S)
+            edge []           node {$a$}   (A)
+        (A) edge []           node {$a,b$} (B)
+        (B) edge []           node {$a,b$} (E);
+  \addvmargin{1mm}
+\end{nfa}
+
+We stellen een verkorte tabel op beginnende bij toestand $S$. Er is geen enkele boog met $\epsilon$, dus $\forall a \in \Sigma: \delta_n(q,a)=\delta_d(q,a)$. Elke toestand van $Q_d$ krijgt een alias om de leesbaarheid te bevorderen.
+
+\begin{center}
+\begin{tabular}{r|r|r|r}
+  $q \in Q_d$ & $eb(q)$ & $\delta_n(q,a)=\delta_d(q,a)$ & $\delta_n(q,b)=\delta_d(q,b)$ \\ \hline
+  $1=\{S\}$ & $\{S\}$ & $\{S,A\}$ & $\{S\}$\\
+  $2=\{S,A\}$ & $\{S,A\}$ & $\{S,A,B\}$ & $\{S,B\}$\\
+  $3=\{S,A,B\}$ & $\{S,A,B\}$ & $\{S,A,B,E\}$ & $\{S,B,E\}$\\
+  $4=\{S,B\}$ & $\{S,B\}$ & $\{S,A,E\}$ & $\{S,E\}$\\
+  $5=\{S,A,B,E\}$ & $\{S,A,B,E\}$ & $\{S,A,B,E\}$ & $\{S,B,E\}$\\
+  $6=\{S,B,E\}$ & $\{S,B,E\}$ & $\{S,A,E\}$ & $\{S,E\}$\\
+  $7=\{S,A,E\}$ & $\{S,A,E\}$ & $\{S,A,B\}$ & $\{S,B\}$\\
+  $8=\{S,E\}$ & $\{S,E\}$ & $\{S,A\}$ & $\{S\}$\\
+\end{tabular}
+\end{center}
+
+We kunnen vervolgende de bijhorende DFA construeren:
+
+\begin{nfa}
+  \node[initial,state]   (1)                    {$1$};
+  \node[state]           (2) [above left of=1]  {$2$};
+  \node[state]           (4) [above right of=2] {$4$};
+  \node[state,accepting] (7) [right of=4]       {$7$};
+  \node[state]           (3) [right of=7]       {$3$};
+  \node[state,accepting] (5) [right of=3]       {$5$};
+  \node[state,accepting] (6) [below right of=5] {$6$};
+  \node[state,accepting] (8) [below left of=6]  {$8$};
+  
+  \path (1) edge [loop below]    node {$b$} (1)
+            edge []              node {$a$} (2)
+        (2) edge []              node {$b$} (4)
+            edge [bend left=90]  node {$a$} (3)
+        (4) edge [bend left=40]  node {$a$} (7)
+            edge [bend right=10] node {$b$} (8)
+        (7) edge []              node {$a$} (3)
+            edge []              node {$b$} (4)
+        (3) edge []              node {$a$} (5)
+            edge [bend right=10] node {$b$} (6)
+        (5) edge [loop above]    node {$a$} (5)
+            edge []              node {$b$} (6)
+        (6) edge [bend left=15]  node {$a$} (7)
+            edge []              node {$b$} (8)
+        (8) edge []              node {$a$} (2)
+            edge []              node {$b$} (1);
+  \addvmargin{1mm}
+\end{nfa}
+
+We proberen om de gevonden DFA nog verder te minimaliseren door de f-verschillende toestanden te bepalen met het standaard algoritme. We bekomen de volgende graaf:
+
+\begin{ugraph}
+  \node[state] (1)              {$1$};
+  \node[state] (2) [above right of=1] {$2$};
+  \node[state] (4) [right of=2] {$4$};
+  \node[state] (7) [below right of=4] {$7$};
+  \node[state] (3) [below of=7] {$3$};
+  \node[state] (5) [below left of=3] {$5$};
+  \node[state] (6) [left of=5]  {$6$};
+  \node[state] (8) [above left of=6]  {$8$};
+  
+  % INIT
+  \path (1) edge [] node {} (7)
+        (2) edge [] node {} (7)
+        (4) edge [] node {} (7)
+        (3) edge [] node {} (7)
+        (1) edge [] node {} (5)
+        (2) edge [] node {} (5)
+        (4) edge [] node {} (5)
+        (3) edge [] node {} (5)
+        (1) edge [] node {} (6)
+        (2) edge [] node {} (6)
+        (4) edge [] node {} (6)
+        (3) edge [] node {} (6)
+        (1) edge [] node {} (8)
+        (2) edge [] node {} (8)
+        (4) edge [] node {} (8)
+        (3) edge [] node {} (8);
+  % REPEAT
+  \path (1) edge [] node {} (3)
+        (1) edge [] node {} (4)
+        (2) edge [] node {} (3)
+        (2) edge [] node {} (4)
+        (5) edge [] node {} (7)
+        (5) edge [] node {} (8)
+        (6) edge [] node {} (7)
+        (6) edge [] node {} (8)
+        (7) edge [] node {} (8)
+        (1) edge [] node {} (2)
+        (5) edge [] node {} (6);
+  \addvmargin{1mm}
+\end{ugraph}
+
+Vervolgens bepalen we de complementgraaf:
+
+\begin{ugraph}
+  \node[state] (1)              {$1$};
+  \node[state] (2) [above right of=1] {$2$};
+  \node[state] (4) [right of=2] {$4$};
+  \node[state] (7) [below right of=4] {$7$};
+  \node[state] (3) [below of=7] {$3$};
+  \node[state] (5) [below left of=3] {$5$};
+  \node[state] (6) [left of=5]  {$6$};
+  \node[state] (8) [above left of=6]  {$8$};
+  \addvmargin{1mm}
+\end{ugraph}
+
+De complementgraaf bevat geen enkele component die uit meer dan \'e'en toestand bestaat. We concluderen dat de DFA reeds minimaal is. We zien nu ook dat de NFA minder toestanden heeft dan de equivalente minimale DFA.
