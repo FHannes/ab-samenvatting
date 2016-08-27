@@ -2,7 +2,23 @@
 
 \subsection{Reguliere talen}
 
-\subsubsection{Vraag 1 (Bijvraag)}
+\subsubsection{Vraag 1}
+
+\textit{Bewijs dat een reguliere taal beschreven door een reguliere expressie door een eindige toestandsautomaat wordt herkend. Doe dit door van de automaat een gegeneraliseerde niet-deterministische eindige toestandsautomaat te maken.}
+
+\textit{Beschrijf in detail hoe uit die GNFA een reguliere expressie kan worden afgeleid.}
+
+\subsubsection{Vraag 1 (Bijvraag 1)}
+
+\textit{Kan voor een PDA ongeveer hetzelfde gedaan worden door een gegeneraliseerde PDA op te stellen?}
+
+Nee, want
+\begin{itemize}
+\item Een PDA bepaalt een contextvrije grammatica, geen reguliere expressie. Elke RE kan naar een CFG (of PDA) geconverteerd worden omdat de verzameling van de talen bepaald door een CFG sterker is dan de verzameling van de reguliere talen. Maar niet elke CFG (of PDA) bepaalt een reguliere taal, dus is het niet mogelijk een GPDA op te stellen om een RE af te leiden.
+\item Een GPDA formaat om een CFG af te leiden uit een PDA is niet nodig, dat kan namelijk rechtstreeks uit een PDA.
+\end{itemize}
+
+\subsubsection{Vraag 1 (Bijvraag 2)}
 
 \begin{center}
 \renewcommand{\arraystretch}{1.5}
@@ -95,6 +111,10 @@ Nu we de boog van $X$ naar $A$ ge\"elemineerd hebben, kunnen we de resterende be
 \end{center}
 
 \subsubsection{Vraag 2}
+
+Beschrijf in detail de transformatie van een deterministische eindige toestandsautomaat naar een equivalente determinischtische eindige toestandsautomaat met een minimaal aantal toestanden. Beschrijf de notie van "equivalentie van automaten" in deze context en argumenteer waarom er geen kleinere equivalente deterministische einde toestandsautomaat bestaat. Bijvraag: Kan een kleinere equivalente niet-deterministische einde toestandsautomaat bestaan?
+
+\subsubsection{Vraag 3}
 
 \textit{Geef de definitie van een Myhil-Nerode relatie over een taal $L$, of zoals we noteren een $MN(L)$-relatie.}
 

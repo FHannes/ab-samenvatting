@@ -1,5 +1,39 @@
 \section{Voorbeelden}
 
+\subsection{Transitietabel NFA}
+\label{ex:nfatbl}
+
+\begin{nfa}
+  \node[initial,state]   (S)                    {$S$};
+  \node[state]           (A) [below right of=S] {$A$};
+  \node[state,accepting] (E) [above right of=A] {$E$};
+  
+  \path (S) edge []           node         {$a$}          (E)
+            edge []           node         {$a,\epsilon$} (A)
+        (A) edge [loop below] node         {$b$}          (A)
+            edge [bend right] node         {$a$}          (E)
+        (E) edge [loop right] node         {$a,b$}        (E)
+            edge [bend right] node [above] {$\epsilon$}   (A);
+  \addvmargin{1mm}
+\end{nfa}
+
+De bijhorende transitietabel voor de gegeven NFA:
+
+\begin{center}
+\begin{tabular}{r|r|r}
+  $Q$ & $\Sigma_\epsilon$ & $\powerset(Q)$ \\ \hline
+  $S$ & $a$ & $\{A,E\}$ \\
+  $S$ & $\epsilon$ & $\{A\}$ \\
+  $A$ & $a$ & $\{E\}$ \\
+  $A$ & $b$ & $\{A\}$ \\
+  $E$ & $a$ & $\{E\}$ \\
+  $E$ & $b$ & $\{E\}$ \\
+  $E$ & $\epsilon$ & $\{A\}$ \\ \hline
+  $S$ & $b$ & $\emptyset$ \\
+  $A$ & $\epsilon$ & $\emptyset$ \\
+\end{tabular}
+\end{center}
+
 \subsection{NFA naar RE}
 \label{ex:gnfa}
 
@@ -604,3 +638,49 @@ Vervolgens bepalen we de complementgraaf:
 \end{ugraph}
 
 De complementgraaf bevat geen enkele component die uit meer dan \'e'en toestand bestaat. We concluderen dat de DFA reeds minimaal is. We zien nu ook dat de NFA minder toestanden heeft dan de equivalente minimale DFA.
+
+\subsection{CFG}
+\label{ex:cfg}
+
+We stellen een CFG op voor de contextvrije taal $L = \{a^nb^n|n \in \nat\}$ over $\Sigma = \{a,b\}$.
+
+\begin{itemize}
+\item $S \rightarrow aSb$
+\item $S \rightarrow \epsilon$
+\end{itemize}
+
+\subsection{CNF}
+\label{ex:cnf}
+
+We stellen een CFG in CNF op voor de contextvrije taal $L = \{a^nb^n|n \in \nat\}$ over $\Sigma = \{a,b\}$.
+
+\begin{itemize}
+\item $A \rightarrow a$
+\item $B \rightarrow b$
+\item $C \rightarrow XB$
+\item $X \rightarrow AC$
+\item $X \rightarrow AB$
+\item $S \rightarrow X$
+\item $S \rightarrow \epsilon$
+\end{itemize}
+
+\subsection{PDA}
+\label{ex:pda}
+
+We stellen een PDA op voor de contextvrije taal $L = \{a^nb^n|n \in \nat\}$ over $\Sigma = \{a,b\}$.
+
+\begin{pda}
+  \node[initial,state]   (q1)               {$q_1$};
+  \node[state]           (q2) [right of=q1] {$q_2$};
+  \node[state]           (q3) [right of=q2] {$q_3$};
+  \node[state,accepting] (q4) [right of=q3] {$q_4$};
+  
+  \path (q1) edge []           node {$\pdat{\epsilon}{\epsilon}{\$}$}       (q2)
+        (q2) edge [loop above] node {$\pdat{a}{\epsilon}{a}$}               (q2)
+             edge []           node {$\pdat{\epsilon}{\epsilon}{\epsilon}$} (q3)
+        (q3) edge [loop above] node {$\pdat{b}{a}{\epsilon}$}               (q3)
+             edge []           node {$\pdat{\epsilon}{\$}{\epsilon}$}       (q4);
+  \addvmargin{1mm}
+\end{pda}
+
+Deze PDA kan niet met minder toestanden voorgesteld worden. Indien $q_3$ een eindtoestand zou zijn (en $q_2$ de starttoestand), dan zou het aantal $a$'s en $b$'s niet meer gelijk zijn, omdat de PDA dan kan stoppen voor dat het even veel $b$'s als $a$'s is tegengekomen. De strings $aaa$ of $aaab$ zouden dan onder andere geldig zijn, zo lang er minder dan of evenveel $b$'s als $a$'s zijn.

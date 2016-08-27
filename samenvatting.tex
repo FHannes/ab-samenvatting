@@ -78,7 +78,7 @@
     >=stealth',
     shorten >=1pt,
     auto,
-    node distance=2cm,
+    node distance=3cm,
     semithick]
   \tikzstyle{every state}=[fill=none,draw=black,text=black]
   \tikzstyle{accepting}=[accepting by double]
@@ -118,6 +118,8 @@
 \newcommand{\etm}{\ensuremath{{E_{TM}}}}
 \newcommand{\eqtm}{\ensuremath{{EQ_{TM}}}}
 \newcommand{\oatm}{\ensuremath{{O^\atm}}}
+
+\newcommand{\pdat}[3]{\ensuremath{{#1},{#2} \rightarrow {#3}}} % PDA transition
 
 \newcommand{\cmark}{\ding{51}}
 \newcommand{\xmark}{\ding{55}}
@@ -202,22 +204,31 @@ Een algebra is een verzameling met daarop een aantal inwendige operaties.
 \end{definitie}
 
 \begin{definitie}{De unie van twee verzamelingen}
-  De unie van twee verzamelingen $S_1$ en $S_2$ is de verzameling die alle elementen bevat die in $S_1$ en/of $S_2$ zitten. \\
-  \\ $S_1 \cup S_2 = \{x|x \in S_1 \of x \in S_2\}$
+  De unie van twee verzamelingen $S_1$ en $S_2$ is de verzameling die alle elementen bevat die in $S_1$ en/of $S_2$ zitten.
+  \begin{equation*}
+  S_1 \cup S_2 = \{x|x \in S_1 \of x \in S_2\}
+  \end{equation*}
 \end{definitie}
 
 \begin{definitie}{De doorsnede van twee verzamelingen}
-  De doorsnede van twee verzamelingen $S_1$ en $S_2$ is de verzameling die alle elementen bevat die in zowel $S_1$ als $S_2$ zitten. \\
-  \\ $S_1 \cup S_2 = \{x|x \in S_1 \en x \in S_2\}$
+  De doorsnede van twee verzamelingen $S_1$ en $S_2$ is de verzameling die alle elementen bevat die in zowel $S_1$ als $S_2$ zitten.
+  \begin{equation*}
+  S_1 \cup S_2 = \{x|x \in S_1 \en x \in S_2\}
+  \end{equation*}
 \end{definitie}
 
 \begin{definitie}{Het complement van een verzameling}
-  Het complement van een verzameling $S$ van alle elementen uit het domein die niet in $S$ zitten. \\
-  \\ $\overline{S} = \{x|x \notin S\}$
+  Het complement van een verzameling $S$ van alle elementen uit het domein die niet in $S$ zitten.
+  \begin{equation*}
+  \overline{S} = \{x|x \notin S\}
+  \end{equation*}
 \end{definitie}
 
 \begin{definitie}{Een machtsverzameling $\powerset(S)$ van een verzameling $S$}
-  Een machtsverzameling $\powerset(S)$ is een verzameling van alle deelverzamelingen die gevormd kunnen worden met de elementen in S, inclusief de lege verzameling en de verzameling A.\\ \\ $\powerset(S) = \{A|A \subseteq S\}$
+  Een machtsverzameling $\powerset(S)$ is een verzameling van alle deelverzamelingen die gevormd kunnen worden met de elementen in S, inclusief de lege verzameling en de verzameling A.
+  \begin{equation*}
+  \powerset(S) = \{A|A \subseteq S\}
+  \end{equation*}
 \end{definitie}
 
 \begin{definitie}{Een equivalentierelatie $\sim$ op een verzameling $S$}
@@ -230,8 +241,10 @@ Een algebra is een verzameling met daarop een aantal inwendige operaties.
 \end{definitie}
 
 \begin{definitie}{Een equivalentieklasse onder $\sim$ op een verzameling $S$}
-  Een equivalentieklasse ($x_\sim \subseteq S$) is de verzameling van alle elementen in de verzameling $S$ die onder de gegeven equivalentierelatie gelijkwaardig zijn aan $x$. \\
-  \\ $x_\sim = \{y \in S|x \sim y\}$
+  Een equivalentieklasse ($x_\sim \subseteq S$) is de verzameling van alle elementen in de verzameling $S$ die onder de gegeven equivalentierelatie gelijkwaardig zijn aan $x$.
+  \begin{equation*}
+  x_\sim = \{y \in S|x \sim y\}
+  \end{equation*}
 \end{definitie}
 
 \begin{definitie}{Een partitie $\partition$ van een verzameling $S$}
@@ -252,8 +265,10 @@ Een algebra is een verzameling met daarop een aantal inwendige operaties.
 \end{definitie}
 
 \begin{definitie}{Een volledige tralie ($L$, $\leq$, $\vee$, $\wedge$)}
-  Een tralie is een volledige tralie indien elke deelverzameling van $L$ een bovengrens en ondergrens heeft die een elementen zijn van $L$. \\
-  \\ $\forall X \subseteq L: \bigwedge_X \in L \en \bigvee_X \in L$
+  Een tralie is een volledige tralie indien elke deelverzameling van $L$ een bovengrens en ondergrens heeft die een elementen zijn van $L$.
+  \begin{equation*}
+  \forall X \subseteq L: \bigwedge_X \in L \en \bigvee_X \in L
+  \end{equation*}
 \end{definitie}
 
 \begin{definitie}{Injectie}
@@ -424,7 +439,7 @@ Eigenschappen van een NFA:
   Twee NFA's zijn equivalent als ze dezelfde taal bepalen.
 \end{definitie}
 
-% TODO: Transitietabel
+Voor een automaat zoals een NFA kan men een transitietabel opstellen die vanuit elke toestand de overgang weergeeft en voor elk symbool en ook voor welke symbolen er geen voergang is. Een voorbeeld van een transitietabel voor een NFA is gegeven in sectie \ref{ex:nfatbl}.
 
 Elke NFA beschrijft een reguliere taal en elke reguliere taal kan beschreven worden door een NFA ($L_E = L_{NFA_E}$). Figuur \ref{fig:regexnfa} toont de overgangen van de elementaire reguliere expressies naar de bijhorende NFA's.
 
@@ -572,17 +587,6 @@ Een NFA kan omgezet worden naar reguliere expressie door de NFA eerst om te zett
   \end{enumalgo}
 \end{algoritme}
 
-\begin{nfa}
-  \node[initial,state]   (q1)               {$\{q_1\}$};
-  \node[state,accepting] (q2) [right=1.5cm of q1] {$\{q_1,q_2\}$};
-  
-  \path (q1) edge [loop above] node {$a$} (q1)
-             edge [bend left]  node [above] {$b$} (q2)
-        (q2) edge [loop above] node {$b$} (q2)
-             edge [bend left]  node [below] {$a$} (q1);
-  \addvmargin{1mm}
-\end{nfa}
-
 Algoritme \ref{alg:cdfa} impliceert ook dat voor elke $a \in \Sigma$ een overgang $\delta(q_t,a)=q_t$ bestaat van $q_t$ naar $q_t$, waarin $t$ staat voor ``trash''. Bovendien kunnen er ook bogen bestaan van $q \in F$ naar $q_t$. Een voorbeeld van hoe een complete DFA voor een gegeven parti\"ele DFA eruit ziet wordt gegeven in sectie \ref{ex:dfatotal}.
 
 De complete DFA wordt voornamelijk gebruikt in praktijk. Verder in dit document wordt vaak gebruik gemaakt van een DFA met de assumptie dat $\delta$ een totale functie is. Daarbij wordt impliciet gesteld dat voor een niet-complete DFA eerst de constructie van de equivalente complete DFA wordt uitgevoerd.
@@ -668,8 +672,8 @@ De equivalentieklassen gedefinieerd door $\sim_f$ bevatten alle toestanden die w
   \label{alg:dfafeqpart}
   We geven een alternatieve aanpak voor het bepalen van f-gelijke toestanden, door een partitie van de toestanden in $Q$ te verfijnen (definitie \ref{def:partfine}). Deze methode werkt op dezelfde wijze als de methode beschreven in algoritme \label{alg:dfafeq}, maar is in praktijk vaak makkelijker om manueel uit te voeren.
   \begin{enumalgo}
-  \item We weten dat alle eindtoestanden f-verschillend zijn van alle andere toestanden. Daarom stellen we een partitie op van Q zodanig dat $P_0 = \{F, Q-F\}$.
-  \item Bij de $i$-de iteratie verfijnen we de partitie $P_{i-1}$ zodanig dat $P_i \leq P_{i-1}$. Elk paar toestanden dat voor elk symbool een overgang heeft naar de zelfde deelverzameling van de partitie $P_{i-1}$ nemen we nu samen in een deelverzameling $P_i$. Herhaal stap 2 tot $P_i = P_{i-1}$, dan is $P_i$ een partitie van $Q$ zodanig dat de toestanden van elke deelverzameling van $P_i$ f-verschillend zijn van die van elke andere deelverzameling.
+  \item We weten dat alle eindtoestanden f-verschillend zijn van alle andere toestanden. Daarom stellen we een partitie op van Q zodanig dat $\partition_0 = \{F, Q-F\}$.
+  \item Bij de $i$-de iteratie verfijnen we de partitie $\partition_{i-1}$ zodanig dat $\partition_i \leq \partition_{i-1}$. Elk paar toestanden dat voor elk symbool een overgang heeft naar de zelfde deelverzameling van de partitie $\partition_{i-1}$ nemen we nu samen in een deelverzameling $\partition_i$. Herhaal stap 2 tot $\partition_i = \partition_{i-1}$, dan is $\partition_i$ een partitie van $Q$ zodanig dat de toestanden van elke deelverzameling van $\partition_i$ f-verschillend zijn van die van elke andere deelverzameling.
   \end{enumalgo}
 \end{algoritme}
 
@@ -858,6 +862,8 @@ Het pompend lemma kan niet gebruikt worden om te bewijzen dat een taal regulier 
   \end{itemize}
 \end{definitie}
 
+Een voorbeeld van een CFG is gegeven in sectie \ref{ex:cfg}.
+
 \begin{definitie}{Afleiding/constructie m.b.v. een CFG}
   Gegeven een CFG ($V$, $\Sigma$, $R$, $S$) en een string $f$ over $V \cup \Sigma_\epsilon$, dan kan men een string $b$ over $V \cup \Sigma_\epsilon$ afleiden/construeren uit $f$ ($b \Rightarrow^* f$) met de gegeven CFG, indien er er een rij strings $s_0,s_1,s_2,...,s_n$ bestaat zodanig dat
   \begin{itemize}
@@ -911,6 +917,8 @@ Met de CNF
 \item heeft de afleiding van een string van lengte $n > 0$ altijd een lengte $2n-1$.
 \end{itemize}
 
+Een voorbeeld van een CFG in CNF is gegeven in sectie \ref{ex:cnf}.
+
 % TODO: Bewijs CNF
 
 \begin{definitie}{Greibach Normaal Vorm}
@@ -963,6 +971,8 @@ Een PDA maakt overgangen zoals in figuur \ref{fig:pdasstep},
 \end{nobreakparagraph}
 Indien de PDA niet-deterministisch is, kunnen er meerdere bogen met dezelfde $\alpha,\beta$ combinaties vertrekken uit een toestand.
 
+Als voorbeeld wordt een PDA voor de niet-reguliere contextvrije taal $L = \{a^nb^n|n \in \nat\}$ over $\Sigma = \{a,b\}$ wordt gegeven in sectie \ref{ex:pda}.
+
 % TODO: Aanvaarding van een string door een PDA
 
 Alternatieve definities van een PDA:
@@ -999,7 +1009,22 @@ Voor een CFL is het mogelijk om met eender welke van deze definities equivalente
 Om een meest-linkse afleiding te bekomen moeten we in algoritme \ref{alg:cfgpda} de symbolen van een string $\gamma \in \sstar_\epsilon$ in omgekeerde volgorde op de stapel plaatsen.
 
 % TODO: Een PDA accepteert een L_CFG
-% TODO: Constructie CFG uit PDA
+
+\begin{algoritme}{Constructie CFG uit PDA.}
+  We construeren een CFG ($V$, $\Sigma$, $R$, $S$) uit een PDA ($Q$, $\Sigma$, $\Gamma$, $\delta$, $q_s$, $F$) als volgt:
+  
+  Vor de PDA om zodanig dat er slechts \'e\'en eindtoestand $q_f$ is, de stapel leeg is wanneer we $q_f$ bereiken en bij elke transitie een symbool van de stapel wordt verwijderd of er op wordt geplaatst, maar niet beiden. Vervolgens wordt de CFG bepaald als
+  \begin{itemize}
+  \item $V = A_{p,q}$ met $p,q \in Q$
+  \item $S = A_{q_s,q_f}$
+  \item $R$ bestaat uit producties van drie verschillende vormen:
+  \begin{itemize}
+  \item $A_{p,p} \rightarrow \epsilon$ met $p \in Q$
+  \item $A_{p,q} \rightarrow A_{p,r}A_{r,q}$ met $p,q,r \in Q$
+  \item $A_{p,q} \rightarrow aA_{r,s}b$ met $p,q,r,s \in Q \en a,b \in \Sigma_\epsilon \en t \in \Gamma \en (r,t) \in \delta(p,a,\epsilon) \en (q,\epsilon) \in \delta(s,b,t)$
+  \end{itemize}
+  \end{itemize}
+\end{algoritme}
 
 \subsection{Pompend lemma voor contextvrije talen}
 
@@ -1263,7 +1288,7 @@ Een enumeratormachine produceert (enumereert) een verzameling strings op de outp
   \input{bewijzen/recogenum}
 \end{bewijs}
 
-\subsection{Beslisbare talen}
+\subsection{(Niet-)beslisbare talen}
 
 \begin{bewijs}{We bewijzen dat $A_{DFA}$ beslisbaar is.}
   Voor $A_{DFA} = \{\langle D,s \rangle | D \text{ is een DFA en } D \text{ accepteert } s\}$ construeren we een beslisser $B$ als volgt:
@@ -1286,11 +1311,61 @@ Een enumeratormachine produceert (enumereert) een verzameling strings op de outp
 % TODO: E_DFA is beslisbaar
 % TODO: EQ_DFA is beslisbaar
 % TODO: A_CFG is beslisbaar
-% TODO: E_CFG is beslisbaar
-% TODO: ES_CFG is beslisbaar
+
+\begin{bewijs}{We bewijzen dat $E_{CFG}$ beslisbaar is.}
+  We kunnen bewijzen dat $E_{CFG} = \{\langle G \rangle | G \text{ is een CFG en } L_G = \emptyset\}$ beslisbaar is door $G$ te transformeren als volgt:
+  \begin{itemize}
+  \item Voor een regel $A \rightarrow \alpha$ met $\alpha$ bestaande enkel uit terminals (inclusief $\epsilon$), dan:
+  \begin{itemize}
+  \item Verwijder alle producties waar $A$ aan de linkerkant staat.
+  \item Vervang in elke regel waar $A$ rechts voorkomt, de voorkomens van $A$ door $\alpha$.
+  \end{itemize}
+  \item Herhaal de transformatie totdat:
+  \begin{itemize}
+  \item Het startsymbool verwijderd is, waarbij de invoer verworpen wordt, omdat dat betekent dat het mogelijk is een string af te leiden in het startsymbool.
+  \item Er geen regels zijn van de benodigde vorm, waarbij de invoer verworpen wordt, omdat de taal dan leeg is. (Het is dus niet mogelijk om een terminal te bereiken vanuit het startsymbool.)
+  \end{itemize}
+  \end{itemize}
+  Door deze transformatie uit te voeren kunnen we voor elke CFG bepalen of die de lege taal bepaalt of niet en dus is $E_{CFG}$ beslisbaar.
+\end{bewijs}
+
+\begin{bewijs}{We bewijzen dat $ES_{CFG}$ beslisbaar is.}
+  We kunnen bewijzen dat $ES_{CFG} = \{\langle G \rangle | G \text{ is een CFG en } \epsilon \in L_G\}$ beslisbaar is door $G$ te transformeren naar de Chomsky Normaal Vorm (definitie\ref{def:cnf}). Indien de CNF de productie ``$S \rightarrow \epsilon$'' bevat kunnen we concluderen dat de gegeven CFG $G$ de lege string bevat. Bij gevolg is $ES_{CFG}$ beslisbaar.
+\end{bewijs}
+
 % TODO: Elke CFL is beslisbaar
+
+\begin{bewijs}{We bewijzen dat $\etm$ niet beslisbaar is.}
+  Stel dat $\etm$ beslisbaar is en $E$ is een beslisser voor $\etm$, dan kunnen we een beslisser $B$ voor $\atm$ construeren. Voor een gegeven invoer $\langle M,s \rangle$ construeren we een machine $M_s$ waarvoor geldt
+  \begin{itemize}
+  \item Gegeven een invoer $w$, als $w \neq s$, verwerpt $M_s$ de string $w$.
+  \item Anders laat $M_s$ $M$ lopen op $w$ en geeft het resultaat terug.
+  \end{itemize}
+  $M_s$ is een machine die enkel accept teruggeeft indien $M$ $s$ accepteert en anders reject. We laten $E$ lopen op $\langle M_s \rangle$:
+  \begin{itemize}
+  \item Als $E$ $M_s$ accepteert, dan laten we $B$ zijn input $\langle M,s \rangle$ verwerpen, omdat $M_s$ dan de lege taal bepaalt, wat enkel mogelijk is als $M$ $s$ verwerpt.
+  \item Als $E$ $M_s$ verwerpt, dan laten we $B$ zijn input $\langle M,s \rangle$ accepteren, omdat $M_s$ dan niet de lege taal bepaalt, wat enkel mogelijk is als $M$ $s$ accepteert.
+  \end{itemize}
+  
+  We zeggen dat $\atm$ reduceerbaar is naar $\etm$.
+\end{bewijs}
+
+\begin{bewijs}{We bewijzen dat $\eqtm$ niet beslisbaar is.}
+  We kunnen $\eqtm$ reduceren naar $\etm$ ($\etm \leq_m \eqtm$). Indien er een beslisser $EQ$ bestaat voor $\eqtm$, dan kunnen we een beslisser $E$ voor $\etm$ bouwen die bij een invoer $\langle M \rangle$, $EQ$ laat lopen op $\langle M,m_\emptyset \rangle$ en hetzelfde resultaat teruggeeft. We weten dat $\etm$ niet beslisbaar is, dus de beslisser $E$ kan niet bestaan en dus de beslisser $EQ$ ook niet. Bijgevolg is $eqtm$ ook niet beslisbaar.
+\end{bewijs}
+
+% TODO: EQ_TM is niet herkenbaar en niet co-herkenbaar
+
+\begin{definitie}{$IsIn_{TM,S}$}
+  Stel dat $S$ een verzameling van talen is, kunnen we voor een gegeven machine $M$ bepalen of de taal $L_M$ bepaald van die machine behoort tot de verzameling $S$?
+  \begin{equation*}
+  IsIn_{TM,S} = \{\langle M \rangle|L_M \in S\}
+  \end{equation*}
+\end{definitie}
+
+We kunnen zeggen dat $\etm = IsIn_{TM,\{\emptyset\}}$ en $REGULAR_{TM} = IsIn_{TM,RegLan}$.
+
 % TODO: REGULAR_TM is niet beslisbaar: $REGULAR_{TM} = \{\langle M \rangle | M \text{ is een Turingmachine en } L_M \text{ is een reguliere taal}\}$
-% TODO: EQ_TM is niet beslisbaar
 % TODO: ALL_CFG is niet beslisbaar
 
 \subsubsection{Overzicht}
