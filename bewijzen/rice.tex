@@ -1,0 +1,15 @@
+  Stel dat $M_\emptyset$ die de lege taal bepaalt, een eigenschap $P$ niet heeft. Omdat $P$ niet-triviaal is, moet er een machine $X$ bestaan die de taal $L_X$ bepaalt en de eigenschap $P$ wel heeft.
+
+  Stel dat er een beslisser $B$ bestaan voor $Pos_P$, dan kunnen we een beslisser $A$ voor $A_{TM}$ construeren. Voor een gegeven invoer $\langle M,s \rangle$ construeren we een hulpmachine $H_{M,s}$ waarvoor geldt
+  \begin{itemize}
+  \item $H_{M,s}$ laat $M$ lopen op $s$.
+  \item Als $M$ $s$ accepteert, dan laat $H_{M,s}$ $X$ lopen op een invoer $x$ en accepteert indien $X$ $x$ accepteert.
+  \end{itemize}
+  
+  We kunnen zeggen dat voor $H_{M,s}$ geldt dat het de taal $L_X$ bepaalt indien $M$ $s$ accepteert en de lege taal bepaalt indien $M$ $s$ niet accepteert. Dat wilt zeggen dat $H_{M,s}$ de eigenschap $P$ heeft indien $M$ $s$ accepteert en de eigenschap $P$ niet heeft indien $M$ $s$ niet accepteert.
+  
+  Bijgevolg kunnen we zeggen dat $A$ een invoer $\langle M,s \rangle$ accepteert als $B$ $H_{M,s}$ accepteert en de invoer verwerpt als $B$ $H_{M,s}$ verwerpt. Dus $A$ is een beslisser voor $\atm$, wat niet mogelijk is. Daarom kan de beslisser $B$ voor $Pos_P$ ook niet bestaan.
+  
+  We zeggen dat $\atm$ reduceerbaar is naar $Pos_P$.
+  
+  Als $M_\emptyset$ de eigenschap $P$ wel heeft, kunnen we het bewijs uitvoeren voor $\overline{P}$. Omdat we dan bewijzen dat $Pos_{\overline{P}} = Neg_P$ onbeslisbaar is, weten we dat ook $Pos_P = \overline{Neg_P}$ onbeslisbaar is.

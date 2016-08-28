@@ -1,0 +1,9 @@
+  Stel $DFA_1$ ($Q_1$, $\Sigma$, $\delta_1$, $q_s$, $F_1$) met $Q_1 = \{q_s,q_1,q_2,...,q_n\}$ is een machine zonder onbereikbare toestanden waarvan elk paar toestanden f-verschillend zijn. Stel dat $DFA_2$ ($Q_2$, $\Sigma$, $\delta_2$, $q_s$, $F_2$) een DFA is met minder toestanden dan $DFA_1$.
+
+  \begin{itemize}
+  \item Elke toestand in $DFA_1$ is bereikbaar, dus er bestaan strings $s_i$ met $i=1...n$ zodanig dat $\delta^*_1(q_s,s_i)=q_i$.
+  \item $DFA_2$ heeft minder toestanden dan $DFA_1$, dus er is een $i$ en $j$ met $i \neq j$, zodanig dat er strings $s_i$ en $s_j$ zijn waarvoor $DFA_2$ meerdere keren in dezelfde toestand komen, dus $\delta^*_2(q_s,s_i)=\delta^*_2(q_s,s_j)$.
+  \item $q_i$ en $q_j$ zijn f-verschillend, dus er bestaat een string $v$ zodanig dat $\delta^*_2(q_i,v) \in F_1 \en \delta^*_2(q_j,v) \notin F_1$ of omgekeerd. Bij gevolg geldt ook $\delta^*_2(q_s,s_iv) \in F_1 \en \delta^*_2(q_s,q_jv) \notin F_1$ of omgekeerd. We zeggen dat $DFA_1$ van $s_iv$ en $s_jv$ just \'e\'en string accepteert.
+  \end{itemize}
+  
+  We kunnen nu aantonen dat $\delta^*_2(q_s,s_iv) = \delta^*_2(\delta^*_2(q_i),v) = \delta^*_2(\delta^*_2(q_j),v) = \delta^*_2(q_s,s_jv)$, wat betekent dat $DFA_1$ en $DFA_2$ niet dezelfde taal kunnen bepalen.

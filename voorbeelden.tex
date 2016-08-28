@@ -639,6 +639,11 @@ Vervolgens bepalen we de complementgraaf:
 
 De complementgraaf bevat geen enkele component die uit meer dan \'e'en toestand bestaat. We concluderen dat de DFA reeds minimaal is. We zien nu ook dat de NFA minder toestanden heeft dan de equivalente minimale DFA.
 
+\subsection{Taal is niet regulier met pompend lemma}
+\label{ex:plre}
+
+\input{voorbeelden/plre}
+
 \subsection{CFG}
 \label{ex:cfg}
 
@@ -684,3 +689,35 @@ We stellen een PDA op voor de contextvrije taal $L = \{a^nb^n|n \in \nat\}$ over
 \end{pda}
 
 Deze PDA kan niet met minder toestanden voorgesteld worden. Indien $q_3$ een eindtoestand zou zijn (en $q_2$ de starttoestand), dan zou het aantal $a$'s en $b$'s niet meer gelijk zijn, omdat de PDA dan kan stoppen voor dat het even veel $b$'s als $a$'s is tegengekomen. De strings $aaa$ of $aaab$ zouden dan onder andere geldig zijn, zo lang er minder dan of evenveel $b$'s als $a$'s zijn.
+
+\subsection{CFG naar PDA}
+\label{ex:cfgpda}
+
+\begin{itemize}
+\item $E \rightarrow a$
+\item $E \rightarrow E+E$
+\item $E \rightarrow E*E$
+\end{itemize}
+
+We converteren de gegeven CFG met startsymbool $E$ naar een PDA:
+
+\begin{pda}
+  \node[initial,state]   (qs)                   {$q_s$};
+  \node[state]           (x)  [below=2cm of qs] {$x$};
+  \node[state,accepting] (qf) [below=2cm of x]  {$q_f$};
+  
+  \path (qs) edge []                            node [pos=0.2] {$\pdat{\epsilon}{\epsilon}{E\$}$} (x)
+        (x)  edge []                            node [pos=0.8] {$\pdat{\epsilon}{\$}{\epsilon}$}  (qf)
+             edge [out=120,in=150,distance=2cm] node [left]    {$\pdat{\epsilon}{E}{a}$}          (x)
+             edge [out=165,in=195,distance=2cm] node [left]    {$\pdat{\epsilon}{E}{E*E}$}        (x)
+             edge [out=210,in=240,distance=2cm] node [left]    {$\pdat{\epsilon}{E}{E+E}$}        (x)
+             edge [out=60,in=30,distance=2cm]   node [right]   {$\pdat{a}{a}{\epsilon}$}          (x)
+             edge [out=15,in=345,distance=2cm]  node [right]   {$\pdat{*}{*}{\epsilon}$}          (x)
+             edge [out=330,in=300,distance=2cm] node [right]   {$\pdat{+}{+}{\epsilon}$}          (x);
+  \addvmargin{1mm}
+\end{pda}
+
+\subsection{Taal is niet contextvrij met pompend lemma}
+\label{ex:plcfg}
+
+\input{voorbeelden/plcfg}

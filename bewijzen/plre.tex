@@ -1,0 +1,13 @@
+Voor een DFA die een taal $L$ bepaalt nemen we een pomplengte $d = \#Q + 1$ en een willekeurige string $s = a_1a_2a_3...a_n$ met $n \geq d$. De accepterende sequentie van toestanden ($q_s = q_1$, $q_2$, ..., $q_f$) voor s heeft een lengte strikt groter dan het aantal toestanden in $Q$, dus er zijn bij de eerste $d$ toestanden zeker twee toestanden gelijk omdat er maar $d-1$ toestanden zijn. Stel dat $q_i$ en $q_j$ gelijk zijn met $i < j \leq d$, dan nemen we
+  \begin{equation*}
+  \begin{cases}
+  x = a_1a_2...a_i\\
+  y = a_{i+1}a_{i+2}...a_j\\
+  z = a_{j+1}a_{j+2}...a_n
+  \end{cases}
+  \end{equation*}
+  \begin{itemize}
+  \item Eigenschap 1 geldt omdat $y$ een lus volgt en die $k$ keer herhaald kan worden voor $xy^kz \in L$.
+  \item Eigenschap 2 geldt omdat $i$ strikt kleiner is dan $j$, dus bevat $y$ minstens \'e\'en element.
+  \item Eigenschap 3 geldt omdat $i < j \leq d$, dus we hebben $xy$ kleiner dan (of gelijk aan) $d$ gekozen.
+  \end{itemize}

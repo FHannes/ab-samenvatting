@@ -1,0 +1,22 @@
+\begin{longtable}{c|c|c|c|X}
+  \textbf{Taal} & \textbf{H} & \textbf{cH} & \textbf{B} & \textbf{Beschrijving} \\ \hline
+  $A_{DFA}$ & \cmark & \cmark & \cmark & De taal met alle DFA's die een bepaalde string accepteren.\\ \hline
+  $E_{DFA}$ & \cmark & \cmark & \cmark & De taal met alle DFA's die de lege taal bepalen.\\ \hline
+  $EQ_{DFA}$ & \cmark & \cmark & \cmark & De taal met alle koppels van equivalente DFA's.\\ \hline
+  $A_{NFA}$ & \cmark & \cmark & \cmark & De taal met alle NFA's die een bepaalde string accepteren.\\ \hline
+  $A_{RegEx}$ & \cmark & \cmark & \cmark & De taal met alle reguliere expressies die een bepaalde string accepteren.\\ \hline
+  $ALL_{RegEx}$ & \cmark & \cmark & \cmark & De taal met alle reguliere expressies die de taal $\sstar$ bepalen.\\ \hline
+  $A_{CFG}$ & \cmark & \cmark & \cmark & De taal met alle CFG's die een bepaalde string accepteren.\\ \hline
+  $E_{CFG}$ & \cmark & \cmark & \cmark & De taal met alle CFG's die de lege taal bepalen.\\ \hline
+  $EQ_{CFG}$ & \xmark & \cmark & \xmark & De taal met alle koppels van equivalente CFG's.\\ \hline
+  $ES_{CFG}$ & \cmark & \cmark & \cmark & De taal met alle CFG's die de lege string genereren.\\ \hline
+  $L_{CFG}$ & \cmark & \cmark & \cmark & Een contextvrije taal bepaald door een CFG.\\ \hline
+  $ALL_{CFG}$ & \cmark & \xmark & \xmark & De taal met alle CFG's die de taal $\sstar$ bepalen.\\ \hline
+  $A_{LBA}$ & \cmark & \cmark & \cmark & De taal met alle LBA's die een bepaalde string accepteren.\\ \hline
+  $E_{LBA}$ & \cmark & \xmark & \xmark & De taal met alle LBA's die de lege taal bepalen.\\ \hline
+  $\atm$ & \cmark & \xmark & \xmark & De taal met alle Turingmachines die voor een bepaalde string, die string accepteren.\\ \hline
+  $\htm$ & \cmark & \xmark & \xmark & De taal met alle Turingmachines die voor een bepaalde string, die string accepteren of verwerpen.\\ \hline
+  $\etm$ & \xmark & \cmark & \xmark & De taal met alle Turingmachines die de lege taal bepalen.\\ \hline
+  $\eqtm$ & \xmark & \xmark & \xmark & De taal met alle koppels van equivalente Turingmachines.\\ \hline
+  $REGULAR_{TM}$ & \cmark & \xmark & \xmark & De taal met alle Turingmachines die een reguliere taal bepalen.\\
+\end{longtable}

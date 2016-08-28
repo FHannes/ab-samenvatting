@@ -1,0 +1,18 @@
+We bewijzen dit door contradictie. Stel dat er een beslisser $B$ bestaat voor $\atm$. Bij een input $\langle M,s \rangle$ accepteert $B$ $M$ als $M$ $s$ accepteert en $B$ verwerpt $M$ als $M$ $S$ verwerpt of blijft lopen.
+
+We construeren nu een contradictiemachine $C$ als
+\begin{equation*}
+C(\langle M \rangle) = opposite(B(\langle M,M \rangle))\text{ voor elke Turingmachine M}
+\end{equation*}
+De functie $opposite(x)$ is gedefinieerd als
+\begin{equation*}
+opposite(x) = \begin{cases}
+reject, & \text{ als } x = accept\\
+accept & \text{ als } x = reject
+\end{cases}
+\end{equation*}
+
+We nemen nu $C(\langle C \rangle) = opposite(B(\langle C,C \rangle))$:
+Als $C(\langle C \rangle) = accept$ ($C$ accepteert $C$), dan accepteert de beslisser $B$ de invoer $\langle C,C \rangle$, dus $B(\langle C,C \rangle) = accept$. Maar $opposite(B(\langle C,C \rangle))$ is dan $reject$, dat is een tegenstelling omdat dan geldt $C(\langle C \rangle) \neq opposite(B(\langle C,C \rangle))$.
+
+We kunnen nu zeggen dat de machine $C$ niet kan bestaan, dus de beslisser $B$ kan ook niet bestaan. Bij gevolg is $\atm$ niet beslisbaar.

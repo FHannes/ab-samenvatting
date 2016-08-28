@@ -1,0 +1,23 @@
+  Voor een taal $L$ nemen we een CFG in CNF, waardoor er voor elke $s \in L$ een parse tree bestaat. Omdat de CFG in CNF staat, weten we dat elk blad onderaan de boom een terminal is, die (voor een niet-lege string $s$) volgt uit een productie met vorm ``$A \rightarrow \alpha$". Elke andere knoop in de boom moet dan volgen uit een productie met vorm ``$A \rightarrow BC$". Daarom kunnen we weggen dat indien we alle bladeren van de boom wegsnoeien, we een perfecte binaire boom bekomen, die een hoogte heeft van minstens $log_2|s|$.
+  
+  Het langste enkelvoudig pad vanaf de wortel van de parse tree moet minstens een lengte hebben van $log_2|s| + 1$. We nemen een string $s \in L$ waarvoor geldt dat $log_2|s| + 1 > n$ met $n = \#V + 1$ Dus er moet minstens \'e\'en variabele $X$ herhaald worden. Vanwege de definitie van de CNF (definitie \ref{def:cnf}) geldt dat $X \neq S$. We nemen op dat pad een $X_1$ en de dichtste herhaling $X_2$ (zie figuur \ref{fig:pumptree}). We kunnen nu de afleiding construeren als
+  \begin{equation*}
+  S \Rightarrow^* uX_2z \Rightarrow^* uvX_1yz \Rightarrow^* uvxyz \text{ met }u,v,x,y,z \in \sstar
+  \end{equation*}
+  
+  \begin{itemize}
+  \item Eigenschap 1 geldt omdat indien de bovenstaande afleiding geldt, de volgende afleidingen ook moeten gelden:
+  \begin{equation*}
+  S \Rightarrow^* uX_2z \Rightarrow^* uxz
+  \end{equation*}
+  \begin{equation*}
+  S \Rightarrow^* uXz \Rightarrow^* uvXyz \Rightarrow^* uvvxyyz
+  \end{equation*}
+  \item Eigenschap 2 geldt omdat $v$ en $y$ niet tegelijkertijd leeg kunnen zijn, want dan zou men $X$ uit zichzelf kunnen afleiden en dat kan niet vanwege de vorm van de CFG.
+  \end{itemize}
+  
+  Deze eigenschappen zijn geldig voor strings langer dan de pomplengte, dus $d = 2^{n-1}$.
+  
+  \begin{itemize}
+  \item Eigenschap 3 geldt omdat $vxy$ afgeleid wordt uit een $X$ met een parse tree die lager is dan $n$, dus hoogstens $d$ bladeren heeft, wat juist correspondeert met $vxy$.
+  \end{itemize}

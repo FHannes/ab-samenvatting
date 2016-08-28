@@ -1,0 +1,9 @@
+We tonen aan dat een taal $L = \{a^nb^n|n \in \nat\}$ over $\Sigma = \{a,b\}$ niet regulier is.
+
+Stel dat er voor $L$ een pomplengte $d$ bestaat, dan beschouwen we de string $s=a^db^d$. We nemen een willekeurige opdeling van $s=xyz$ met $|y| > 0$. Er zijn drie mogelijkheden:
+
+\begin{itemize}
+\item $y$ bevat enkel $a$'s: $xyyz$ bevat dan meer $a$'s dan $b$'s, dus $xyyz \notin L$ of $xz$ bevat dan meer $b$'s dan $a$'s, dus $xz \notin L$
+\item $y$ bevat enkel $b$'s: $xyyz$ bevat dan meer $b$'s dan $a$'s, dus $xyyz \notin L$ of $xz$ bevat dan meer $a$'s dan $b$'s, dus $xz \notin L$
+\item $y$ is van de vorm $a^ib^j$ met $i,b \in \nat_0$: $xyyz \notin L$ want het aantal $a$'s en $b$'s blijft enkel gelijk indien $i=j$ en zelfs dan wordt de volgorde niet meer gerespecteerd, er zullen $a$'s en $b$'s door elkaar staan.
+\end{itemize}

@@ -1,0 +1,13 @@
+  We construeren een DFA ($Q_d$, $\Sigma$, $\delta_d$, $q_{sd}$, $F_d$) uit een NFA ($Q_n$, $\Sigma$, $\delta_n$, $q_{sn}$, $F_n$) zodanig dat $L_{NFA} = L_{DFA}$ als volgt:
+  \begin{itemize}
+  \item $Q_d = \powerset(Q_n)$: Elke toestand van de DFA is een verzameling van toestanden van de NFA. Onbereikbare toestanden zullen we later verwijderen, waardoor zal gelden: $Q_d \subseteq \powerset(Q_n)$.
+  \item \bm{$\delta_d: (\powerset(Q_n) \times \Sigma) \rightarrow \powerset(Q_n)$}\\$\delta_d(\dfastate, a) = eb(\delta_n(\dfastate, a))$ voor $\dfastate \in Q_d$: Voor een symbool $a$ is er vanuit de toestand van de DFA $\dfastate$ een overgang naar de toestand van de DFA die alle toestanden van de NFA bevat die epsilon-bereikbaar zijn vanuit alle $q \in \dfastate$.
+  \item $q_{sd} = eb(q_{sn})$: De starttoestand is de verzameling van toestanden van de NFA die epsilon-bereikbaar zijn vanuit de starttoestand van de NFA.
+  \item $F_d = \{S|S \in Q_d, S \cap F_n \neq \emptyset\}$: Een eindtoestand van een DFA bevat altijd een eindtoestand van de NFA.
+  \end{itemize}
+  Om de constructie uit te voeren hebben we de volgende definities ingevoerd:
+  \begin{itemize}
+  \item \bm{$eb: Q_n \rightarrow \powerset(Q_n)$}\\ $eb(q) = \{x|x \in \{q\} \cup \delta_n(q, \epsilon)\}$ met $q \in Q_n$: De afbeelding die een toestand $q \in Q_n$ afbeeldt op alle epsilon-bereikbare toestanden. Een toestand $q_{next}$ is epsilon-bereikbaar uit $q$ indien $q_{next} = q$ of er een overgang bestaat zodanig dat $\delta_n(q, \epsilon) = q_{next}$.
+  \item \bm{$eb: Q_d \rightarrow \powerset(Q_n)$}\\ $eb(\dfastate) = \{x|x \in \bigcup_{q \in \dfastate}eb(q)\}$ met $\dfastate \in Q_d$: De afbeelding die een toestand $\dfastate \in Q_d$ afbeeldt op alle toestanden die epsilon-bereikbaar zijn vanuit alle toestanden in $\dfastate$.
+  \item \bm{$\delta_n: Q_d \times \Sigma \rightarrow \powerset(Q_n)$}\\ $\delta_n(\dfastate, a) = \{x|x \in \bigcup_{q \in \dfastate}\delta_n(q, a)\}$ met $\dfastate \in Q_d$ en $a \in \Sigma$: De afbeelding die een toestand $\dfastate \in Q_d$ afbeeldt op de verzameling van alle toestanden die voor een gegeven symbool bereikbaar zijn vanuit elke toestand in $\dfastate$.
+  \end{itemize}

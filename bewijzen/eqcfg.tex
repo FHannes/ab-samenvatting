@@ -1,0 +1,3 @@
+  We kunnen bewijzen dat $EQ_{CFG} = \{\langle G_1,G_2 \rangle | G_1 \en G_2 \text{ zijn equivalente}$ $\text{CFG's}\}$ beslisbaar door $ALL_{CFG}$ te reduceren naar $EQ_{CFG}$.
+
+  Stel dat $EQ_{CFG}$ beslisbaar is en $EQ$ is een beslisser voor $EQ_{CFG}$, dan kunnen we een beslisser $A$ voor $ALL_{CFG}$ construeren. Gegeven een invoer $\langle G \rangle$, laat $A$ $EQ$ lopen op $\langle G,G_1 \rangle$, waarbij $\langle G_1 \rangle$ een CFG is die de taal $\sstar$ genereert. $A$ geeft de uitvoer van $EQ$ terug. $A$ is nu een beslisser voor $ALL_{CFG}$, die niet kan bestaan, dus de beslisser $EQ$ voor $EQ_{CFG}$ kan ook niet bestaan.

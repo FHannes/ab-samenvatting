@@ -1,0 +1,12 @@
+  We construeren een Orakelmachine $\oatm$. Bij input $\langle M \rangle$ doet $\oatm$:
+  \begin{itemize}
+  \item Construeer een Turingmachine $P$ die bij input $w$:
+  \begin{itemize}
+  \item $M$ laat lopen op alle strings van $\sstar$.
+  \item Als $M$ eender welke string van $\sstar$ accepteert, dan accepteert $P$ de input $w$. ($P$ accepteert voor eendere welke $w$ zo lang dat $M$ minstens \'e\'en string accepteert en dus niet de lege taal bepaalt.)
+  \end{itemize}
+  \item $\oatm$ vraagt aan het orakel of $\langle P,w \rangle \in \atm$.
+  \item Als het orakel ``ja'' antwoordt, dan verwerpt $\oatm$ de invoer, omdat $M$ niet de lege taal bepaalt. Anders accepteert het de invoer.
+  \end{itemize}
+  
+  $\oatm$ is een beslisser voor de taal $\etm$.

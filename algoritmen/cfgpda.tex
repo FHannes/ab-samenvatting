@@ -1,0 +1,15 @@
+  We stellen een PDA ($Q$, $\Sigma_{PDA}$, $\Gamma$, $\delta$, $q_s$, $F$) voor een CFG ($V$, $\Sigma_{CFG}$, $R$, $S$) met
+  \begin{itemize}
+  \item $Q = {q_s, q_h, q_a}$ met $q_h$ een hulptoestand
+  \item $\Sigma_{PDA} = \Sigma_{CFG}$
+  \item $\Gamma = \{\$\} \cup V \cup \Sigma_{CFG}$
+  \item $\delta$ waarvoor geldt:
+  \begin{itemize}
+  \item Er is 1 boog van $q_s$ naar $q_h$ met label ``$\epsilon,\epsilon\rightarrow\$$".
+  \item Er is 1 boog van $q_h$ naar $q_a$ met label ``$\epsilon,\$\rightarrow\epsilon$".
+  \item Voor elk symbool $a \in \Sigma_{CFG}$ is er een lus bij $q_h$ met label ``$a,a\rightarrow\epsilon$".
+  \item Voor elke productie $(X \rightarrow \gamma) \in R$ is er een lus bij $q_h$ met label ``$\epsilon,X\rightarrow\gamma$". (Vervang de linkerkant van een productie bovenaan de stapel met de rechterkant van de productie.)
+  \end{itemize}
+  \item $q_s$ de starttoestand
+  \item $F = \{q_a\}$ met $q_a$ de eindtoestand
+  \end{itemize}

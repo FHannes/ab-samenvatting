@@ -13,10 +13,11 @@
 \usepackage{enumitem}
 \usepackage{bm}
 \usepackage{pifont}
+\usepackage{ltxtable}
 \usepackage{tabularx}
 \usepackage{hyperref}
 \usepackage{tikz}
-\usetikzlibrary{arrows,automata,calc,fit,positioning}
+\usetikzlibrary{arrows,automata,calc,chains,decorations.pathreplacing,fit,positioning}
 \usepackage{chngcntr}
 \counterwithin{figure}{section}
 
@@ -95,6 +96,23 @@
   \tikzstyle{every state}=[fill=none,draw=black,text=black]
   \tikzstyle{accepting}=[accepting by double]
   \tikzstyle{every initial by arrow}=[initial text=]}%
+  {\end{tikzpicture}\end{center}}
+ 
+\newenvironment{stack}%
+  {\begin{center}\begin{tikzpicture}[
+    start chain=going right,
+    node distance=0cm]
+    \tikzstyle{tape node}=[
+        on chain,
+        draw,
+        inner sep=1pt,
+        outer xsep=0pt,
+        minimum height=.5cm,
+        minimum width=.5cm,
+        text depth=0pt,
+        font=\tt,
+        semithick]
+  \tikzstyle{every initial by arrow}=[initial text=top]}%
   {\end{tikzpicture}\end{center}}
   
 \newenvironment{enumalgo}%
@@ -533,11 +551,12 @@ Een NFA kan omgezet worden naar reguliere expressie door de NFA eerst om te zett
 \end{algoritme}
 
 \begin{algoritme}{Transformatie NFA naar GNFA}
+  \label{alg:nfagnfa}
   \vspace{-5mm}\begin{enumalgo}
   \item Generaliseer de NFA:
     \begin{itemize}
-    \item Voer een nieuwe starttoestand $q_s$ in.
-    \item Voer een nieuwe (unieke) eindtoestand $q_a$ in.
+    \item Voer een nieuwe begintoestand $q_s$ in.
+    \item Voer een nieuwe (unieke) eindtoestand $q_e$ in.
     \item Teken $\epsilon$-boog van $q_s$ naar de oude begintoestand.
     \item Teken $\epsilon$-boog van elke oude eindtoestand naar $q_e$.
     \item Vul de automaat aan met $\phi$-bogen waar er bogen ontbreken. (Zie definitie \ref{def:gnfa})
@@ -546,15 +565,44 @@ Een NFA kan omgezet worden naar reguliere expressie door de NFA eerst om te zett
   \item Reduceer de GNFA:
     \begin{itemize}
     \item Als $Q \setminus \{q_s, q_e\} = \emptyset$, ga naar stap 3.
-    \item Voer een reductiestap uit door een willekeurige knoop $q \in Q \setminus \{q_s, q_e\}$ te verwijderen. (Zie voorbeeld \ref{ex:gnfa})
+    \item Voer een reductiestap uit door een willekeurige toestand $q \in Q \setminus \{q_s, q_e\}$ te verwijderen. De basis reductiestap wordt weergegeven in figuur \ref{fig:gnfareduce}.
     \item Herhaal stap 2.
     \end{itemize}
   \item Bepaal de reguliere expressie die af te lezen is als label op de boog tussen $q_s$ en $q_e$.
-\end{enumalgo}
+  \end{enumalgo}
 \end{algoritme}
 
-% TODO: Bewijs dat elke string die aanvaard wordt voor de reductiestap nadien nog steeds aanvaard wordt
-% TODO: Bewijs dat elke string die verworpen wordt voor de reductiestap nadien nog steeds verworpen wordt
+Een voorbeeld van algoritme \ref{alg:nfagnfa} wordt weergegeven in sectie \ref{ex:gnfa}.
+
+\begin{figure}[ht]
+\centering
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{>{\centering\arraybackslash}m{4cm}>{\centering\arraybackslash}m{1cm} >{\centering\arraybackslash}m{5cm}}
+\begin{nfa}
+  \node[state] (A)                     {$q_a$};
+  \node[state] (X)  [below right of=A] {$q$};
+  \node[state] (B)  [above right of=X] {$q_b$};
+  
+  \path (A) edge [bend left]  node {$E_4$} (B)
+            edge [bend right] node {$E_1$} (X)
+        (X) edge [loop below] node {$E_2$} (X)
+            edge [bend right] node {$E_3$} (B);
+  \addvmargin{1mm}
+\end{nfa} & $\longrightarrow$ & \begin{nfa}
+  \node[state] (A)                   {$q_a$};
+  \node[state] (B)  [right=3cm of A] {$q_b$};
+  
+  \path (A) edge []  node {$E_4|E_1(E_2)^*E_3$} (B);
+  \addvmargin{1mm}
+\end{nfa}
+\end{tabular}
+\caption{Een basis reductiestap om een GNFA te reduceren.}
+\label{fig:gnfareduce}
+\end{figure}
+
+\begin{bewijs}{We bewijzen dat een NFA een reguliere taal bepaalt.}
+\input{bewijzen/nfare}
+\end{bewijs}
 
 \subsection{DFA}
 
@@ -592,20 +640,7 @@ Algoritme \ref{alg:cdfa} impliceert ook dat voor elke $a \in \Sigma$ een overgan
 De complete DFA wordt voornamelijk gebruikt in praktijk. Verder in dit document wordt vaak gebruik gemaakt van een DFA met de assumptie dat $\delta$ een totale functie is. Daarbij wordt impliciet gesteld dat voor een niet-complete DFA eerst de constructie van de equivalente complete DFA wordt uitgevoerd.
 
 \begin{algoritme}{Transformatie NFA naar DFA}
-  \label{alg:nfadfa}
-  We construeren een DFA ($Q_d$, $\Sigma$, $\delta_d$, $q_{sd}$, $F_d$) uit een NFA ($Q_n$, $\Sigma$, $\delta_n$, $q_{sn}$, $F_n$) zodanig dat $L_{NFA} = L_{DFA}$ als volgt:
-  \begin{itemize}
-  \item $Q_d = \powerset(Q_n)$: Elke toestand van de DFA is een verzameling van toestanden van de NFA. Onbereikbare toestanden zullen we later verwijderen, waardoor zal gelden: $Q_d \subseteq \powerset(Q_n)$.
-  \item \bm{$\delta_d: (\powerset(Q_n) \times \Sigma) \rightarrow \powerset(Q_n)$}\\$\delta_d(\dfastate, a) = eb(\delta_n(\dfastate, a))$ voor $\dfastate \in Q_d$: Voor een symbool $a$ is er vanuit de toestand van de DFA $\dfastate$ een overgang naar de toestand van de DFA die alle toestanden van de NFA bevat die epsilon-bereikbaar zijn vanuit alle $q \in \dfastate$.
-  \item $q_{sd} = eb(q_{sn})$: De starttoestand is de verzameling van toestanden van de NFA die epsilon-bereikbaar zijn vanuit de starttoestand van de NFA.
-  \item $F_d = \{S|S \in Q_d, S \cap F_n \neq \emptyset\}$: Een eindtoestand van een DFA bevat altijd een eindtoestand van de NFA.
-  \end{itemize}
-  Om de constructie uit te voeren hebben we de volgende definities ingevoerd:
-  \begin{itemize}
-  \item \bm{$eb: Q_n \rightarrow \powerset(Q_n)$}\\ $eb(q) = \{x|x \in \{q\} \cup \delta_n(q, \epsilon)\}$ met $q \in Q_n$: De afbeelding die een toestand $q \in Q_n$ afbeeldt op alle epsilon-bereikbare toestanden. Een toestand $q_{next}$ is epsilon-bereikbaar uit $q$ indien $q_{next} = q$ of er een overgang bestaat zodanig dat $\delta_n(q, \epsilon) = q_{next}$.
-  \item \bm{$eb: Q_d \rightarrow \powerset(Q_n)$}\\ $eb(\dfastate) = \{x|x \in \bigcup_{q \in \dfastate}eb(q)\}$ met $\dfastate \in Q_d$: De afbeelding die een toestand $\dfastate \in Q_d$ afbeeldt op alle toestanden die epsilon-bereikbaar zijn vanuit alle toestanden in $\dfastate$.
-  \item \bm{$\delta_n: Q_d \times \Sigma \rightarrow \powerset(Q_n)$}\\ $\delta_n(\dfastate, a) = \{x|x \in \bigcup_{q \in \dfastate}\delta_n(q, a)\}$ met $\dfastate \in Q_d$ en $a \in \Sigma$: De afbeelding die een toestand $\dfastate \in Q_d$ afbeeldt op de verzameling van alle toestanden die voor een gegeven symbool bereikbaar zijn vanuit elke toestand in $\dfastate$.
-  \end{itemize}
+  \label{alg:nfadfa} \input{algoritmen/nfadfa}
 \end{algoritme}
 
 Sectie \ref{ex:nfadfa} toont enkele voorbeelden van de conversie van NFA's naar DFA's.
@@ -685,7 +720,7 @@ Sectie \ref{ex:dfafeqpart} beschrijft een voorbeeld van het alternatief algoritm
 
 \begin{algoritme}{DFA naar DFA$_{min}$}
   \label{alg:dfamin}
-  \begin{enumalgo}
+  \vspace{-5mm}\begin{enumalgo}
   \item Verwijder alle toestanden van waaruit het niet mogelijk is om een eindtoestand $q \in F$ te bereiken en alle toestanden die niet bereikbaar zijn.
   \item Transformeer (indien nodig) de DFA naar een volledige DFA met algoritme \ref{alg:cdfa}.
   \item Bepaal de f-gelijke toestanden van de DFA met algoritme \ref{alg:dfafeq}.
@@ -698,18 +733,10 @@ Sectie \ref{ex:dfafeqpart} beschrijft een voorbeeld van het alternatief algoritm
 Sectie \ref{ex:dfamin} toont een voorbeeld van de minimalisatie van een DFA, gebruikmakende van algoritme \ref{alg:dfamin}.
 
 \begin{bewijs}{We bewijzen dat een minimale een minimaal aantal toestanden heeft.}
-  Stel $DFA_1$ ($Q_1$, $\Sigma$, $\delta_1$, $q_s$, $F_1$) met $Q_1 = \{q_s,q_1,q_2,...,q_n\}$ is een machine zonder onbereikbare toestanden waarvan elk paar toestanden f-verschillend zijn. Stel dat $DFA_2$ ($Q_2$, $\Sigma$, $\delta_2$, $q_s$, $F_2$) een DFA is met minder toestanden dan $DFA_1$.
-
-  \begin{itemize}
-  \item Elke toestand in $DFA_1$ is bereikbaar, dus er bestaan strings $s_i$ met $i=1...n$ zodanig dat $\delta^*_1(q_s,s_i)=q_i$.
-  \item $DFA_2$ heeft minder toestanden dan $DFA_1$, dus er is een $i$ en $j$ met $i \neq j$, zodanig dat er strings $s_i$ en $s_j$ zijn waarvoor $DFA_2$ meerdere keren in dezelfde toestand komen, dus $\delta^*_2(q_s,s_i)=\delta^*_2(q_s,s_j)$.
-  \item $q_i$ en $q_j$ zijn f-verschillend, dus er bestaat een string $v$ zodanig dat $\delta^*_2(q_i,v) \in F_1 \en \delta^*_2(q_j,v) \notin F_1$ of omgekeerd. Bij gevolg geldt ook $\delta^*_2(q_s,s_iv) \in F_1 \en \delta^*_2(q_s,q_jv) \notin F_1$ of omgekeerd. We zeggen dat $DFA_1$ van $s_iv$ en $s_jv$ just \'e\'en string accepteert.
-  \end{itemize}
-  
-  We kunnen nu aantonen dat $\delta^*_2(q_s,s_iv) = \delta^*_2(\delta^*_2(q_i),v) = \delta^*_2(\delta^*_2(q_j),v) = \delta^*_2(q_s,s_jv)$, wat betekent dat $DFA_1$ en $DFA_2$ niet dezelfde taal kunnen bepalen.
+  \input{bewijzen/dfamin_minstates}
 \end{bewijs}
 
-Het is belangrijk te beseffen dat er geen DFA bestaat die dezelfde taal bepaald als een minimale DFA, met minder toestanden. Maar dat is niet noodzakelijk waar voor een NFA! Er kan namelijk een NFA bestaan die minder toestanden heeft dan ene minimale DFA en nog steeds dezelfde taal bepaalt. Dit is het gevolg van de beperkingen die bij een DFA worden opgelegd, die niet gelden voor een NFA, zoals het verbod op $\epsilon$-bogen en dat er voor een bepaald symbool hoogstens \'e\'en boog uit een toestand mag vertrekken. Daarom zal een DFA (zelfs een minimale DFA) die equivalent is met een NFA, vaak meer toestanden hebben. Een voorbeeld van een taal waar dit geldt is uitgewerkt in sectie \ref{ex:nfaldfamin}.
+Het is belangrijk te beseffen dat er geen DFA bestaat die dezelfde taal bepaald als een minimale DFA, met minder toestanden. Maar dat is niet noodzakelijk waar voor een NFA! Er kan namelijk een NFA bestaan die minder toestanden heeft dan een minimale DFA en nog steeds dezelfde taal bepaalt. Dit is het gevolg van de beperkingen die bij een DFA worden opgelegd, die niet gelden voor een NFA, zoals het verbod op $\epsilon$-bogen en dat er voor een bepaald symbool hoogstens \'e\'en boog uit een toestand mag vertrekken. Daarom zal een DFA (zelfs een minimale DFA) die equivalent is met een NFA, vaak meer toestanden hebben. Een voorbeeld van een taal waar dit geldt is uitgewerkt in sectie \ref{ex:nfaldfamin}.
 
 \begin{definitie}{Isomorfe DFA's}
   Een $DFA_1$ ($Q_1$, $\Sigma$, $\delta_1$, $q_{s1}$, $F_1$) is isomorf met een $DFA_2$ ($Q_2$, $\Sigma$, $\delta_2$, $q_{s2}$, $F_2$) indien enkel de namen van hun toestanden verschillen. Dus er bestaat een bijectie $b: Q_1 \rightarrow Q_2$ zodanig dat
@@ -743,6 +770,8 @@ Het is belangrijk te beseffen dat er geen DFA bestaat die dezelfde taal bepaald 
 \caption{Commutatief diagram voor $b$ en $\delta_i$.}
 \label{fig:isodfa}
 \end{figure}
+
+Als twee DFA's $DFA_1$ en $DFA_2$ dezelfde taal bepalen (equivalent zijn), dan zijn hun minimale DFA's isomorf.
 
 \subsection{Myhill-Nerode relaties op $\sstar$}
 
@@ -801,6 +830,14 @@ De equivalentierelatie $\sim_{DFA}$ is een $MN(L_{DFA})$-relatie op $\sstar$.
 % TODO: MN(L) en isomorfe DFA's
 % TODO: Supremum van MN(L)-relaties
 
+De $MN(L)$-relatie die hoort bij de minimale DFA wordt gegeven door:
+\begin{equation*}
+  x \sim_{min} y \Longleftrightarrow \forall s \in \Sigma^* (xs \in L \Leftrightarrow ys \in L)
+\end{equation*}
+Deze relatie wordt vertaald als ``Indien twee toestanden f-gelijk zijn, dan zijn ze identiek.''.
+
+We kunnen bewijzen dat twee minimale DFA's die dezelfde taal bepalen isomorf zijn. Beide DFA's moeten hetzelfde aantal toestanden $n$ hebben. Indien we het supremum nemen van die DFA's bekomen we terug een DFA met $n$ toestanden. Het kan niet meer dan $n$ toestanden zijn omdat het supremum nooit meer toestanden heeft dan de twee gegeven DFA's en minder kan ook niet omdat de nieuwe DFA dan niet meer dezelfde taal zou bepalen. De (drie) DFA's moeten dus isomorf zijn.
+
 Het is mogelijk om met een $MN(L)$-relatie te bewijzen dat een taal niet-regulier is. Je gaat te werk door aan te nemen dat als er een minimale DFA bestaat voor de taal, waarvoor men een relatie $\sim_{DFA}$ definieert. Je neemt aan dat die voldoet aan de eerste twee eigenschappen van de definitie (\ref{def:mnl}) en bewijst vervolgens dat het aantal equivalentieklassen van die relatie oneindig is.
 
 % TODO: Stelling van Myhill en Nerode
@@ -817,31 +854,15 @@ Het pompend lemma kan niet gebruikt worden om te bewijzen dat een taal regulier 
 \end{center}
 
 \begin{definitie}{Het pompend lemma voor reguliere talen}
-  Voor een reguliere taal $L$ bestaat een pomplengte $d$ zodanig dat als $s \in L$ en $|s| \geq d$, er minstens \'e\'en verdeling bestaat van $s$ in stukken $x$, $y$ en $z$ met $s = xyz$ en
-  \begin{enumerate}
-  \item $\forall i \geq 0: xy^iz \in L$
-  \item $|y| > 0$
-  \item $|xy| \leq d$
-  \end{enumerate}
+  \input{definities/plre}
 \end{definitie}
 
 \begin{bewijs}{We bewijzen de eigenschappen van het pompend lemma.}
-  Voor een DFA die een taal $L$ bepaalt nemen we een pomplengte $d = \#Q + 1$ en een willekeurige string $s = a_1a_2a_3...a_n$ met $n \geq d$. De accepterende sequentie van toestanden ($q_s = q_1$, $q_2$, ..., $q_f$) voor s heeft een lengte strikt groter dan het aantal toestanden in $Q$, dus er zijn bij de eerste $d$ toestanden zeker twee toestanden gelijk omdat er maar $d-1$ toestanden zijn. Stel dat $q_i$ en $q_j$ gelijk zijn met $i < j \leq d$, dan nemen we
-  \begin{equation*}
-  \begin{cases}
-  x = a_1a_2...a_i\\
-  y = a_{i+1}a_{i+2}...a_j\\
-  z = a_{j+1}a_{j+2}...a_n
-  \end{cases}
-  \end{equation*}
-  \begin{itemize}
-  \item Eigenschap 1 geldt omdat $y$ een lus volgt en die $k$ keer herhaald kan worden voor $xy^kz \in L$.
-  \item Eigenschap 2 geldt omdat $i$ strikt kleiner is dan $j$, dus bevat $y$ minstens \'e\'en element.
-  \item Eigenschap 3 geldt omdat $i < j \leq d$, dus we hebben $xy$ kleiner dan (of gelijk aan) $d$ gekozen.
-  \end{itemize}
+  \input{bewijzen/plre}
 \end{bewijs}
 
-% TODO: Voorbeeld gebruiken van pompend lemme of aan te tonen dat een taal niet-regulier is
+Een voorbeeld van hoe het pompend lemma gebruikt kan worden om te bewijzen dat een taal niet-regulier is, is gegeven in sectie \ref{ex:plre}.
+
 % TODO: Algebra van DFAs
 
 \subsection{Andere automaten}
@@ -884,8 +905,10 @@ Een voorbeeld van een CFG is gegeven in sectie \ref{ex:cfg}.
   Een taal $L$ is een contextvrije taal (CFL) indien er een CFG bestaat zodanig dat $L = L_{CFG}$.
 \end{definitie}
 
+De volgorde van de ontwikkeling van variabelen van een CFG bij een afleiding is niet belangrijk. Er wordt echter vaak een meest-linkse afleiding gehanteerd.
+
 \begin{definitie}{Ambigue strings}
-  Een string is ambigu indien er voor die meerdere meest-linkse (of meest-rechtse) afleidingen bestaan.
+  Een string is ambigu indien er voor die string meerdere meest-linkse (of meest-rechtse) afleidingen bestaan.
 \end{definitie}
 
 \begin{definitie}{Ambigue CFG's}
@@ -989,31 +1012,35 @@ Voor een CFL is het mogelijk om met eender welke van deze definities equivalente
 
 \begin{algoritme}{Constructie van een PDA uit een CFG}
   \label{alg:cfgpda}
-  We stellen een PDA ($Q$, $\Sigma_{PDA}$, $\Gamma$, $\delta$, $q_s$, $F$) voor een CFG ($V$, $\Sigma_{CFG}$, $R$, $S$) met
-  \begin{itemize}
-  \item $Q = {q_s, q_h, q_a}$ met $q_h$ een hulptoestand
-  \item $\Sigma_{PDA} = \Sigma_{CFG}$
-  \item $\Gamma = \{\$\} \cup V \cup \Sigma_{CFG}$
-  \item $\delta$ waarvoor geldt:
-  \begin{itemize}
-  \item Er is 1 boog van $q_s$ naar $q_h$ met label ``$\epsilon,\epsilon\rightarrow\$$".
-  \item Er is 1 boog van $q_h$ naar $q_a$ met label ``$\epsilon,\$\rightarrow\epsilon$".
-  \item Voor elk symbool $a \in \Sigma_{CFG}$ is er een lus bij $q_h$ met label ``$a,a\rightarrow\epsilon$".
-  \item Voor elke productie $(X \rightarrow \gamma) \in R$ is er een lus bij $q_h$ met label ``$\epsilon,X\rightarrow\gamma$". (Vervang de linkerkant van een productie bovenaan de stapel met de rechterkant van de productie.)
-  \end{itemize}
-  \item $q_s$ de starttoestand
-  \item $F = \{q_a\}$ met $q_a$ de eindtoestand
-  \end{itemize}
+  \input{algoritmen/cfgpda}
 \end{algoritme}
 
-Om een meest-linkse afleiding te bekomen moeten we in algoritme \ref{alg:cfgpda} de symbolen van een string $\gamma \in \sstar_\epsilon$ in omgekeerde volgorde op de stapel plaatsen.
+Om een meest-linkse afleiding te bekomen moeten we in algoritme \ref{alg:cfgpda} de symbolen van een string $\gamma \in \sstar_\epsilon$ in originele volgorde op de stapel plaatsen. De stapel kan gezien worden als een string (zie figuur \ref{fig:pdastack}), omdat het een geordende reeks van symbolen is. Het volgende symbool dat van de stapel verwijderd wordt is het symbool dat vooraan de string staat die de stapel voorstelt. Indien $\gamma$ vooraan wordt geplaatst, wordt de string meest-links afgeleid door de gevormde PDA.
 
-% TODO: Een PDA accepteert een L_CFG
+\begin{figure}[ht]
+\centering
+\begin{stack}
+   \node [initial,tape node] (s1) {$a_1$};
+   \node [tape node] {$a_2$};
+   \node [tape node] {$a_3$};
+   \node [tape node] {$...$};
+   \node [tape node] (sn) {$a_n$};
+   \draw[decorate,decoration={brace,raise=1mm}] (s1.north west) -- (sn.north east) node (brace) [midway, above=1mm] {\footnotesize{stapel}};
+\end{stack}
+\caption{Een voorstelling van de stapel als string.}
+\label{fig:pdastack}
+\end{figure}
+
+Een voorbeeld van de constructie van een PDA uit een CFG wordt gegeven in sectie \ref{ex:cfgpda}.
+
+\begin{bewijs}{We bewijzen dat een PDA geconstrueerd uit een CFG een taal $L_{CFG}$ accepteert.}
+  \input{bewijzen/cfgpda}
+\end{bewijs}
 
 \begin{algoritme}{Constructie CFG uit PDA.}
   We construeren een CFG ($V$, $\Sigma$, $R$, $S$) uit een PDA ($Q$, $\Sigma$, $\Gamma$, $\delta$, $q_s$, $F$) als volgt:
   
-  Vor de PDA om zodanig dat er slechts \'e\'en eindtoestand $q_f$ is, de stapel leeg is wanneer we $q_f$ bereiken en bij elke transitie een symbool van de stapel wordt verwijderd of er op wordt geplaatst, maar niet beiden. Vervolgens wordt de CFG bepaald als
+  Voor de PDA om zodanig dat er slechts \'e\'en eindtoestand $q_f$ is, de stapel leeg is wanneer we $q_f$ bereiken en bij elke transitie een symbool van de stapel wordt verwijderd of er op wordt geplaatst, maar niet beiden. Vervolgens wordt de CFG bepaald als
   \begin{itemize}
   \item $V = A_{p,q}$ met $p,q \in Q$
   \item $S = A_{q_s,q_f}$
@@ -1029,40 +1056,13 @@ Om een meest-linkse afleiding te bekomen moeten we in algoritme \ref{alg:cfgpda}
 \subsection{Pompend lemma voor contextvrije talen}
 
 \begin{definitie}{Het pompend lemma voor contextvrije talen}
-  Voor een contextvrije taal $L$ bestaat een pomplengte $d$ zodanig dat als $s \in L$ en $|s| \geq d$, er minstens \'e\'en verdeling van $s$ bestaat in stukken $u$, $v$, $x$, $y$, $z$ met $s = uvxyz$ en
-  \begin{enumerate}
-  \item $\forall i \geq 0: uv^ixy^iz \in L$
-  \item $|vy| > 0$
-  \item $|vxy| \leq d$
-  \end{enumerate}
+  \input{definities/plcfg}
 \end{definitie}
 
 Net zoals bij het pompend lemma voor reguliere talen, is het niet mogelijk om met deze variant te bewijzen dat een taal regulier is, omdat het een eigenschap is van een CFL, maar er zijn ook niet-contextvrije talen die die eigenschap zouden kunnen hebben. Het is enkel mogelijk om aan te tonen dat als deze eigenschap niet geldig is, dat een taal niet contextvrij is.
 
 \begin{bewijs}{We bewijzen het pompend lemma voor contextvrije talen.}
-  Voor een taal $L$ nemen we een CFG in CNF, waardoor er voor elke $s \in L$ een parse tree bestaat. Omdat de CFG in CNF staat, weten we dat elk blad onderaan de boom een terminal is, die (voor een niet-lege string $s$) volgt uit een productie met vorm ``$A \rightarrow \alpha$". Elke andere knoop in de boom moet dan volgen uit een productie met vorm ``$A \rightarrow BC$". Daarom kunnen we weggen dat indien we alle bladeren van de boom wegsnoeien, we een perfecte binaire boom bekomen, die een hoogte heeft van minstens $log_2|s|$.
-  
-  Het langste enkelvoudig pad vanaf de wortel van de parse tree moet minstens een lengte hebben van $log_2|s| + 1$. We nemen een string $s \in L$ waarvoor geldt dat $log_2|s| + 1 > n$ met $n = \#V + 1$ Dus er moet minstens \'e\'en variabele $X$ herhaald worden. Vanwege de definitie van de CNF (definitie \ref{def:cnf}) geldt dat $X \neq S$. We nemen op dat pad een $X_1$ en de dichtste herhaling $X_2$ (zie figuur \ref{fig:pumptree}). We kunnen nu de afleiding construeren als
-  \begin{equation*}
-  S \Rightarrow^* uX_2z \Rightarrow^* uvX_1yz \Rightarrow^* uvxyz \text{ met }u,v,x,y,z \in \sstar
-  \end{equation*}
-  
-  \begin{itemize}
-  \item Eigenschap 1 geldt omdat indien de bovenstaande afleiding geldt, de volgende afleidingen ook moeten gelden:
-  \begin{equation*}
-  S \Rightarrow^* uX_2z \Rightarrow^* uxz
-  \end{equation*}
-  \begin{equation*}
-  S \Rightarrow^* uXz \Rightarrow^* uvXyz \Rightarrow^* uvvxyyz
-  \end{equation*}
-  \item Eigenschap 2 geldt omdat $v$ en $y$ niet tegelijkertijd leeg kunnen zijn, want dan zou men $X$ uit zichzelf kunnen afleiden en dat kan niet vanwege de vorm van de CFG.
-  \end{itemize}
-  
-  Deze eigenschappen zijn geldig voor strings langer dan de pomplengte, dus $d = 2^{n-1}$.
-  
-  \begin{itemize}
-  \item Eigenschap 3 geldt omdat $vxy$ afgeleid wordt uit een $X$ met een parse tree die lager is dan $n$, dus hoogstens $d$ bladeren heeft, wat juist correspondeert met $vxy$.
-  \end{itemize}
+  \input{bewijzen/plcfg}
 \end{bewijs}
 
 \begin{figure}[ht]
@@ -1103,9 +1103,14 @@ Net zoals bij het pompend lemma voor reguliere talen, is het niet mogelijk om me
   \label{fig:pumptree}
 \end{figure}
 
-% TODO: Toepassing pompend lemma voor CFL
+In sectie \ref{ex:plcfg} wordt een voorbeeld gegeven van een toepassing van het pompend lemma om te bewijzen dat een taal niet contextvrij is.
+
 % TODO: Algebra van CFL's
-% TODO: Ambiguiteit en DPDA
+
+\subsubsection{Ambigu\"iteit end determinisme}
+
+Er bestaan geen ambigue CFL's die deterministisch zijn, maar wel niet-ambigue CFL's die niet-deterministisch zijn. Bij gevolg kunnen we zeggen dat het niet mogelijk is om elke PDA om te zetten naar een DPDA.
+
 % TODO: Contextgevoelige grammatica
 
 \newpage\section{Chomsky hi\"erarchie}
@@ -1196,7 +1201,7 @@ Niet alle talen $L \in L_\Sigma$ zijn herkenbaar.
 % TODO: Bewijs
 
 % TODO: Grafische voorstelling Turingmachine
-% TODO: Berkeningen van een TM voorstellen en nabootsen
+% TODO: Berekeningen van een TM voorstellen en nabootsen
 % TODO: Deterministische Turinmachines
 % TODO: Encodering
 
@@ -1215,24 +1220,7 @@ Niet alle talen $L \in L_\Sigma$ zijn herkenbaar.
 Er bestaat geen Turingmachine $B$ die kan beslissen of een gegeven Turingmachine $M$ een gegeven string $s$ accepteert. De taal $\atm$ is niet beslisbaar.
 
 \begin{bewijs}{We bewijzen dat $\atm$ niet beslisbaar is.}
-We bewijzen dit door contradictie. Stel dat er een beslisser $B$ bestaat voor $\atm$. Bij een input $\langle M,s \rangle$ accepteert $B$ $M$ als $M$ $s$ accepteert en $B$ verwerpt $M$ als $M$ $S$ verwerpt of blijft lopen.
-
-We construeren nu een contradictiemachine $C$ als
-\begin{equation*}
-C(\langle M \rangle) = opposite(B(\langle M,M \rangle))\text{ voor elke Turingmachine M}
-\end{equation*}
-De functie $opposite(x)$ is gedefinieerd als
-\begin{equation*}
-opposite(x) = \begin{cases}
-reject, & \text{ als } x = accept\\
-accept & \text{ als } x = reject
-\end{cases}
-\end{equation*}
-
-We nemen nu $C(\langle C \rangle) = opposite(B(\langle C,C \rangle))$:
-Als $C(\langle C \rangle) = accept$ ($C$ accepteert $C$), dan accepteert de beslisser $B$ de invoer $\langle C,C \rangle$, dus $B(\langle C,C \rangle) = accept$. Maar $opposite(B(\langle C,C \rangle))$ is dan $reject$, dat is een tegenstelling omdat dan geldt $C(\langle C \rangle) \neq opposite(B(\langle C,C \rangle))$.
-
-We kunnen nu zeggen dat de machine $C$ niet kan bestaan, dus de beslisser $B$ kan ook niet bestaan. Bij gevolg is $\atm$ niet beslisbaar.
+  \input{bewijzen/atm}
 \end{bewijs}
 
 \begin{definitie}{Het Halting-probleem voor TM's}
@@ -1329,25 +1317,22 @@ Een enumeratormachine produceert (enumereert) een verzameling strings op de outp
   Door deze transformatie uit te voeren kunnen we voor elke CFG bepalen of die de lege taal bepaalt of niet en dus is $E_{CFG}$ beslisbaar.
 \end{bewijs}
 
+\begin{bewijs}{We bewijzen dat $EQ_{CFG}$ niet beslisbaar is.}
+  \input{bewijzen/eqcfg}
+\end{bewijs}
+
 \begin{bewijs}{We bewijzen dat $ES_{CFG}$ beslisbaar is.}
   We kunnen bewijzen dat $ES_{CFG} = \{\langle G \rangle | G \text{ is een CFG en } \epsilon \in L_G\}$ beslisbaar is door $G$ te transformeren naar de Chomsky Normaal Vorm (definitie\ref{def:cnf}). Indien de CNF de productie ``$S \rightarrow \epsilon$'' bevat kunnen we concluderen dat de gegeven CFG $G$ de lege string bevat. Bij gevolg is $ES_{CFG}$ beslisbaar.
 \end{bewijs}
 
 % TODO: Elke CFL is beslisbaar
+% TODO: A_LBA is beslisbaar
+% TODO: E_LBA is beslisbaar
 
 \begin{bewijs}{We bewijzen dat $\etm$ niet beslisbaar is.}
-  Stel dat $\etm$ beslisbaar is en $E$ is een beslisser voor $\etm$, dan kunnen we een beslisser $B$ voor $\atm$ construeren. Voor een gegeven invoer $\langle M,s \rangle$ construeren we een machine $M_s$ waarvoor geldt
-  \begin{itemize}
-  \item Gegeven een invoer $w$, als $w \neq s$, verwerpt $M_s$ de string $w$.
-  \item Anders laat $M_s$ $M$ lopen op $w$ en geeft het resultaat terug.
-  \end{itemize}
-  $M_s$ is een machine die enkel accept teruggeeft indien $M$ $s$ accepteert en anders reject. We laten $E$ lopen op $\langle M_s \rangle$:
-  \begin{itemize}
-  \item Als $E$ $M_s$ accepteert, dan laten we $B$ zijn input $\langle M,s \rangle$ verwerpen, omdat $M_s$ dan de lege taal bepaalt, wat enkel mogelijk is als $M$ $s$ verwerpt.
-  \item Als $E$ $M_s$ verwerpt, dan laten we $B$ zijn input $\langle M,s \rangle$ accepteren, omdat $M_s$ dan niet de lege taal bepaalt, wat enkel mogelijk is als $M$ $s$ accepteert.
-  \end{itemize}
+  \input{bewijzen/etm}
   
-  We zeggen dat $\atm$ reduceerbaar is naar $\etm$.
+  We zeggen dat $\overline{\atm}$ reduceerbaar is naar $\etm$.
 \end{bewijs}
 
 \begin{bewijs}{We bewijzen dat $\eqtm$ niet beslisbaar is.}
@@ -1366,32 +1351,11 @@ Een enumeratormachine produceert (enumereert) een verzameling strings op de outp
 We kunnen zeggen dat $\etm = IsIn_{TM,\{\emptyset\}}$ en $REGULAR_{TM} = IsIn_{TM,RegLan}$.
 
 % TODO: REGULAR_TM is niet beslisbaar: $REGULAR_{TM} = \{\langle M \rangle | M \text{ is een Turingmachine en } L_M \text{ is een reguliere taal}\}$
-% TODO: ALL_CFG is niet beslisbaar
 
 \subsubsection{Overzicht}
-De onderstaande tabel geeft voor heel wat talen weer of ze herkenbaar en beslisbaar zijn:\\[.2cm]
-\def\tabularxcolumn#1{m{#1}}
-\begin{tabularx}{\textwidth}{c|c|c|X}
-  \textbf{Taal} & \textbf{H} & \textbf{B} & \textbf{Beschrijving} \\ \hline
-  $A_{DFA}$ & \cmark & \cmark & De taal met alle DFA's die een bepaalde string accepteren.\\ \hline
-  $E_{DFA}$ & \cmark & \cmark & De taal met alle DFA's die de lege taal bepalen.\\ \hline
-  $EQ_{DFA}$ & \cmark & \cmark & De taal met alle koppels van equivalente DFA's.\\ \hline
-  $A_{NFA}$ & \cmark & \cmark & De taal met alle NFA's die een bepaalde string accepteren.\\ \hline
-  $A_{RegEx}$ & \cmark & \cmark & De taal met alle reguliere expressies die een bepaalde string accepteren.\\ \hline
-  $A_{CFG}$ & \cmark & \cmark & De taal met alle CFG's die een bepaalde string accepteren.\\ \hline
-  $E_{CFG}$ & \cmark & \cmark & De taal met alle CFG's die de lege taal bepalen.\\ \hline
-  $ES_{CFG}$ & \cmark & \cmark & De taal met alle CFG's die de lege string genereren.\\ \hline
-  $L_{CFG}$ & \cmark & \cmark & Een contextvrije taal bepaald door een CFG.\\ \hline
-  $ALL_{CFG}$ & \cmark & \xmark & De taal met alle CFG's die de taal $\sstar$ bepalen.\\ \hline
-  $A_{LBA}$ & \cmark & \cmark & De taal met alle LBA's die een bepaalde string accepteren.\\ \hline
-  $E_{LBA}$ & \cmark & \xmark & De taal met alle LBA's die de lege taal bepalen.\\ \hline
-  $\atm$ & \cmark & \xmark & De taal met alle Turingmachines die voor een bepaalde string, die string accepteren.\\ \hline
-  $\htm$ & \cmark & \xmark & De taal met alle Turingmachines die voor een bepaalde string, die string accepteren of verwerpen.\\ \hline
-  $\etm$ & \cmark & \xmark & De taal met alle Turingmachines die de lege taal bepalen.\\ \hline
-  $\eqtm$ & \xmark & \xmark & De taal met alle koppels van equivalente Turingmachines.\\ \hline
-  $REGULAR_{TM}$ & \cmark & \xmark & De taal met alle Turingmachines die een reguliere taal bepalen.\\
-\end{tabularx}
-\def\tabularxcolumn#1{p{#1}}
+De onderstaande tabel geeft voor heel wat talen weer of ze herkenbaar (H), co-herkenbaar (cH) en beslisbaar (B) zijn:
+
+\LTXtable{\textwidth}{tabelbeslisbaar.tex}
 
 % TODO: Aftelbaarheid
 
@@ -1400,36 +1364,19 @@ De onderstaande tabel geeft voor heel wat talen weer of ze herkenbaar en beslisb
 Een eigenschap $P$ van Turingmachines verdeelt die in twee verzamelingen. De machines met die eigenschap $Pos_P = \{M|P(M)=true\}$ en de machines zonder die eigenschap $Neg_P = \{M|P(M)=false\}$. Samen vormen ze een partitie $\{Pos_P, Neg_P\}$ van de verzameling van alle Turingmachines.
 
 \begin{definitie}{Niet-triviale eigenschap}
-  Een eigenschap $P$ is niet triviaal indien $Pos_P \neq \emptyset$ en $Neg_P \neq \emptyset$.
+  \input{definities/niettriv}
 \end{definitie}
 
 \begin{definitie}{Taal-invariante eigenschap}
-  Een eigenschap $P$ is taal-invariant als alle machines die dezelfde taal bepalen ook die eigenschap gemeenschappelijk hebben (of geen enkel van die machines die eigenschap heeft).
-  \begin{equation*}
-  L_{M_1} = L_{M_2} \Rightarrow P(M_1) = P(M_2)
-  \end{equation*}
+  \input{definities/taalinv}
 \end{definitie}
 
 \begin{definitie}{Eerste stelling van Rice}
-  Voor elke niet-triviale, taal-invariante eigenschap $P$ geldt dat $Pos_P$ niet beslisbaar is. (Ook $Neg_P$ is niet beslisbaar, maar dat volgt uit $Neg_P = \overline{Pos_P}$.)
+  \input{definities/rice}
 \end{definitie}
 
 \begin{bewijs}{We bewijzen de eerste stelling van Rice}
-  Stel dat $M_\emptyset$ die de lege taal bepaalt, een eigenschap $P$ niet heeft. Omdat $P$ niet-triviaal is, moet er een machine $X$ bestaan die de taal $L_X$ bepaalt en de eigenschap $P$ wel heeft.
-
-  Stel dat er een beslisser $B$ bestaan voor $Pos_P$, dan kunnen we een beslisser $A$ voor $A_{TM}$ construeren. Voor een gegeven invoer $\langle M,s \rangle$ construeren we een hulpmachine $H_{M,s}$ waarvoor geldt
-  \begin{itemize}
-  \item $H_{M,s}$ laat $M$ lopen op $s$.
-  \item Als $M$ $s$ accepteert, dan laat $H_{M,s}$ $X$ lopen op een invoer $x$ en accepteert indien $X$ $x$ accepteert.
-  \end{itemize}
-  
-  We kunnen zeggen dat voor $H_{M,s}$ geldt dat het de taal $L_X$ bepaalt indien $M$ $s$ accepteert en de lege taal bepaalt indien $M$ $s$ niet accepteert. Dat wilt zeggen dat $H_{M,s}$ de eigenschap $P$ heeft indien $M$ $s$ accepteert en de eigenschap $P$ niet heeft indien $M$ $s$ niet accepteert.
-  
-  Bijgevolg kunnen we zeggen dat $A$ een invoer $\langle M,s \rangle$ accepteert als $B$ $H_{M,s}$ accepteert en de invoer verwerpt als $B$ $H_{M,s}$ verwerpt. Dus $A$ is een beslisser voor $\atm$, wat niet mogelijk is. Daarom kan de beslisser $B$ voor $Pos_P$ ook niet bestaan.
-  
-  We zeggen dat $\atm$ reduceerbaar is naar $Pos_P$.
-  
-  Als $M_\emptyset$ de eigenschap $P$ wel heeft, kunnen we het bewijs uitvoeren voor $\overline{P}$. Omdat we dan bewijzen dat $Pos_{\overline{P}} = Neg_P$ onbeslisbaar is, weten we dat ook $Pos_P = \overline{Neg_P}$ onbeslisbaar is.
+  \input{bewijzen/rice}
 \end{bewijs}
 
 % TODO: Tweede stelling van Rice?
@@ -1455,7 +1402,7 @@ Een eigenschap $P$ van Turingmachines verdeelt die in twee verzamelingen. De mac
 \item Als $L_1 \leq_m L_2$ en $L_2$ is herkenbaar, dan is $L_1$ herkenbaar.
 \end{itemize}
 
-We kunnen bewijzen dat $\etm$ niet beslisbaar is met de functie $f$ die  $E(\langle M \rangle)$ afbeeldt op $EQ(\langle M,M_\emptyset \rangle)$. We noteren $\etm \leq_m \eqtm$.
+We kunnen bewijzen dat $\eqtm$ niet beslisbaar is met de functie $f$ die $E(\langle M \rangle)$ afbeeldt op $EQ(\langle M,M_\emptyset \rangle)$. We noteren $\etm \leq_m \eqtm$.
 
 % TODO: Bewijs dat als L1 naar L2 reduceert, dat \overline{L1} ook naar \overline{L2} reduceert.
 % TODO: Bewijs EQ_TM is net herkenbaar en niet co-herkenbaar
@@ -1469,18 +1416,7 @@ We kunnen bewijzen dat $\etm$ niet beslisbaar is met de functie $f$ die  $E(\lan
 We kunnen een orakelmachine $\oatm$ bouwen die $\atm$ beslist. De verzameling van orakelmachines met $\oatm$ is strikt sterker van de verzameling van de Turingmachines omdat die meer talen beslist/herkent. Aangezien dat heel wat talen niet beslisbaar (of zelfs herkenbaar) zijn omdat $\atm$ niet beslisbaar is.
 
 \begin{bewijs}{We bewijzen dat er een $\oatm$ bestaat die $\etm$ beslist.}
-  We construeren een Orakelmachine $\oatm$. Bij input $\langle M \rangle$ doet $\oatm$:
-  \begin{itemize}
-  \item Construeer een Turingmachine $P$ die bij input $w$:
-  \begin{itemize}
-  \item $M$ laat lopen op alle strings van $\sstar$.
-  \item Als $M$ eender welke string van $\sstar$ accepteert, dan accepteert $P$ de input $w$. ($P$ accepteert voor eendere welke $w$ zo lang dat $M$ minstens \'e\'en string accepteert en dus niet de lege taal bepaalt.)
-  \end{itemize}
-  \item $\oatm$ vraagt aan het orakel of $\langle P,w \rangle \in \atm$.
-  \item Als het orakel ``ja'' antwoordt, dan verwerpt $\oatm$ de invoer, omdat $M$ niet de lege taal bepaalt. Anders accepteert het de invoer.
-  \end{itemize}
-  
-  $\oatm$ is een beslisser voor de taal $\etm$.
+  \input{bewijzen/etmoatm}
 \end{bewijs}
 
 \begin{definitie}{Turingreduceerbaarheid}
@@ -1613,11 +1549,11 @@ Een voorbeeld van $\delta$-conversie: $+\ 5\ 5 \stackrel{\delta}{\longleftrighta
 \subsection{Reductie in normaalorde}
 
 \begin{definitie}{Church-Rosser I (CR1)}
-  Church-Rosser I verwijst naar de eerste stelling van Church en Rosser. Die stelling zegt dat indien $E_1 \stackrel{*}{\longleftrightarrow} E_2$ geldt, dat er een expressie $E$ moet bestaan in normaalvorm zodanig dat $E_1 \stackrel{*}{\longrightarrow} E$ en $E_2 \stackrel{*}{\longrightarrow} E$.
+  \input{definities/cr1}
 \end{definitie}
 
 \begin{bewijs}{We bewijzen de uniciteit van de normaalvorm.}
-  Stel dat $E \stackrel{*}{\longleftrightarrow} E_1$ en $E \stackrel{*}{\longleftrightarrow} E_2$ gelden, waarbij dat $E_1$ en $E_2$ in normaalvorm staan. Dan moet gelden dat $E_1 \stackrel{*}{\longleftrightarrow} E_2$. Volgend CR1 moet dan gelden dat er een normaalvorm $F$ bestaat zodanig dat $E_1 \stackrel{*}{\longleftrightarrow} F$ en $E_2 \stackrel{*}{\longleftrightarrow} F$. Omdat $E_1$ en $E_2$ reeds in normaalvorm staan, zijn er in geen van beiden expressies nog redexen die gereduceerd kunnen worden, dus concluderen we dat (eventuaal onder $\alpha$-conversie) $E_1 = F = E_2$.
+  Stel dat $E \stackrel{*}{\longleftrightarrow} E_1$ en $E \stackrel{*}{\longleftrightarrow} E_2$ gelden, waarbij dat $E_1$ en $E_2$ in normaalvorm staan. Dan moet gelden dat $E_1 \stackrel{*}{\longleftrightarrow} E_2$. Volgend CR1 moet dan gelden dat er een normaalvorm $F$ bestaat zodanig dat $E_1 \stackrel{*}{\longleftrightarrow} F$ en $E_2 \stackrel{*}{\longleftrightarrow} F$. Omdat $E_1$ en $E_2$ reeds in normaalvorm staan, zijn er in geen van beiden expressies nog redexen die gereduceerd kunnen worden, dus concluderen we dat (eventueel onder $\alpha$-conversie) $E_1 = F = E_2$.
 \end{bewijs}
 
 \begin{definitie}{Reductie in normaalorde}
@@ -1627,7 +1563,7 @@ Bij reductie in normaalorde wordt steeds de meest linkse buitenste redex eerst g
 Reductie in normaalorde garandeert dat een normaalvorm gevonden wordt (indien mogelijk), maar is niet noodzakelijk optimaal. Het is mogelijk dat een andere reductieorde een reductierij oplevert met minder stappen. Een voorbeeld daarvan is de ``call-by-value'' techniek, waarbij eerst een argument voor een functie wordt gereduceerd. Een expressie die wordt doorgegeven als argument voor reductie, kan mogelijk meerdere keren ge\"evalueerd worden.
 
 \begin{definitie}{Church-Rosser II (CR2)}
-  Church-Rosser II verwijst naar de tweede stelling van Church en Rosser. Die stelling zegt dat indien $E \stackrel{*}{\longleftrightarrow} N$  bestaat met $N$ in normaalvorm, dat er een rij reducties moet bestaan in normaal orde van $E$ naar $N$.
+  \input{definities/cr2}
 \end{definitie}
 
 \begin{definitie}{Turing-compleetheid}

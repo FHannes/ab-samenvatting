@@ -1,0 +1,17 @@
+  We bewijzen dit door aan te tonen dat een NFA kan omgezet worden naar een reguliere expressie die dezelfde taal bepaalt. Daarom tonen we aan dat bij algoritme \ref{alg:nfagnfa} de verzameling van aanvaarde strings in elke stap niet verandert.
+  
+  We kunnen een pad om een string te accepteren doorheen toestanden van een GNFA beschrijven als $E_1E_2E_3...E_n$ met $n$ het aantal toestanden om de eindtoestand te bereiken en $E_i$ reguliere expressies. We verwijzen naar de GNFA voor een reductiestap met $GNFA_{voor}$ en erna met $GNFA_{na}$.
+  \begin{enumalgo}
+  \item De omzetting van NFA naar GNFA wijzigt de verzameling aanvaarde strings niet:
+  \begin{itemize}
+  \item Stel dat NFA dezelfde taal $L_E$ bepaalt als een reguliere expressie $E$. Een nieuwe begintoestand toevoegen met een $\epsilon$ boog naar de oude staat gelijk aan de expressie $\epsilon E$, dewelke gelijk is aan $E$.
+  \item Stel dat NFA dezelfde taal $L_E$ bepaalt als een reguliere expressie $E$. Een nieuwe eindtoestand toevoegen met een $\epsilon$ bogen van de oude toestanden naar de nieuwe, staat gelijk aan de expressie $E\epsilon$, dewelke gelijk is aan $E$.
+  \item Het toevoegen van de extra bogen om de GNFA te vervolledigen wijzigt de verzameling aanvaarde talen niet. Deze $\phi$-bogen kunnen niet gevolgd worden en dus kunnen er geen toestanden bereikt worden die voordien niet bereikt konden worden.
+  \item Indien we twee parallelle gerichte bogen met labels $a_1 \in \Sigma$ en $a_2 \in \Sigma$ samennemen als een unie van die labels, dan verandert de verzameling aanvaarde strings niet. We kunnen immers de reguliere expressie $E_1|E_2$ met $E_1 = a_1$ en $E_2 = a_2$ omzetten naar een NFA met twee toestanden waarvan tussen er twee parallelle gerichte bogen lopen die de labels $a_1$ en $a_2$ hebben.
+  \end{itemize}
+  \item De basis reductiestap om de GNFA te reduceren wijzigt de verzameling aanvaarde strings niet. Bij het verwijderen van een willekeurige toestand $q$ zeggen we:
+  \begin{itemize}
+  \item Indien een string $s$ aanvaard wordt door $GNFA_{voor}$ met een pad dat $q$ niet bevat, dan wordt wordt die ook aanvaard door $GNFA_{na}$ omdat het pad ongewijzigd blijft. Als het pad $q$ wel bevat, dan zijn er twee toestanden $q_a$ en $q_b$ zodanig dat $q_aq^nq_b$ met $n > 0$ een opeenvolging is in dat pas. De reguliere expressies op de bogen $q_aq$, $qq$ en $qq_b$ zijn dan $E_1$, $E_2$ en $E_3$ respectievelijk en bijgevolg is dat deel van het pad gelijk aan de expressie $E_1(E_2)^*E_3$. Die expressie vinden we terug op de boog $q_aq_b$ in $GNFA_{na}$, dus wordt dezelfde string ook aanvaard door $GNFA_{na}$.
+  \item Als een string $s$ aanvaard wordt door $GNFA_{na}$, kan het pad door $GNFA_{na}$ de toestand $q$ uiteraard niet bevatten. Op een boog $q_aq_b$ staat de reguliere expressie $E_4|E_1(E_2)^*E_3$, wat wil zeggen dat de string moet voldoen aan aan de expressie $E_4$ of de expressie $E_1(E_2)^*E_3$. In $GNFA_{voor}$ komt dat overeen met het bereiken van $q_b$ uit $q_a$ door een boog $q_aq_b$ te volgen met expressie $E_4$, ofwel bogen $q_aq^nq_b$ met $n > 0$ waar de toestand $q$ \'e\'en of meerdere keren voorkomt. De reguliere expressies op de bogen $q_aq$, $qq$ en $qq_b$ zijn dan $E_1$, $E_2$ en $E_3$ respectievelijk. De string wordt door $GNFA_{voor}$ dus ook aanvaard wanneer $q$ wel of niet op het pad door $GNFA_{voor}$ ligt.
+  \end{itemize}
+  \end{enumalgo}

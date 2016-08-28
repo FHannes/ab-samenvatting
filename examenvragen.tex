@@ -2,21 +2,56 @@
 
 \subsection{Reguliere talen}
 
-\subsubsection{Vraag 1}
+\subsubsection{Vraag 1 - GNFA}
 
-\textit{Bewijs dat een reguliere taal beschreven door een reguliere expressie door een eindige toestandsautomaat wordt herkend. Doe dit door van de automaat een gegeneraliseerde niet-deterministische eindige toestandsautomaat te maken.}
+\textit{Bewijs dat een reguliere taal beschreven door een reguliere expressie door een eindige toestandsautomaat wordt herkend. Doe dit door van de automaat een gegeneraliseerde niet-deterministische eindige toestandsautomaat te maken. Beschrijf in detail hoe uit die GNFA een reguliere expressie kan worden afgeleid.}
 
-\textit{Beschrijf in detail hoe uit die GNFA een reguliere expressie kan worden afgeleid.}
+\paragraph{Algoritme om de omzetting uit te voeren.}
+\begin{enumalgo}
+  \item Generaliseer de NFA:
+    \begin{itemize}
+    \item Voer een nieuwe begintoestand $q_s$ in.
+    \item Voer een nieuwe (unieke) eindtoestand $q_e$ in.
+    \item Teken $\epsilon$-boog van $q_s$ naar de oude begintoestand.
+    \item Teken $\epsilon$-boog van elke oude eindtoestand naar $q_e$.
+    \item Vul de automaat aan met $\phi$-bogen waar er bogen ontbreken. (Zie definitie \ref{def:gnfa})
+    \item Neem parallelle gerichte bogen samen met de unie van hun labels.
+    \end{itemize}
+  \item Reduceer de GNFA:
+    \begin{itemize}
+    \item Als $Q \setminus \{q_s, q_e\} = \emptyset$, ga naar stap 3.
+    \item Voer een reductiestap uit door een willekeurige toestand $q \in Q \setminus \{q_s, q_e\}$ te verwijderen. De basis reductiestap:\\
+    \begin{tabular}{>{\centering\arraybackslash}m{3.5cm}>{\centering\arraybackslash}m{1cm} >{\centering\arraybackslash}m{4cm}}
+\begin{nfa}
+  \node[state] (A)                     {$q_a$};
+  \node[state] (X)  [below right of=A] {$q$};
+  \node[state] (B)  [above right of=X] {$q_b$};
+  
+  \path (A) edge [bend left]  node {$E_4$} (B)
+            edge [bend right] node {$E_1$} (X)
+        (X) edge [loop below] node {$E_2$} (X)
+            edge [bend right] node {$E_3$} (B);
+  \addvmargin{1mm}
+\end{nfa} & $\longrightarrow$ & \begin{nfa}
+  \node[state] (A)                   {$q_a$};
+  \node[state] (B)  [right=2.5cm of A] {$q_b$};
+  
+  \path (A) edge []  node {$E_4|E_1(E_2)^*E_3$} (B);
+  \addvmargin{1mm}
+\end{nfa}
+\end{tabular}
+    \item Herhaal stap 2.
+    \end{itemize}
+  \item Bepaal de reguliere expressie die af te lezen is als label op de boog tussen $q_s$ en $q_e$.
+  \end{enumalgo}
+  
+\paragraph{Bewijs.} \input{bewijzen/nfare}
 
 \subsubsection{Vraag 1 (Bijvraag 1)}
 
 \textit{Kan voor een PDA ongeveer hetzelfde gedaan worden door een gegeneraliseerde PDA op te stellen?}
 
-Nee, want
-\begin{itemize}
-\item Een PDA bepaalt een contextvrije grammatica, geen reguliere expressie. Elke RE kan naar een CFG (of PDA) geconverteerd worden omdat de verzameling van de talen bepaald door een CFG sterker is dan de verzameling van de reguliere talen. Maar niet elke CFG (of PDA) bepaalt een reguliere taal, dus is het niet mogelijk een GPDA op te stellen om een RE af te leiden.
-\item Een GPDA formaat om een CFG af te leiden uit een PDA is niet nodig, dat kan namelijk rechtstreeks uit een PDA.
-\end{itemize}
+Nee, want een GPDA formaat bestaat niet. Bij het construeren van een PDA uit een CFG, bekomen we een PDA met drie toestanden. Zo'n PDA kunnen we makkelijk naar een CFG converteren, maar niet elke PDA heeft drie toestanden en er is geen gelijkaardige manier zoals bij een GNFA om de PDA te reduceren.
 
 \subsubsection{Vraag 1 (Bijvraag 2)}
 
@@ -30,7 +65,7 @@ Nee, want
   
   \path (A) edge [bend left]  node {$E_4$} (B)
             edge [bend right] node {$E_1$} (X)
-        (X) edge [loop below] node {$E_2$} (E)
+        (X) edge [loop below] node {$E_2$} (X)
             edge [bend right] node {$E_3$} (B);
   \addvmargin{1mm}
 \end{nfa} & $\longrightarrow$ & \begin{nfa}
@@ -91,7 +126,7 @@ Nu we de boog van $X$ naar $A$ ge\"elemineerd hebben, kunnen we de resterende be
 
 \begin{center}
 \renewcommand{\arraystretch}{1.5}
-\begin{tabular}{>{\centering\arraybackslash}m{5cm}>{\centering\arraybackslash}m{1cm} >{\centering\arraybackslash}m{5cm}}
+\begin{tabular}{>{\centering\arraybackslash}m{4cm}>{\centering\arraybackslash}m{1cm} >{\centering\arraybackslash}m{5.5cm}}
 \begin{nfa}
   \node[state] (A)              {$A$};
   \node[state] (X) [right of=A] {$X$};
@@ -110,13 +145,92 @@ Nu we de boog van $X$ naar $A$ ge\"elemineerd hebben, kunnen we de resterende be
 \end{tabular}
 \end{center}
 
-\subsubsection{Vraag 2}
+\subsubsection{Vraag 2 - NFA naar DFA}
 
-Beschrijf in detail de transformatie van een deterministische eindige toestandsautomaat naar een equivalente determinischtische eindige toestandsautomaat met een minimaal aantal toestanden. Beschrijf de notie van "equivalentie van automaten" in deze context en argumenteer waarom er geen kleinere equivalente deterministische einde toestandsautomaat bestaat. Bijvraag: Kan een kleinere equivalente niet-deterministische einde toestandsautomaat bestaan?
+\textit{Beschrijf in detail de transformatie van een niet-deterministische eindige toestandsautomaat naar een equivalente deterministische eindige toestandsautomaat.}
 
-\subsubsection{Vraag 3}
+\input{algoritmen/nfadfa}
 
-\textit{Geef de definitie van een Myhil-Nerode relatie over een taal $L$, of zoals we noteren een $MN(L)$-relatie.}
+\textit{Beschrijf de notie van ``equivalentie van automaten'' in deze context en argumenteer waarom de transformatie ``correct'' is.}
+
+Een NFA en DFA zijn equivalent indien ze dezelfde taal bepalen. De transformatie van een NFA naar een DFA is correct omdat de resulterende DFA de uitvoering van de NFA simuleert. Bij het uitvoeren van een DFA voor een gegeven string kunnen we telkens maar in \'e\'en toestand belanden, bij een NFA is dat niet het geval. De transformatie die we toepassen stelt ons in staat om voor elk symbool van een string te bepalen in welke toestand of combinatie van toestanden een NFA zich zal bevinden. Indien \'e\'en van die toestanden een eindtoestand is, kan de NFA de string op dat punt ook accepteren. Die constructie zelf is een DFA, omdat we nu voor elk pad door de automaat een deterministisch pad naar combinaties van toestanden hebben bepaald.
+
+\textit{Bespreek de uitspraak ``deze transformatie is [niet] deterministisch''. (kies zelf of je die ``niet'' wil houden of niet)}
+
+De transformatie is deterministisch omdat de resulterende DFA altijd hetzelfde is voor een bepaalde NFA.
+
+\subsubsection{Vraag 2 (Bijvraag 1)}
+
+\textit{Kan er zo'n DFA bestaan met minder toestanden dan de NFA?}
+
+Het is mogelijk dat een DFA die geconstrueerd wordt uit een NFA minder toestanden heeft. Dat is mogelijk omdat verschillende toestanden van de NFA worden samengenomen en indien de onbereikbare toestanden niet in de resulterende DFA worden opgenomen, is er daarom een mogelijkheid om een kleine DFA te bekomen.
+
+Een (triviaal) voorbeeld is bijvoorbeeld een nieuwe begintoestand introduceren in een NFA die met een $\epsilon$-boog naar de oude toestand gaat. Indien de originele NFA naar een DFA transformeert met een gelijk aantal toestanden, zal de nieuwe NFA naar een DFA transformeren die \'e\'en toestand minder heeft omdat de $\epsilon$-bereikbare toestanden samen worden genomen.
+
+
+\subsubsection{Vraag 2 (Bijvraag 2)}
+
+\textit{Werkt deze transformatie ook om van een NPDA naar een DPDA te gaan?}
+
+Nee, het is mogelijk om voor elke CFG een PDA te construeren, maar het is niet mogelijk om een PDA om te zetten naar een deterministische PDA indien de CFL ambigu is. Dat wil zeggen dat er voor een string uit die taal meer dan \'e\'en meest-linkse afleiding bestaat. We kunnen dus geen algemeen algoritme opstellen dat een PDA omzet naar een deterministische versie van die PDA.
+
+\subsubsection{Vraag 3 - DFA naar DFA$_{min}$}
+
+\textit{Beschrijf in detail de transformatie van een deterministische eindige toestandsautomaat naar een equivalente deterministische eindige toestandsautomaat met een minimaal aantal toestanden.}
+
+\paragraph{Algoritme om de overgangsfunctie van een DFA totaal te maken.}
+  Indien de parti\"ele DFA niet reeds een complete DFA is, construeren we een equivalente complete DFA als volgt:
+  \begin{enumalgo}
+  \item We bepalen een nieuwe verzameling toestanden $Q' = Q \cup \{q_t\}$, met een nieuwe toestand $q_t$.
+  \item We bepalen een nieuwe overgangsfunctie $\delta'$ voor $Q' = Q \cup \{q_t\}$ waarvoor geldt
+  \begin{equation*}
+  \forall q \in Q', a \in \Sigma: \delta'(q, a) = \begin{cases}
+    \delta(q, a), & \text{als}\ \delta(q, a) \neq \phi\\
+    q_t & \text{anders}
+  \end{cases}
+  \end{equation*}
+  \end{enumalgo}
+
+\paragraph{Algoritme om f-gelijke toestanden te bepalen.}
+  We stellen een graaf V op met als knopen de toestanden van een gegeven DFA. We duiden een boog in $V$ tussen twee knopen $q_1$ en $q_2$ aan als $(q_1,q_2) \in V$.
+  \begin{enumalgo}
+  \item We voegen aan de graaf V een boog toe tussen elk paar knopen waarvan er precies \'e\'en in $F$ zit.
+  \item Indien er een paar knopen $p$ en $q$ bestaat, zodanig dat $(p,q) \notin V$ en $\exists a \in \Sigma: (\delta(p, a),\delta(q, a)) \in V$, dan:
+  \begin{itemize}
+  \item Voeg een boog $(p,q)$ toe aan $V$.
+  \item Herhaal stap 2.
+  \end{itemize}
+  Anders, ga naar stap 3.
+  \item Stel de complementsgraaf $G$ van $V$ op. De toestanden van elk component van $G$ zijn onderling f-gelijk. De toestanden van twee verschillende componenten van $G$ zijn f-verschillend van elkaar.
+  \end{enumalgo}
+
+\paragraph{Algoritme om DFA$_{min}$ te bepalen.}
+\begin{enumalgo}
+  \item Verwijder alle toestanden van waaruit het niet mogelijk is om een eindtoestand $q \in F$ te bereiken en alle toestanden die niet bereikbaar zijn.
+  \item Transformeer (indien nodig) de DFA naar een volledige DFA met bovenstaand algoritme.
+  \item Bepaal de f-gelijke toestanden van de DFA met bovenstaand algoritme.
+  \item Neem alle f-gelijke toestanden samen in een enkele toestand, zodanig dat alle uitgaande bogen van alle f-gelijke toestanden nu uit hun gecombineerde toestand vertrekken en alle bogen die toekwamen in de f-gelijke toestanden nu toekomen in hun gecombineerde toestand.
+  \item Verwijder (indien toegevoegd in stap 2) de toestand $q_t$, vanuit deze toestand is het niet mogelijk om de eindtoestand te bereiken.
+  \end{enumalgo}
+  De resulterende DFA is een minimale DFA.
+
+\textit{Beschrijf de notie van ``equivalentie van automaten'' in deze context en argumenteer waarom er geen kleinere equivalente deterministische eindige toestandsautomaat bestaat.}
+
+Twee automaten zijn equivalent indien ze dezelfde taal bepalen. Als twee DFA's $DFA_1$ en $DFA_2$ dezelfde taal bepalen (equivalent zijn), dan zijn hun minimale DFA's isomorf. Dat wil zeggen dat enkel de namen van hun toestanden mogen verschillen.
+
+\textbf{Bewijs dat een minimale DFA het minimum aantal toestanden heeft.} \input{bewijzen/dfamin_minstates}
+
+\subsubsection{Vraag 3 (Bijvraag 1)}
+
+\textit{Kan een kleinere equivalente niet-deterministische eindige toestandsautomaat (NFA) bestaan?}
+
+Er kan een NFA bestaan die minder toestanden heeft dan een minimale DFA en nog steeds dezelfde taal bepaalt. Dit is het gevolg van de beperkingen die bij een DFA worden opgelegd, die niet gelden voor een NFA, zoals het verbod op $\epsilon$-bogen en dat er voor een bepaald symbool hoogstens \'e\'en boog uit een toestand mag vertrekken. Daarom zal een DFA (zelfs een minimale DFA) die equivalent is met een NFA, vaak meer toestanden hebben.
+
+Een voorbeeld van een taal waarvoor dat geld is de taal bepaald door de reguliere expressie $(a|b)^*a(a|b)(a|b)$. Deze taal kan bepaald worden door een NFA met vier toestanden. De equivalente minimale DFA die dezelfde taal bepaalt heeft acht toestanden.
+
+\subsubsection{Vraag 4 - $MN(L)$-relaties}
+
+\textit{Geef de definitie van een Myhill-Nerode relatie over een taal $L$, of zoals we noteren een $MN(L)$-relatie.}
 
 Een Myhill-Nerode relatie voor een taal $L$ ($MN(L)$-relatie) is een equivalentierelatie $\sim_X$ die voldoet aan de volgende eigenschappen:
   \begin{itemize}
@@ -137,17 +251,154 @@ Een taal $L$ waarvoor een $MN(L)$-relatie bestaat moet regulier zijn. Een mogeli
 \end{equation*}
 We kunnen voor de taal $L$ een equivalente DFA opstellen die dezelfde taal bepaalt, maar niet isomorf is. De equivalentierelatie $\sim_{DFA}$ voor die DFA zal $\Sigma^*$ anders partitioneren. Bijgevolg bestaat er meer dan \'e\'en $MN(L)$-relatie voor een taal $L$.
 
+\subsubsection{Vraag 4 - Pompend lemma}
+
+\textit{Geef een precieze formulering van het pompend lemma voor reguliere talen en een bewijs ervan.}
+
+\input{definities/plre}
+
+\paragraph{Bewijs.} \input{bewijzen/plre}
+
+\textit{Geef voorbeelden waarbij je laat zien hoe je dat lemma gebruikt om te bewijzen dat een gegeven taal regulier is en om te bewijzen dat een gegeven taal niet regulier is.}
+
+Het pompend lemma kan niet gebruikt worden om te bewijzen dat een taal regulier is, omdat het een eigenschap definieert die elke reguliere taal heeft, maar het is niet uitgesloten dat een niet-reguliere taal die eigenschap niet heeft (en er zijn effectief niet-reguliere talen waarvan men strings kan pompen). Dus het is enkel mogelijk om aan te tonen dat een taal niet regulier is indien die een string bevat die men niet kan pompen.
+
+\input{voorbeelden/plre}
+
+\subsubsection{Vraag 4 (Bijvraag 1)}
+
+\textit{Is er een verband tussen de kleinste DFA voor een taal en de kortste pomplengte?}
+
+Ja, de kortste pomplengte moet steeds \'e\'en groter zijn dan het aantal toestanden in de minimale DFA. Indien dat niet het geval zou zijn, is het pompend lemma niet meer geldig voor strings die een lengte hebben gelijk aan het aantal toestanden (of voor een lengte kleiner dan dat). Intu\"itief voelen we dit aan omdat in de verdeling $s=xyz$, $y$ uit minstens \'e\'n symbool moet bestaan, en dat $xz$ dan ook tot de taal moet behoren. Maar als de string gelijk is aan het aantal toestanden, dan kunnen we niet met zekerheid zeggen dat een deel van de string herhaalt kan worden, door middel van een lus in de DFA.
+
+Een voorbeeld is de volgende minimale DFA die $L = \{abcd\}$ over $\Sigma = \{a,b,c,d\}$ bepaalt:
+\begin{nfa}
+  \node[initial,state]   (S)              {$S$};
+  \node[state]           (A) [right of=S] {$A$};
+  \node[state]           (B) [above of=A] {$B$};
+  \node[state,accepting] (E) [right of=A] {$E$};
+  
+  \path (S) edge []           node {$a$} (A)
+        (A) edge [bend left]  node {$b$} (B)
+            edge []           node {$d$} (E)
+        (B) edge [bend left]  node {$c$} (A);
+  \addvmargin{1mm}
+\end{nfa}
+Voor een pomplengte $4$ zouden we de string $s = abcd$ moeten kunnen pompen. Maar er is geen enkele verdeling $s=xyz$ waarvoor dat $xy^nz \in L$ met $n \in \nat$.
+
 \subsection{Contextvrije talen}
 
-\subsubsection{Vraag 1 (Bijvraag)}
+\subsubsection{Vraag 1 - CFG naar PDA}
+
+\textit{Geef het algoritme om een CFG naar zijn PDA om te zetten en bewijs de correctheid hiervan.}
+
+\input{algoritmen/cfgpda}
+  
+\paragraph{Bewijs.} \input{bewijzen/cfgpda}
+
+\subsubsection{Vraag 1 (Bijvraag 1)}
 
 \textit{Volgens een constructie in de cursus kan een PDA bij een overgang meerdere elementen per keer pushen, waarom mag dit?}
 
-% TODO: Zie constructie PDA uit CFG
+Dat is toegestaan omdat de stapel als een string kan voorgesteld worden waarvan we telkens het eerste symbool behandelen. Indien we een string op de stapel zetten om verder af te leiden, plaatsen we die in zijn geheel vooraan de stapel. Op die manier wordt ook de meest-linkse afleidingsvolgorde gerespecteerd.
+
+\begin{center}
+\begin{stack}
+   \node [initial,tape node] (s1) {$a_1$};
+   \node [tape node] {$a_2$};
+   \node [tape node] {$a_3$};
+   \node [tape node] {$...$};
+   \node [tape node] (sn) {$a_n$};
+   \draw[decorate,decoration={brace,raise=1mm}] (s1.north west) -- (sn.north east) node (brace) [midway, above=1mm] {\footnotesize{stapel}};
+\end{stack}
+\end{center}
+
+\subsubsection{Vraag 2 - Pompend lemma}
+
+\textit{Geef een precieze formulering van het pompend lemma voor context-vrije talen en een bewijs ervan.}
+
+\input{definities/plcfg}
+
+\paragraph{Bewijs.} \input{bewijzen/plcfg}
+
+\textit{Geef voorbeelden waarbij je laat zien hoe je dat lemma gebruikt om te bewijzen dat een gegeven taal context-vrij is en om te bewijzen dat een gegeven taal niet context-vrij is.}
+
+Het pompend lemma kan niet gebruikt worden om te bewijzen dat een taal contextvrij is, omdat het een eigenschap definieert die elke contextvrije taal heeft, maar het is niet uitgesloten dat een niet-contextvrij taal die eigenschap niet heeft. Dus het is enkel mogelijk om aan te tonen dat een taal niet contextvrij is indien die een string bevat die men niet kan pompen.
+
+\input{voorbeelden/plcfg}
+
+\subsection{Chomsky Hi\"erarchie}
+
+\subsubsection{Vraag 1}
+
+\textit{Vertel alles wat je weet i.v.m. de Chomsky-hierarchie binnen de 5 minuten. Wat is de tijdscomplexiteit was doorheen de Chomsky-hierarchie.}
+
+De Chomsky hi\"erarchie is een hi\"erarchische rangschikking van talen. Elke klasse van talen in de hi\"erarchie zit vervat in een sterkere klasse van talen, met de grootste klasse (die van de Turing-herkenbare talen) zijnde een deelverzameling van $L_\Sigma$:
+\begin{itemize}
+\item Type-0: De klasse van de herkenbare talen heeft een onbeperkte grammatica, dat wil zeggen er geen restricties zijn op de grammaticale regels. Elke taal die door een Turingmachine herkent wordt zit in deze klasse.
+\item Type-1: De klasse van de contextgevoelige talen heeft een contextgevoelige grammatica, daarbij mogen de productieregels in tegenstelling tot een CFG zowel aan de linker- als rechterzijde een combinatie van variabelen en terminals bevatten. Elke taal die door een lineair begrensde automaat (Turingmachine) bepaalt wordt zit in deze klasse. Een LBA kan een beslissingsprobleem oplossen in $O(n)$-ruimte.
+\item Type-2: De klasse van de contextvrije talen heeft een contextvrije grammatica (CFG). Elke taal die door een push-down automaat bepaalt wordt zit in deze klasse. Het parsen van een string uit een taal $L_{CFG}$ kan in $O(n^2)$-tijd.
+\item Type-3: De klasse van de reguliere talen heeft een reguliere grammatica. Elke taal die door een eindige toestandsautomaat bepaalt wordt zit in deze klasse. Een string uit een taal $L_{RE}$ kan herkend worden in $O(n)$-tijd.
+\end{itemize}
+\begin{center}
+\begin{tikzpicture}
+  \path
+    (0,0) rectangle (8,6) [draw]
+    (1.5,5.5) node {$L_\Sigma = \powerset(\sstar)$}
+    (4,2.75) coordinate (A) node[above=1.5cm] {Turing-herkenbare talen} ellipse (3.5 and 2.5) [draw]
+    (4,2.25) coordinate (B) node[above=1cm] {Contextsensitieve talen} ellipse (3 and 2) [draw]
+    (4,1.75) coordinate (C) node[above=0.5cm] {Contextvrije talen} ellipse (2.5 and 1.5) [draw]
+    (4,1.25) coordinate (D) node {Reguliere talen} ellipse (2 and 1) [draw];
+\end{tikzpicture}
+\end{center}
+
+\textit{Zijn de talen van een TM beslisbaar?}
+
+De verzameling van de talen die bepaald worden door een Turingmachine, of m.a.w. Turing-herkenbaar zijn is niet beslisbaar. Dit is equivalent met de vraag, kunnen we voor elke string $s \in L$ waarbij $L$ een taal is die door een machine $TM$ herkent wordt, beslissen dat $s$ door $TM$ geaccepteerd wordt? Dat is het acceptatieprobleem, wat niet beslisbaar is.
 
 \subsection{Turingmachines}
 
-\subsubsection{Vraag 1}
+\subsubsection{Vraag 1 - $\atm$}
+
+\textit{Bewijs in detail dat $\atm$ niet beslisbaar is - steun daarbij niet op de stelling van Rice.}
+
+\input{bewijzen/atm}
+
+\textit{Zou het helpen als het toegelaten was op de stelling van Rice te steunen?}
+
+Nee. We hebben de stelling van Rice bewezen door $\atm$ te reduceren naar $Pos_P$, om aan te tonen dat $Pos_P$ niet beslisbaar is omdat $\atm$ niet beslisbaar is. Met andere woorden, het bewijs voor de stelling van Rice steunt op het bewijs dat $\atm$ niet beslisbaar is en dus kan de stelling niet gebruikt worden om dat te bewijzen.
+
+\textit{Is $\atm$ herkenbaar?}
+
+Ja, $\atm$ is herkenbaar. We kunnen namelijk een enumerator machine bouwen dit $\atm$ herkent.
+
+\textit{Is $\atm$ co-herkenbaar?}
+
+Nee, indien het co-herkenbaar was, zou het ook beslisbaar moeten zijn omdat het herkenbaar is.
+
+\subsubsection{Vraag 2 - $\etm$}
+
+\textit{Geef het bewijs van de stelling $\etm$ is niet beslisbaar: doe dat zonder de stelling van Rice te gebruiken.}
+
+\input{bewijzen/etm}
+
+\textit{Bespreek daarna de uitspraken $\etm$ is herkenbaar en $\etm$ is co-herkenbaar.}
+
+Indien het herkenbaar was, zou het ook beslisbaar moeten zijn omdat het co-herkenbaar is.
+
+$\etm$ is co-herkenbaar. We kunnen namelijk een enumerator machine bouwen dit $\overline{\etm}$ herkent.
+
+\textit{Ken je ook alternatieve bewijzen?}
+
+We kunnen dit bewijzen met de stelling van Rice. Bovendien is het ook mogelijk om aan te tonen dat $\etm$ beslisbaar is t.o.v. $\atm$ ($\etm \leq_T \atm$) met een orakel voor $\atm$:
+
+\input{bewijzen/etmoatm}
+
+\textit{Hoe zit het met $E_{CFG}$?}
+
+\input{bewijzen/eqcfg}
+
+\subsubsection{Vraag 3 - Enumerator machine}
 
 \textit{Definieer de enumerator machine.}
 
@@ -165,6 +416,73 @@ We kunnen voor de taal $L$ een equivalente DFA opstellen die dezelfde taal bepaa
 
 Elke beslisbare taal is ook een herkenbare taal. Omdat elke herkenbare taal ge\"enumereerd kan worden kan ook elke beslisbare taal ge\"enumereerd worden.
 
-\textit{Bespreek in deze context de uitspraak ``de verzameling van Turingmachines is een herkenbare taal".}
+\textit{Bespreek in deze context de uitspraak ``de verzameling van Turingmachines is een herkenbare taal''.}
 
-% TODO
+Elke Turingmachine herkent een taal en elke herkenbare taal is enumereerbaar, dus moet ook de verzameling van alle Turingmachines enumereerbaar en dus herkenbaar zijn.
+
+\subsubsection{Vraag 4 - Stelling van Rice}
+
+\textit{Leg de stelling van Rice uit, en geef het bewijs.}
+
+\input{definities/rice}
+
+\paragraph{Bewijs.} \input{bewijzen/rice}
+
+\textit{Geef minstens één eigenschap van Turingmachines die niet voldoet aan de voorwaarde voor de stelling van Rice, en laat zien dat die eigenschap geen aanleiding geeft tot een niet-beslisbare taal.}
+
+De eigenschap ``de taal bepaald door een Turingmachine moet herkenbaar zijn'' is triviaal, omdat elke Turingmachine een Turing-herkenbare taal bepaalt. Dus deze eigenschap voldoet niet aan de stelling van Rice.
+
+Indien deze eigenschap aanleiding zou geven tot een niet-beslisbare taal, dan zou elke herkenbare taal niet-beslisbaar moeten zijn. We weten echter dat elke beslisbare taal ook herkenbaar is.
+
+\subsubsection{Vraag 4 (Bijvraag 1)}
+
+\textit{Karakteriseer volledig alle eigenschappen van Turingmachines die aan de stelling van Rice voldoen m.b.v. $IsIn_{TM,S}$.}
+
+$IsIn_{TM,S}$ is de verzameling van alle Turingmachines $M$ die een taal $L_M$ bepalen die deel uitmaakt van de verzameling $S$. We zoeken een eigenschap $P$ van een Turingmachine $M$ zodanig dat
+\begin{equation*}
+  L_M \in S \leftrightarrow M \in Pos_P \en M \notin Neg_P
+\end{equation*} 
+
+Indien de eigenschap $P$ aan de stelling van Rice voldoet, is $IsIn_{TM,S}$ niet beslisbaar, want dan geldt $IsIn_{TM,S} = Pos_P$.
+
+\subsubsection{Vraag 5 - Reduceerbaarheid}
+
+\textit{Bespreek de twee noties van reduceerbaarheid ($A \leq_m B$ en $A \leq_T B$), hun verband en op welke manier die noties kunnen gebruikt worden om aan te tonen dat een taal (on)beslisbaar/herkenbaar is.}
+
+\paragraph{Reduceerbaarheid.} Een taal $L_1$ over $\Sigma_1$ kan gereduceerd worden naar een taal $L_2$ over $\Sigma_2$ als er een afbeelding \bm{$f: \sstar_1 \rightarrow \sstar_2$} bestaat zodanig dat $f(L_1) \subseteq L_2$ en $f(\overline{L_1}) \subseteq \overline{L_2}$ met $f$ een Turing-berkenbare functie.
+
+Indien een taal $A$ niet-beslisbaar is en reduceerbaar is naar een andere taal $B$, dan moet $B$ ook niet-beslisbaar zijn. Omdat we anders de beslisser van $B$ zouden kunnen gebruiken om $A$ te beslissen. We zeggen dus ook dat $A$ beslisbaar is als $B$ beslisbaar is. Dit geldt analoog voor herkenbaarheid.
+
+\paragraph{Turingreduceerbaarheid.} Een taal $A$ is Turingeduceerbaar naar een taal $B$ indien er een orakelmachine $O^B$ bestaat die $A$ beslist. We zeggen dat $A$ beslisbaar is t.o.v. $B$.
+
+Indien een taal $B$ beslisbaar is en een taal $A$ Turingreduceerbaar is naar $B$, dan moet $A$ ook beslisbaar zijn.
+
+\paragraph{Verband.} Turingreduceerbaarheid is fijner dan reduceerbaarheid. Elk probleem $A$ dat reduceerbaar is naar $B$ moet ook Turingreduceerbaar zijn naar $B$.
+
+\subsection{Lambda calculus}
+
+\subsubsection{Vraag 1 - Church-Rosser}
+
+\textit{Formuleer en bespreek de stellingen van Church-Rosser.}
+
+\paragraph{CR1.} \input{definities/cr1}
+
+Uit de eerste stelling volgt de uniciteit van de normaalvorm. Dat wilt zeggen dat de normaalvorm van een expressie altijd uniek is en enkel kan verschillen onder $\alpha$-reductie.
+
+\paragraph{CR2.} \input{definities/cr2}
+
+\textit{Geef daarbij hun belang i.v.m. het baseren van een programmeertaal op lambda-calculus.}
+
+De eerste stelling is belangrijk omdat het in essentie zegt dat het reduceren van een lambda-expressie altijd hetzelfde resultaat zal produceren.
+
+De tweede stelling is belangrijk omdat de reductie in normaalorde zorgt voor ``lazy evaluation''. Een techniek waarbij een expressie enkel wordt ge\"evalueerd indien de waarde van die expressie nodig is. Een voorbeeld daarvan is het evalueren van een ``OR'' expressie. Het tweede argument van die expressie zal enkel ge\"evalueerd worden indien het eerste argument naar ``FALSE'' evalueert, omdat anders het resultaat van de expressie reeds ``TRUE'' zal zijn.
+
+\textit{Geef de relatie met de programmeertaal Haskell.}
+
+$\lambda$-calculus vormt de basis van de klasse van functionele programmeertalen. Haskell is een voorbeeld van een functionele programmeertaal, vernoemd naar de wiskunde Haskell Curry, wiens achternaam ook gebruik wordt voor de techniek ``currying'' bij functionele (en logische) programmeertalen en wie ook \'e\'en van de meest gekende vastpuntcombinators heeft bedacht.
+
+\subsubsection{Vraag 1 (Bijvraag 1)}
+
+\textit{Is $\lambda$-calculus Turing-compleet?}
+
+Ja, het is mogelijk om elke (universele) Turingmachine in $\lambda$-calculus voor te stellen, omdat het elke Turing-berkenbare functie kan voorstellen.

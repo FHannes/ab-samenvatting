@@ -1,0 +1,10 @@
+  Stel dat $\etm$ beslisbaar is en $E$ is een beslisser voor $\etm$, dan kunnen we een beslisser $B$ voor $\atm$ construeren. Voor een gegeven invoer $\langle M,s \rangle$ construeren we een machine $M_s$ waarvoor geldt
+  \begin{itemize}
+  \item Gegeven een invoer $w$, als $w \neq s$, verwerpt $M_s$ de string $w$.
+  \item Anders laat $M_s$ $M$ lopen op $w$ en geeft het resultaat terug.
+  \end{itemize}
+  $M_s$ is een machine die enkel accept teruggeeft indien $M$ $s$ accepteert en anders reject. We laten $E$ lopen op $\langle M_s \rangle$:
+  \begin{itemize}
+  \item Als $E$ $M_s$ accepteert, dan laten we $B$ zijn input $\langle M,s \rangle$ verwerpen, omdat $M_s$ dan de lege taal bepaalt, wat enkel mogelijk is als $M$ $s$ verwerpt.
+  \item Als $E$ $M_s$ verwerpt, dan laten we $B$ zijn input $\langle M,s \rangle$ accepteren, omdat $M_s$ dan niet de lege taal bepaalt, wat enkel mogelijk is als $M$ $s$ accepteert.
+  \end{itemize}
