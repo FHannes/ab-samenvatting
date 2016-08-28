@@ -181,6 +181,31 @@
 
 \newpage
 
+\section{Voorwoord}
+
+Deze samenvatting werd gemaakt ter voorbereiding van het examen van Automaten en Berekenbaarheid. Ik bied geen garanties dat de samenvatting volledig is (m.a.w. dat alles uit de cursus aanwezig is) en dat de samenvatting correct is. De belangrijkste leerstof voor het examen zou aanwezig moeten zijn, maar hier en daar ontbreken er nog enkele details. De samenvatting bevat tevens ook dingen die niet terug te vinden zijn in de cursus, zoals het bewijs voor ``$EQ_{CFG}$ is niet beslisbaar''. Bovendien vind je achteraan de samenvatting een lijst met alle examenvragen die de voorbije drie jaren zijn gevraagd en een antwoord op die vragen (inclusief bijvragen). Het meeste van die inhoud staat letterlijk ook eerder in de samenvatting, maar dit biedt een goed overzicht van de examenvragen. De examenvragen voor het vak zijn gekend, echter niet alle bijvragen zijn gekend, dus het is mogelijk dat er bijvragen gesteld worden die niet in deze samenvatting vermeld worden!
+
+De volledige broncode voor deze samenvatting is terug te vinden op GitHub (\url{https://github.com/FHannes/ab-samenvatting}). Als je een fout vindt, kan je die daar altijd melden, of zelf corrigeren en een pull request openen. Zowel je collega studenten als ik zullen je dankbaar zijn.
+
+\subsection{Studeren}
+
+Zorg bij het studeren van dit vak dat je voldoende tijd voorziet! Het is een vak van zes studiepunten en dat is het zeker en vast waard. Dit vak simpelweg volledig memoriseren is meestal niet voldoende om te slagen. Hoewel de examenvragen gekend zijn, is de professor meer ge\"interesseerd in je inzicht in de leerstof, niet hoe goed je ze vanbuiten hebt geleerd. Het schrijven van deze samenvatting was voor mij persoonlijk dan ook de methode om de leerstof zo goed mogelijk te begrijpen. Details zijn erg belangrijk!
+
+\subsection{Examen}
+
+Het examen voor dit vak is mondeling. Je krijgt twee vragen en schriftelijke voorbereidingstijd. De vragen zoals je die krijgt per stuk staan zo ook in deze samenvatting. Tijdens de mondelinge ondervraging krijg je bij elke vraag nog \'e\'en of meerdere bijvragen. Let op dat het antwoord op veel van de examenvragen niet letterlijk in de cursus staat! Je hebt meestal een goede grip op de leerstof nodig om een zinnig antwoord te formuleren. De professor zal ook niet naar je schriftelijke antwoorden kijken. Dus het is erg belangrijk dat je in staat bent om formules correct mondeling over te brengen. Zorg dat je zeker niet in de war raakt door verschillende symbolen (b.v. $\rightarrow$, $\Rightarrow^*$, $\stackrel{*}{\longrightarrow}$, ...) of de vele verschillende Griekse letters die gebruikt worden.
+
+\subsection{Extra materiaal}
+\begin{itemize}
+\item Webpagina van het vak:\\\url{https://people.cs.kuleuven.be/~bart.demoen/AB/index.html}
+\item Studentencursus door Tom Sydney Kerckhove:\\\url{https://github.com/NorfairKing/ab-notities}
+\item Poster met belangrijke elementen uit de cursus door Willem Van Onsem:\\\url{https://github.com/KommuSoft/publications/tree/posterab/poster_automaten_en_berekenbaarheid}
+\item Boek ``Introduction to the Theory of Computation'' door Michael Sipser
+\end{itemize}
+
+
+\newpage
+
 \section{Voorkennis}
 
 \subsection{Belangrijke afkortingen}
@@ -1593,13 +1618,15 @@ Indien een $\lambda$-calculus toelaat om functies bij naam te defini\"eren of na
 \begin{definitie}{Vastpuntcombinator}
   Een vastpuntcombinator (FPC) is een functie $Y$ die voldoet aan
   \begin{equation*}
-  F: Y\ F = F\ (Y\ F)
+  \forall F: Y\ F = F\ (Y\ F)
   \end{equation*}
   De vastpuntcombinator van Curry wordt veel gebruikt en is gedefinieerd als
   \begin{equation*}
   \lambda f.\ (\lambda x.\ f\ (x\ x))\ (\lambda x.\ f\ (x\ x))
   \end{equation*}
 \end{definitie}
+
+Sectie \ref{ex:lambdarecurse} toont een voorbeeld van een recursieve functie ge\"mplementeerd in zuivere $\lambda$-calculus en de uitvoering ervan.
 
 % TODO: Programmeertalen
 

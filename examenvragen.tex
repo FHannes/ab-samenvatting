@@ -445,7 +445,41 @@ $IsIn_{TM,S}$ is de verzameling van alle Turingmachines $M$ die een taal $L_M$ b
 
 Indien de eigenschap $P$ aan de stelling van Rice voldoet, is $IsIn_{TM,S}$ niet beslisbaar, want dan geldt $IsIn_{TM,S} = Pos_P$.
 
-\subsubsection{Vraag 5 - Reduceerbaarheid}
+\subsubsection{Vraag 5 - Orakelmachine}
+
+\textit{Wat is een orakelmachine?}
+
+Een orakelmachine is een Turingmachine die een orakel kan raadplegen om de oplossing voor een bepaald probleem te vragen.
+
+Aan een orakel voor $\atm$ kan een TM bijvoorbeeld vragen of een machine $M$ een string $s$ accepteert.
+
+\textit{Bespreek de uitspraak: "de verzameling orakelmachines (over een gegeven orakel) is strikt krachtiger dan de verzameling van Turing machines". Leg hierbij ook uit wat je bedoelt met "krachtiger".}
+
+Een verzameling $A$ is krachtiger (of sterker) dan een verzameling $B$ indien $B$ een deelverzameling is van $A$.
+
+De verzameling van orakelmachines over een gegeven orakel is krachtiger dan de verzameling van de Turingmachines, omdat een orakelmachine een Turingmachine is, dus voor elke Turingmachine bestaat een equivalente orakelmachine die het orakel niet raadpleegt. Bovendien kan een orakelmachine problemen beslissen die een Turingmachine niet kan beslissen, wat maakt dat de verzameling van orakelmachines groter is dan de verzameling van Turingmachines en dus krachtiger.
+
+Een voorbeeld is de orakelmachine $\oatm$ met een orakel voor $\atm$, die in staat is om $\atm$ te beslissen en bij gevolg ook heel wat andere problemen.
+
+\textit{Kan een verzameling orakelmachines (voor bepaald gegeven orakel) alle talen beslissen?}
+
+Nee, de verzameling van orakelmachines is (oneindig) aftelbaar, maar de verzameling van alle talen $L_\Sigma$ is niet-aftelbaar. Daarom moet er minstens \'e\'n taal zijn die een orakelmachine voor een bepaald orakel niet kan beslissen.
+
+\subsubsection{Vraag 5 (Bijvraag 1)}
+
+\textit{Kan een orakelmachine voor $\atm$, $\htm$ beslissen?}
+
+Ja, je kan een orakelmachine $\oatm$ construeren die voor een input $\langle M,s \rangle$ beslist of die machine stopt voor de string $s$. Dat gebeurt als volgt:
+
+\begin{itemize}
+\item De machine vraagt aan het orakel of $M$ $s$ accepteert. Indien het antwoord ``ja'' is, dan accepteert $\oatm$ de invoer.
+\item Anders construeren we een machine $M_i$ die gelijk is een $M$ met de uitzondering dat de accepterende en verwerpende toestanden gewisseld zijn. De machine vraagt aan het orakel of $M_i$ $s$ accepteert. Indien het antwoord ``ja'' is, dan accepteert $\oatm$ de invoer.
+\item Anders verwerpt $\oatm$ de invoer, omdat we dan weten dat $M$ niet zal stoppen.
+\end{itemize}
+
+We kunnen zeggen dat $\htm \leq_T \atm$. Bovendien, omdat we weten dat $\atm \leq_m \htm$ en dus ook $\atm \leq_T \htm$, zeggen we dat $\atm \equiv_T \htm$ ($\atm$ en $\htm$ zijn Turing-equivalent).
+
+\subsubsection{Vraag 6 - Reduceerbaarheid}
 
 \textit{Bespreek de twee noties van reduceerbaarheid ($A \leq_m B$ en $A \leq_T B$), hun verband en op welke manier die noties kunnen gebruikt worden om aan te tonen dat een taal (on)beslisbaar/herkenbaar is.}
 
@@ -486,3 +520,28 @@ $\lambda$-calculus vormt de basis van de klasse van functionele programmeertalen
 \textit{Is $\lambda$-calculus Turing-compleet?}
 
 Ja, het is mogelijk om elke (universele) Turingmachine in $\lambda$-calculus voor te stellen, omdat het elke Turing-berkenbare functie kan voorstellen.
+
+\subsubsection{Vraag 1 (Bijvraag 2)}
+
+\textit{Hoeveel conversieregels ken je?}
+
+Er zijn drie conversieregels, namelijk:
+
+\begin{itemize}
+\item $\alpha$-conversie: Het hernoemen van variabelen.
+\item $\beta$-conversie: Functie evaluatie.
+\item $\eta$-conversie: Equivalentie onder redundante $\lambda$-abstracties.
+\end{itemize}
+
+Een vierde conversieregel, $\delta$-conversie wordt meestal niet vermeld. Dat is de evaluatie van ingebouwde functies.
+
+\subsubsection{Vraag 1 (Bijvraag 3)}
+
+\textit{Laat daarna zien hoe je in zuivere lambda-calculus recursieve functies kan defini\"eren. Doe dat m.b.v. een voorbeeld recursieve functie verschillend van FAC uit de cursus.}
+
+Het is mogelijk om in $\lambda$-calculus een recursieve functie gebruik te maken van een vastpuntcombinator. Dat is een zelf-replicerende expressie. De meest voorkomende vastpuntcombinator werd voorgesteld door Haskell Curry:
+\begin{equation*}
+  Y\ F = F\ (Y\ F) \text{ met } Y = \lambda f.\ (\lambda x.\ f\ (x\ x))\ (\lambda x.\ f\ (x\ x))
+\end{equation*}
+
+\input{voorbeelden/lambdarecurse}

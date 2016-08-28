@@ -1,0 +1,28 @@
+Stel dat een $\lambda$-calculus niet beschikt over een optel functie, maar wel over een functie $INC$ om een getal met \'e\'en te verhogen en $DEC$ om dat getal met \'e\'en te verlagen. We stellen een recursieve functie $PLUS$ op, die een getal bij een ander getal optelt.
+
+\begin{equation*}
+  H = \lambda f,a,b.\ (IF\ (=\ b\ 0)\ a\ (f\ (INC\ a)\ (DEC\ b))) \text{ met } PLUS = H\ PLUS
+\end{equation*}
+
+$H$ is het vastpunt voor $PLUS$, nu kunnen de defini\"erende vergelijking $PLUS = H\ PLUS$ vervangen met de vastpuntcombinator, zodat we $PLUS = Y H$ bekomen.
+
+We kunnen nu een bewerking met deze functie uitvoeren:
+
+\begin{equation*}
+\begin{aligned}
+PLUS\ 4\ 1 = \\
+Y\ H\ 4\ 1 = \\
+H\ (Y\ H)\ 4\ 1 = \\
+\lambda f,a,b.\ (IF\ (=\ b\ 0)\ a\ (f\ (INC\ a)\ (DEC\ b)))\ (Y\ H)\ 4\ 1 \rightarrow \\
+\lambda a,b.\ (IF\ (=\ b\ 0)\ a\ ((Y\ PLUS)\ (INC\ a)\ (DEC\ b)))\ 4\ 1 \stackrel{*}{\longrightarrow} \\
+(IF\ (=\ 1\ 0)\ 4\ ((Y\ H)\ (INC\ 4)\ (DEC\ 1))) \rightarrow \\
+(IF\ FALSE\ 4\ ((Y\ H)\ (INC\ 4)\ (DEC\ 1))) \rightarrow \\
+(Y\ H)\ (INC\ 4)\ (DEC\ 1) \rightarrow^* \\
+(Y\ H)\ 5\ 0 = \\
+\lambda f,a,b.\ (IF\ (=\ b\ 0)\ a\ (f\ (INC\ a)\ (DEC\ b)))\ (Y\ H)\ 5\ 0 \rightarrow \\
+\lambda a,b.\ (IF\ (=\ b\ 0)\ a\ ((Y\ H)\ (INC\ a)\ (DEC\ b)))\ 5\ 0 \stackrel{*}{\longrightarrow} \\
+(IF\ (=\ 0\ 0)\ 5\ ((Y\ H)\ (INC\ 5)\ (DEC\ 0))) \rightarrow \\
+(IF\ TRUE\ 5\ ((Y\ H)\ (INC\ 5)\ (DEC\ 0))) \rightarrow \\
+5
+\end{aligned}
+\end{equation*}
