@@ -16,6 +16,8 @@
 \usepackage{ltxtable}
 \usepackage{tabularx}
 \usepackage{hyperref}
+\usepackage{qrcode}
+\usepackage{epstopdf}
 \usepackage{tikz}
 \usetikzlibrary{arrows,automata,calc,chains,decorations.pathreplacing,fit,positioning}
 \usepackage{chngcntr}
@@ -164,17 +166,24 @@
         \begin{minipage}[t]{\textwidth}
             \begin{center}
                 \large{\rm{\textbf{\uppercase{Samenvatting}}}}\\
-                \large{\rm{Automaten en Berekenbaarheid [G0P84a]}}
+                \large{\rm{Automaten en Berekenbaarheid [G0P84a]}}\\[2cm]
+                \includegraphics[scale=1]{assets/by-nc-sa-eu.eps}
             \end{center}
         \end{minipage}
     \end{center}
-    \vfill
-    \hfill\makebox[3cm][l]{%
-        \vbox to 7cm{\vfill\noindent
+    \vfill\vspace*{5cm}
+    \begin{minipage}[t]{0.2\textwidth}
+        \begin{center}
+            @GitHub\\
+            \qrcode{https://github.com/FHannes/ab-samenvatting}\\
+            {\tt \#\input{rev}}
+        \end{center}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.35\textwidth}
+        \vfill\noindent \\[5mm]
             {\rm \textbf{Fr\'ed\'eric Hannes}}\\[2mm]
             {\rm Academisch jaar 2015--2016}
-        }
-    }
+    \end{minipage}
 \end{titlepage}
 
 \tableofcontents
