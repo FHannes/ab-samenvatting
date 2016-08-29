@@ -1,0 +1,14 @@
+  We kunnen bewijzen dat $E_{CFG} = \{\langle G \rangle | G \text{ is een CFG en } L_G = \emptyset\}$ beslisbaar is door $G$ te transformeren als volgt:
+  \begin{itemize}
+  \item Voor een regel $A \rightarrow \alpha$ met $\alpha$ bestaande enkel uit terminals (inclusief $\epsilon$), dan:
+  \begin{itemize}
+  \item Verwijder alle producties waar $A$ aan de linkerkant staat.
+  \item Vervang in elke regel waar $A$ rechts voorkomt, de voorkomens van $A$ door $\alpha$.
+  \end{itemize}
+  \item Herhaal de transformatie totdat:
+  \begin{itemize}
+  \item Het startsymbool verwijderd is, waarbij de invoer verworpen wordt, omdat dat betekent dat het mogelijk is een string af te leiden in het startsymbool.
+  \item Er geen regels zijn van de benodigde vorm, waarbij de invoer verworpen wordt, omdat de taal dan leeg is. (Het is dus niet mogelijk om een terminal te bereiken vanuit het startsymbool.)
+  \end{itemize}
+  \end{itemize}
+  Door deze transformatie uit te voeren kunnen we voor elke CFG bepalen of die de lege taal bepaalt of niet en dus is $E_{CFG}$ beslisbaar.

@@ -901,6 +901,10 @@ Een voorbeeld van hoe het pompend lemma gebruikt kan worden om te bewijzen dat e
 
 \subsection{Andere automaten}
 
+\begin{definitie}{Transducer}
+  Een transducer is een automaat die lijkt op een DFA. Elke overgang heeft een label $\alpha/\beta$ waarbij $\alpha$ het symbool is waarvoor de overgang gemaakt wordt, zoals bij een DFA en $\beta$ het symbool dat aan de uitvoer wordt toegevoegd wanneer de overgang gemaakt wordt.
+\end{definitie}
+
 \begin{definitie}{B\"uchi automaat}
   Een B\"uchi automaat (BA) is een automaat die lijkt op een NFA, maar deze doorlopen oneindige strings. Een BA accepteert een string indien de rij toestanden die gepasseerd wordt oneindig dikwijls een accepterende toestand bevat.
 \end{definitie}
@@ -1145,7 +1149,15 @@ In sectie \ref{ex:plcfg} wordt een voorbeeld gegeven van een toepassing van het 
 
 Er bestaan geen ambigue CFL's die deterministisch zijn, maar wel niet-ambigue CFL's die niet-deterministisch zijn. Bij gevolg kunnen we zeggen dat het niet mogelijk is om elke PDA om te zetten naar een DPDA.
 
-% TODO: Contextgevoelige grammatica
+\newpage\section{Contextgevoelige grammatica}
+
+\begin{definitie}{Contextgevoelige grammatica}
+  De contextgevoelige (contextsensitieve) grammatica (CSG) is bepaalt een verzameling strikt sterker dan die bepaald door de contextvrije grammatica's. De producties van een CSG mogen aan de linkerzijde meerdere terminals en variabelen bevatten.
+\end{definitie}
+
+\begin{definitie}{Lineair begrensde automaat}
+  Een lineair begrensde automaat (LBA) is een Turingmachine (definitie \ref{def:tm}) die waarbij het tape alfabet twee extra symbolen bevat die links en rechts de tape begrenzen. Het is niet toegestaan om die symbolen te overschrijven of om buiten de grens bepaald door die symbolen te schrijven. M.a.w. het geheugen van de Turingmachine is begrensd.
+\end{definitie}
 
 \newpage\section{Chomsky hi\"erarchie}
 
@@ -1335,20 +1347,7 @@ Een enumeratormachine produceert (enumereert) een verzameling strings op de outp
 % TODO: A_CFG is beslisbaar
 
 \begin{bewijs}{We bewijzen dat $E_{CFG}$ beslisbaar is.}
-  We kunnen bewijzen dat $E_{CFG} = \{\langle G \rangle | G \text{ is een CFG en } L_G = \emptyset\}$ beslisbaar is door $G$ te transformeren als volgt:
-  \begin{itemize}
-  \item Voor een regel $A \rightarrow \alpha$ met $\alpha$ bestaande enkel uit terminals (inclusief $\epsilon$), dan:
-  \begin{itemize}
-  \item Verwijder alle producties waar $A$ aan de linkerkant staat.
-  \item Vervang in elke regel waar $A$ rechts voorkomt, de voorkomens van $A$ door $\alpha$.
-  \end{itemize}
-  \item Herhaal de transformatie totdat:
-  \begin{itemize}
-  \item Het startsymbool verwijderd is, waarbij de invoer verworpen wordt, omdat dat betekent dat het mogelijk is een string af te leiden in het startsymbool.
-  \item Er geen regels zijn van de benodigde vorm, waarbij de invoer verworpen wordt, omdat de taal dan leeg is. (Het is dus niet mogelijk om een terminal te bereiken vanuit het startsymbool.)
-  \end{itemize}
-  \end{itemize}
-  Door deze transformatie uit te voeren kunnen we voor elke CFG bepalen of die de lege taal bepaalt of niet en dus is $E_{CFG}$ beslisbaar.
+  \input{bewijzen/ecfg}
 \end{bewijs}
 
 \begin{bewijs}{We bewijzen dat $EQ_{CFG}$ niet beslisbaar is.}
@@ -1370,10 +1369,10 @@ Een enumeratormachine produceert (enumereert) een verzameling strings op de outp
 \end{bewijs}
 
 \begin{bewijs}{We bewijzen dat $\eqtm$ niet beslisbaar is.}
-  We kunnen $\eqtm$ reduceren naar $\etm$ ($\etm \leq_m \eqtm$). Indien er een beslisser $EQ$ bestaat voor $\eqtm$, dan kunnen we een beslisser $E$ voor $\etm$ bouwen die bij een invoer $\langle M \rangle$, $EQ$ laat lopen op $\langle M,m_\emptyset \rangle$ en hetzelfde resultaat teruggeeft. We weten dat $\etm$ niet beslisbaar is, dus de beslisser $E$ kan niet bestaan en dus de beslisser $EQ$ ook niet. Bijgevolg is $eqtm$ ook niet beslisbaar.
+  We kunnen $\etm$ reduceren naar $\eqtm$ ($\etm \leq_m \eqtm$). Indien er een beslisser $EQ$ bestaat voor $\eqtm$, dan kunnen we een beslisser $E$ voor $\etm$ bouwen die bij een invoer $\langle M \rangle$, $EQ$ laat lopen op $\langle M,m_\emptyset \rangle$ en hetzelfde resultaat teruggeeft. We weten dat $\etm$ niet beslisbaar is, dus de beslisser $E$ kan niet bestaan en dus de beslisser $EQ$ ook niet. Bijgevolg is $eqtm$ ook niet beslisbaar.
 \end{bewijs}
 
-% TODO: EQ_TM is niet herkenbaar en niet co-herkenbaar
+% TODO: EQ_TM is niet (co-)herkenbaar
 
 \begin{definitie}{$IsIn_{TM,S}$}
   Stel dat $S$ een verzameling van talen is, kunnen we voor een gegeven machine $M$ bepalen of de taal $L_M$ bepaald van die machine behoort tot de verzameling $S$?

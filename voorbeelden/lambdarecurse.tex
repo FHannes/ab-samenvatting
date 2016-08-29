@@ -13,16 +13,16 @@ We kunnen nu een bewerking met deze functie uitvoeren:
 PLUS\ 4\ 1 = \\
 Y\ H\ 4\ 1 = \\
 H\ (Y\ H)\ 4\ 1 = \\
-\lambda f,a,b.\ (IF\ (=\ b\ 0)\ a\ (f\ (INC\ a)\ (DEC\ b)))\ (Y\ H)\ 4\ 1 \rightarrow \\
+\lambda f,a,b.\ (IF\ (=\ b\ 0)\ a\ (f\ (INC\ a)\ (DEC\ b)))\ (Y\ H)\ 4\ 1 \longrightarrow \\
 \lambda a,b.\ (IF\ (=\ b\ 0)\ a\ ((Y\ PLUS)\ (INC\ a)\ (DEC\ b)))\ 4\ 1 \stackrel{*}{\longrightarrow} \\
-(IF\ (=\ 1\ 0)\ 4\ ((Y\ H)\ (INC\ 4)\ (DEC\ 1))) \rightarrow \\
-(IF\ FALSE\ 4\ ((Y\ H)\ (INC\ 4)\ (DEC\ 1))) \rightarrow \\
-(Y\ H)\ (INC\ 4)\ (DEC\ 1) \rightarrow^* \\
+(IF\ (=\ 1\ 0)\ 4\ ((Y\ H)\ (INC\ 4)\ (DEC\ 1))) \longrightarrow \\
+(IF\ FALSE\ 4\ ((Y\ H)\ (INC\ 4)\ (DEC\ 1))) \longrightarrow \\
+(Y\ H)\ (INC\ 4)\ (DEC\ 1) \stackrel{*}{\longrightarrow} \\
 (Y\ H)\ 5\ 0 = \\
-\lambda f,a,b.\ (IF\ (=\ b\ 0)\ a\ (f\ (INC\ a)\ (DEC\ b)))\ (Y\ H)\ 5\ 0 \rightarrow \\
+\lambda f,a,b.\ (IF\ (=\ b\ 0)\ a\ (f\ (INC\ a)\ (DEC\ b)))\ (Y\ H)\ 5\ 0 \longrightarrow \\
 \lambda a,b.\ (IF\ (=\ b\ 0)\ a\ ((Y\ H)\ (INC\ a)\ (DEC\ b)))\ 5\ 0 \stackrel{*}{\longrightarrow} \\
-(IF\ (=\ 0\ 0)\ 5\ ((Y\ H)\ (INC\ 5)\ (DEC\ 0))) \rightarrow \\
-(IF\ TRUE\ 5\ ((Y\ H)\ (INC\ 5)\ (DEC\ 0))) \rightarrow \\
+(IF\ (=\ 0\ 0)\ 5\ ((Y\ H)\ (INC\ 5)\ (DEC\ 0))) \longrightarrow \\
+(IF\ TRUE\ 5\ ((Y\ H)\ (INC\ 5)\ (DEC\ 0))) \longrightarrow \\
 5
 \end{aligned}
 \end{equation*}
