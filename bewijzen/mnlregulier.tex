@@ -9,7 +9,7 @@
   \begin{equation*}
   \forall x, y \in \Sigma^*, a \in \Sigma: xa \sim_D ya \Leftrightarrow \delta(\delta^*(q_s, x), a) = \delta(\delta^*(q_s, y), a)
   \end{equation*}
-  \item $\sim_D$ verfijnt $\sim_{L_D}$, omdat $\sim_D$ een equivalentieklasse genereert voor alle strings die aanvaard worden door per eindtoestand. Bovendien is $\delta$ een totale functie en zullen alle strings die niet aanvaard worden samen in een equivalentieklasse komen. De verzameling van die equivalentieklassen is een partitie van $\Sigma^*$ die $\sim_{L_D}$ verfijnt.
+  \item $\sim_D$ verfijnt $\sim_{L_D}$, omdat $\sim_D$ een equivalentieklasse genereert voor alle strings die aanvaard worden door $D$ per eindtoestand en een klasse voor elke string die eindigt in een andere toestand. Daardoor worden de verzamelingen $L$ en $\overline{L}$ opgedeeld in kleinere disjuncte verzamelingen. De verzameling van die equivalentieklassen is een partitie van $\Sigma^*$ die $\sim_{L_D}$ verfijnt.
   \item $\sim_D$ heeft een eindige index omdat het aantal toestanden in $D$ eindig is.
   \end{itemize}
   \item Voor een $MN(L)$-relatie kan men een DFA ($Q$, $\Sigma$, $\delta$, $q_s$, $F$) construeren die $L$ bepaalt, waarvoor geldt
@@ -30,11 +30,11 @@
   \begin{itemize}
   \item Voor een string $x$ met een lengte $l = 0$:
   \begin{equation*}
-  \delta^*(\epsilon_\sim,\epsilon) = \delta(\epsilon_\sim,\epsilon) = \epsilon_\sim \Leftrightarrow x_\sim \in F
+  \delta^*(\epsilon_\sim,\epsilon) = \delta(\epsilon_\sim,\epsilon) = \epsilon_\sim
   \end{equation*}
   \item Stel dat de bewering geldt voor een string met willekeurige lengte $l$, dan geldt ze ook voor $xa$ met $a \in \Sigma$:
   \begin{equation*}
-  \delta^*(\epsilon_\sim,xa) = \delta(x_\sim,a) = (xa)_\sim \Leftrightarrow x_\sim \in F
+  \delta^*(\epsilon_\sim,xa) = \delta(x_\sim,a) = (xa)_\sim
   \end{equation*}
   \end{itemize}
   \end{itemize}

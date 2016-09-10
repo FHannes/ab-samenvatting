@@ -209,7 +209,7 @@ Nee, het is mogelijk om voor elke CFG een PDA te construeren, maar het is niet m
   \item Verwijder alle toestanden van waaruit het niet mogelijk is om een eindtoestand $q \in F$ te bereiken en alle toestanden die niet bereikbaar zijn.
   \item Transformeer (indien nodig) de DFA naar een volledige DFA met bovenstaand algoritme.
   \item Bepaal de f-gelijke toestanden van de DFA met bovenstaand algoritme.
-  \item Neem alle f-gelijke toestanden samen in een enkele toestand, zodanig dat alle uitgaande bogen van alle f-gelijke toestanden nu uit hun gecombineerde toestand vertrekken en alle bogen die toekwamen in de f-gelijke toestanden nu toekomen in hun gecombineerde toestand.
+  \item Neem alle onderling f-gelijke toestanden samen in een enkele toestand, zodanig dat alle uitgaande bogen van alle f-gelijke toestanden nu uit hun gecombineerde toestand vertrekken en alle bogen die toekwamen in de f-gelijke toestanden nu toekomen in hun gecombineerde toestand.
   \item Verwijder (indien toegevoegd in stap 2) de toestand $q_t$, vanuit deze toestand is het niet mogelijk om de eindtoestand te bereiken.
   \end{enumalgo}
   De resulterende DFA is een minimale DFA.
@@ -269,7 +269,7 @@ Het pompend lemma kan niet gebruikt worden om te bewijzen dat een taal regulier 
 
 \textit{Is er een verband tussen de kleinste DFA voor een taal en de kortste pomplengte?}
 
-Ja, de kortste pomplengte moet steeds \'e\'en groter zijn dan het aantal toestanden in de minimale DFA. Indien dat niet het geval zou zijn, is het pompend lemma niet meer geldig voor strings die een lengte hebben gelijk aan het aantal toestanden (of voor een lengte kleiner dan dat). Intu\"itief voelen we dit aan omdat in de verdeling $s=xyz$, $y$ uit minstens \'e\'n symbool moet bestaan, en dat $xz$ dan ook tot de taal moet behoren. Maar als de string gelijk is aan het aantal toestanden, dan kunnen we niet met zekerheid zeggen dat een deel van de string herhaalt kan worden, door middel van een lus in de DFA.
+Ja, de kortste pomplengte moet steeds \'e\'en groter zijn dan het aantal toestanden in de minimale DFA. Indien dat niet het geval zou zijn, is het pompend lemma niet meer geldig voor strings die een lengte hebben gelijk aan het aantal toestanden (of voor een lengte kleiner dan dat). Intu\"itief voelen we dit aan omdat in de verdeling $s=xyz$, $y$ uit minstens \'e\'en symbool moet bestaan, en dat $xz$ dan ook tot de taal moet behoren. Maar als de string gelijk is aan het aantal toestanden, dan kunnen we niet met zekerheid zeggen dat een deel van de string herhaalt kan worden, door middel van een lus in de DFA.
 
 Een voorbeeld is de volgende minimale DFA die $L = \{abcd\}$ over $\Sigma = \{a,b,c,d\}$ bepaalt:
 \begin{nfa}
@@ -428,7 +428,7 @@ Elke Turingmachine herkent een taal en elke herkenbare taal is enumereerbaar, du
 
 \paragraph{Bewijs.} \input{bewijzen/rice}
 
-\textit{Geef minstens één eigenschap van Turingmachines die niet voldoet aan de voorwaarde voor de stelling van Rice, en laat zien dat die eigenschap geen aanleiding geeft tot een niet-beslisbare taal.}
+\textit{Geef minstens \'e\'en eigenschap van Turingmachines die niet voldoet aan de voorwaarde voor de stelling van Rice, en laat zien dat die eigenschap geen aanleiding geeft tot een niet-beslisbare taal.}
 
 De eigenschap ``de taal bepaald door een Turingmachine moet herkenbaar zijn'' is triviaal, omdat elke Turingmachine een Turing-herkenbare taal bepaalt. Dus deze eigenschap voldoet niet aan de stelling van Rice.
 
