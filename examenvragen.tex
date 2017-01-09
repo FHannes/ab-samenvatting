@@ -243,7 +243,7 @@ Een Myhill-Nerode relatie voor een taal $L$ ($MN(L)$-relatie) is een equivalenti
 
 \input{bewijzen/mnlregulier}
 
-\textit{Bestaat er voor een taal $L$ soms meer dan één $MN(L)$-relatie?}
+\textit{Bestaat er voor een taal $L$ soms meer dan \'e\'en $MN(L)$-relatie?}
 
 Een taal $L$ waarvoor een $MN(L)$-relatie bestaat moet regulier zijn. Een mogelijke $MN(L)$-relatie voor een reguliere taal is $\sim_{DFA}$. Die equivalentierelatie wordt bepaald door alle strings die vanuit de begintoestand van de $DFA$ een willekeurige toestand bereiken te groeperen per toestand.
 \begin{equation*}
@@ -269,7 +269,7 @@ Het pompend lemma kan niet gebruikt worden om te bewijzen dat een taal regulier 
 
 \textit{Is er een verband tussen de kleinste DFA voor een taal en de kortste pomplengte?}
 
-Ja, de kortste pomplengte moet steeds \'e\'en groter zijn dan het aantal toestanden in de minimale DFA. Indien dat niet het geval zou zijn, is het pompend lemma niet meer geldig voor strings die een lengte hebben gelijk aan het aantal toestanden (of voor een lengte kleiner dan dat). Intu\"itief voelen we dit aan omdat in de verdeling $s=xyz$, $y$ uit minstens \'e\'en symbool moet bestaan, en dat $xz$ dan ook tot de taal moet behoren. Maar als de string gelijk is aan het aantal toestanden, dan kunnen we niet met zekerheid zeggen dat een deel van de string herhaalt kan worden, door middel van een lus in de DFA.
+Ja, de kortste pomplengte moet steeds \'e\'en groter zijn dan het aantal toestanden in de minimale DFA. Indien dat niet het geval zou zijn, is het pompend lemma niet meer geldig voor strings die een lengte hebben gelijk aan het aantal toestanden (of voor een lengte kleiner dan dat). Intu\"itief voelen we dit aan omdat in de verdeling $s=xyz$, $y$ uit minstens \'e\'en symbool moet bestaan, en dat $xz$ dan ook tot de taal moet behoren. Maar als de lengte van de string gelijk is aan het aantal toestanden, dan kunnen we niet met zekerheid zeggen dat een deel van de string herhaald kan worden, door middel van een lus in de DFA.
 
 Een voorbeeld is de volgende minimale DFA die $L = \{abcd\}$ over $\Sigma = \{a,b,c,d\}$ bepaalt:
 \begin{nfa}
@@ -337,8 +337,8 @@ De Chomsky hi\"erarchie is een hi\"erarchische rangschikking van talen. Elke kla
 \begin{itemize}
 \item Type-0: De klasse van de herkenbare talen heeft een onbeperkte grammatica, dat wil zeggen er geen restricties zijn op de grammaticale regels. Elke taal die door een Turingmachine herkent wordt zit in deze klasse.
 \item Type-1: De klasse van de contextgevoelige talen heeft een contextgevoelige grammatica, daarbij mogen de productieregels in tegenstelling tot een CFG zowel aan de linker- als rechterzijde een combinatie van variabelen en terminals bevatten. Elke taal die door een lineair begrensde automaat (Turingmachine) bepaalt wordt zit in deze klasse. Een LBA kan een beslissingsprobleem oplossen in $O(n)$-ruimte.
-\item Type-2: De klasse van de contextvrije talen heeft een contextvrije grammatica (CFG). Elke taal die door een push-down automaat bepaalt wordt zit in deze klasse. Het parsen van een string uit een taal $L_{CFG}$ kan in $O(n^2)$-tijd.
-\item Type-3: De klasse van de reguliere talen heeft een reguliere grammatica. Elke taal die door een eindige toestandsautomaat bepaalt wordt zit in deze klasse. Een string uit een taal $L_{RE}$ kan herkend worden in $O(n)$-tijd.
+\item Type-2: De klasse van de contextvrije talen heeft een contextvrije grammatica (CFG). Elke taal die door een push-down automaat bepaald wordt zit in deze klasse. Het parsen van een string uit een taal $L_{CFG}$ kan in $O(n^2)$-tijd.
+\item Type-3: De klasse van de reguliere talen heeft een reguliere grammatica. Elke taal die door een eindige toestandsautomaat bepaald wordt zit in deze klasse. Een string uit een taal $L_{RE}$ kan herkend worden in $O(n)$-tijd.
 \end{itemize}
 \begin{center}
 \begin{tikzpicture}
@@ -473,11 +473,11 @@ Ja, je kan een orakelmachine $\oatm$ construeren die voor een input $\langle M,s
 
 \begin{itemize}
 \item De machine vraagt aan het orakel of $M$ $s$ accepteert. Indien het antwoord ``ja'' is, dan accepteert $\oatm$ de invoer.
-\item Anders construeren we een machine $M_i$ die gelijk is een $M$ met de uitzondering dat de accepterende en verwerpende toestanden gewisseld zijn. De machine vraagt aan het orakel of $M_i$ $s$ accepteert. Indien het antwoord ``ja'' is, dan accepteert $\oatm$ de invoer.
+\item Anders construeren we een machine $M_i$ die gelijk is aan $M$ met de uitzondering dat de accepterende en verwerpende toestanden gewisseld zijn. De machine vraagt aan het orakel of $M_i$ $s$ accepteert. Indien het antwoord ``ja'' is, dan accepteert $\oatm$ de invoer.
 \item Anders verwerpt $\oatm$ de invoer, omdat we dan weten dat $M$ niet zal stoppen.
 \end{itemize}
 
-We kunnen zeggen dat $\htm \leq_T \atm$. Bovendien, omdat we weten dat $\atm \leq_m \htm$ en dus ook $\atm \leq_T \htm$, zeggen we dat $\atm \equiv_T \htm$ ($\atm$ en $\htm$ zijn Turing-equivalent).
+We kunnen zeggen dat $\htm \leq_T \atm$. Bovendien, omdat we weten dat $\atm \leq_m \htm$ en dus ook $\atm \leq_T \htm$, zeggen we dat $\atm \equiv_T \htm$ ($\atm$ en $\htm$ zijn Turing-equivalent)\footnote{\url{https://en.wikipedia.org/wiki/Turing_degree\#Turing_equivalence}}.
 
 \subsubsection{Vraag 6 - Reduceerbaarheid}
 
@@ -491,7 +491,7 @@ Indien een taal $A$ niet-beslisbaar is en reduceerbaar is naar een andere taal $
 
 Indien een taal $B$ beslisbaar is en een taal $A$ Turingreduceerbaar is naar $B$, dan moet $A$ ook beslisbaar zijn.
 
-\paragraph{Verband.} Turingreduceerbaarheid is fijner dan reduceerbaarheid. Elk probleem $A$ dat reduceerbaar is naar $B$ moet ook Turingreduceerbaar zijn naar $B$.
+\paragraph{Verband.} Reduceerbaarheid (many-one) is fijner dan Turingreduceerbaarheid. Elk probleem $A$ dat reduceerbaar is naar $B$ moet ook Turingreduceerbaar zijn naar $B$.
 
 \subsection{Lambda calculus}
 
@@ -528,9 +528,9 @@ Ja, het is mogelijk om elke (universele) Turingmachine in $\lambda$-calculus voo
 Er zijn drie conversieregels, namelijk:
 
 \begin{itemize}
-\item $\alpha$-conversie: Het hernoemen van variabelen.
-\item $\beta$-conversie: Functie evaluatie.
-\item $\eta$-conversie: Equivalentie onder redundante $\lambda$-abstracties.
+\item $\alpha$-conversie: Hernoemen van variabelen,
+\item $\beta$-conversie: Functie evaluatie,
+\item $\eta$-conversie: Eliminatie van redundante $\lambda$-abstracties.
 \end{itemize}
 
 Een vierde conversieregel, $\delta$-conversie wordt meestal niet vermeld. Dat is de evaluatie van ingebouwde functies.
@@ -539,7 +539,7 @@ Een vierde conversieregel, $\delta$-conversie wordt meestal niet vermeld. Dat is
 
 \textit{Laat daarna zien hoe je in zuivere lambda-calculus recursieve functies kan defini\"eren. Doe dat m.b.v. een voorbeeld recursieve functie verschillend van FAC uit de cursus.}
 
-Het is mogelijk om in $\lambda$-calculus een recursieve functie gebruik te maken van een vastpuntcombinator. Dat is een zelf-replicerende expressie. De meest voorkomende vastpuntcombinator werd voorgesteld door Haskell Curry:
+Het is mogelijk om in $\lambda$-calculus voor een recursieve functie gebruik te maken van een vastpuntcombinator. Dat is een zelf-replicerende expressie. De meest voorkomende vastpuntcombinator werd voorgesteld door Haskell Curry:
 \begin{equation*}
   Y\ F = F\ (Y\ F) \text{ met } Y = \lambda f.\ (\lambda x.\ f\ (x\ x))\ (\lambda x.\ f\ (x\ x))
 \end{equation*}

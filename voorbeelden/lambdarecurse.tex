@@ -4,7 +4,7 @@ Stel dat een $\lambda$-calculus niet beschikt over een optel functie, maar wel o
   H = \lambda f,a,b.\ (IF\ (=\ b\ 0)\ a\ (f\ (INC\ a)\ (DEC\ b))) \text{ met } PLUS = H\ PLUS
 \end{equation*}
 
-$H$ is het vastpunt voor $PLUS$, nu kunnen de defini\"erende vergelijking $PLUS = H\ PLUS$ vervangen met de vastpuntcombinator, zodat we $PLUS = Y H$ bekomen.
+$H$ is het vastpunt voor $PLUS$, nu kunnen we de defini\"erende vergelijking $PLUS = H\ PLUS$ vervangen met de vastpuntcombinator, zodat we $PLUS = Y H$ bekomen.
 
 We kunnen nu een bewerking met deze functie uitvoeren:
 
@@ -14,7 +14,7 @@ PLUS\ 4\ 1 = \\
 Y\ H\ 4\ 1 = \\
 H\ (Y\ H)\ 4\ 1 = \\
 \lambda f,a,b.\ (IF\ (=\ b\ 0)\ a\ (f\ (INC\ a)\ (DEC\ b)))\ (Y\ H)\ 4\ 1 \longrightarrow \\
-\lambda a,b.\ (IF\ (=\ b\ 0)\ a\ ((Y\ PLUS)\ (INC\ a)\ (DEC\ b)))\ 4\ 1 \stackrel{*}{\longrightarrow} \\
+\lambda a,b.\ (IF\ (=\ b\ 0)\ a\ ((Y\ H)\ (INC\ a)\ (DEC\ b)))\ 4\ 1 \stackrel{*}{\longrightarrow} \\
 (IF\ (=\ 1\ 0)\ 4\ ((Y\ H)\ (INC\ 4)\ (DEC\ 1))) \longrightarrow \\
 (IF\ FALSE\ 4\ ((Y\ H)\ (INC\ 4)\ (DEC\ 1))) \longrightarrow \\
 (Y\ H)\ (INC\ 4)\ (DEC\ 1) \stackrel{*}{\longrightarrow} \\
