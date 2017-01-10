@@ -1,7 +1,7 @@
   Stel dat $\etm$ beslisbaar is en $E$ is een beslisser voor $\etm$, dan kunnen we een beslisser $B$ voor $\atm$ construeren. Voor een gegeven invoer $\langle M,s \rangle$ construeren we een machine $M_s$ waarvoor geldt
   \begin{itemize}
   \item Gegeven een invoer $w$, als $w \neq s$, verwerpt $M_s$ de string $w$.
-  \item Anders laat $M_s$ $M$ lopen op $w$ en geeft het resultaat terug.
+  \item Anders laat $M_s$ $M$ lopen op $w$ en geeft hetzelfde resultaat terug.
   \end{itemize}
   $M_s$ is een machine die enkel accept teruggeeft indien $M$ $s$ accepteert en anders reject. We laten $E$ lopen op $\langle M_s \rangle$:
   \begin{itemize}
