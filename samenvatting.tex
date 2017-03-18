@@ -1365,9 +1365,9 @@ Een enumeratormachine produceert (enumereert) een verzameling strings op de outp
 
 \begin{bewijs}{We bewijzen dat $\etm$ niet beslisbaar is.}
   \input{bewijzen/etm}
-  
-  We zeggen dat $\overline{\atm}$ reduceerbaar is naar $\etm$.
 \end{bewijs}
+  
+We zeggen dat $\etm$ reduceerbaar is naar $\atm$.
 
 \begin{bewijs}{We bewijzen dat $\eqtm$ niet beslisbaar is.}
   We kunnen $\etm$ reduceren naar $\eqtm$ ($\etm \leq_m \eqtm$). Indien er een beslisser $EQ$ bestaat voor $\eqtm$, dan kunnen we een beslisser $E$ voor $\etm$ bouwen die bij een invoer $\langle M \rangle$, $EQ$ laat lopen op $\langle M,M_\emptyset \rangle$ en hetzelfde resultaat teruggeeft. We weten dat $\etm$ niet beslisbaar is, dus de beslisser $E$ kan niet bestaan en dus de beslisser $EQ$ ook niet. Bijgevolg is $\eqtm$ ook niet beslisbaar.
