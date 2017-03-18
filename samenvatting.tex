@@ -1287,9 +1287,9 @@ Bij een invoer $\langle M,s \rangle$ laat $B$ de machine $H$ lopen op $\langle M
 \item indien $H(\langle M,s \rangle) = reject$, dan stopt $M$ niet voor een invoer $s$. $B$ geeft als resultaat $reject$.
 \end{itemize}
 Omdat $\atm$ niet beslisbaar is, kan $B$ niet bestaan, dus kan ook $H$ niet bestaan. Bij gevolg is $\htm$ niet beslisbaar.
+\end{bewijs}
 
 We zeggen dat $\atm$ reduceerbaar is naar $\htm$.
-\end{bewijs}
 
 \begin{bewijs}{We bewijzen dat $\atm$ herkenbaar is.}
   Het is mogelijk een herkenner $H$ voor $\atm$ te construeren die bij een invoer $\langle M,s \rangle$ $M$ laat lopen op $s$. $H$ accepteert de invoer $\langle M,s \rangle$ als $M$ de invoer $s$ accepteert en verwerpt de invoer als $M$ niet stopt bij invoer $s$ of $s$ verwerpt.
